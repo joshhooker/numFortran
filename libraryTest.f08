@@ -280,9 +280,16 @@ program libraryTest
   print *, besselK(2,5.5d0)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING SPHERICAL BESSEL FUNCTION OF THE FIRST KIND:'
+  print *, sphBesselJ(3.d0,2.d0)
+  print *, sphBesselJ(-3,2)
+  print *, sphBesselJ(10,2.d0)
+  print *, sphBesselJ(-10.,2)
+  write(*,*)
+
   write(*,'(2x,a)') 'TESTING GAMMA FUNCTION:'
-  print *, gamma(1.21d0)
-  print *, gammaFunc(1.21d0)
+  print *, gamma(10.21d0)
+  print *, gammaFunc(10.21d0)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE FIRST KIND:'

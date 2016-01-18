@@ -4,11 +4,11 @@
 !
 !  * Bessel Functions - J and Y
 !  * Bessel Function - I and K
+!  * Airy Function - Ai and Bi
 !  * Gamma Function (Not 100%)
 !
 ! Future:
 !  * Spherical Bessel Functions
-!  * Airy Function - Ai and Bi
 !  * Legendre Function
 !  * Hermite Polynomial
 !  * Laguerre Polynomial
@@ -25,27 +25,38 @@ module specialFunctions
   integer, parameter :: dp = kind(0.d0)
 
   public :: besselJ, besselY, besselI, besselK
+  public :: sphBesselJ
   public :: airyA, airyB
   public :: gammaFunc
 
   interface besselJ
     module procedure besselJ_ii, besselJ_ir, besselJ_id, besselJ_ri, &
-        besselJ_di, besselJ_rr, besselJ_dd
+        besselJ_di, besselJ_rr, besselJ_rd, besselJ_dr, besselJ_dd
   end interface
 
   interface besselY
     module procedure besselY_ii, besselY_ir, besselY_id, besselY_ri, &
-        besselY_di, besselY_rr, besselY_dd
+        besselY_di, besselY_rr, besselY_rd, besselY_dr, besselY_dd
   end interface
 
   interface besselI
     module procedure besselI_ii, besselI_ir, besselI_id, besselI_ri, &
-        besselI_di, besselI_rr, besselI_dd
+        besselI_di, besselI_rr, besselI_rd, besselI_dr, besselI_dd
   end interface
 
   interface besselK
     module procedure besselK_ii, besselK_ir, besselK_id, besselK_ri, &
-        besselK_di, besselK_rr, besselK_dd
+        besselK_di, besselK_rr, besselK_rd, besselK_dr, besselK_dd
+  end interface
+
+  interface sphBesselJ
+    module procedure sphBesselJ_ii, sphBesselJ_ir, sphBesselJ_id, sphBesselJ_ri, &
+        sphBesselJ_di, sphBesselJ_rr, sphBesselJ_rd, sphBesselJ_dr, sphBesselJ_dd
+  end interface
+
+  interface sphBesselY
+    module procedure sphBesselY_ii, sphBesselY_ir, sphBesselY_id, sphBesselY_ri, &
+        sphBesselY_di, sphBesselY_rr, sphBesselY_rd, sphBesselY_dr, sphBesselY_dd
   end interface
 
   interface airyA
@@ -171,6 +182,38 @@ contains
     besselJ_rr = intResults/pi_
   end function besselJ_rr
 
+  real(dp) function besselJ_rd(n,x)
+    !! Bessel function of the first kind \( J_{n}(x) \)
+    real :: n
+      !! input: real for Bessel function of the form /( J_{n}(x) /)
+    real(dp) :: x
+      !! input: real value at where Bessel function to be evaluated at
+    real(dp) :: intResults
+    real(dp) :: consts(2)
+    consts(1) = dble(n)
+    consts(2) = dble(x)
+    intResults = gaussLegendre(besselJFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselJFunction2,0.d0,1.d0,2,consts)
+    besselJ_rd = intResults/pi_
+  end function besselJ_rd
+
+  real(dp) function besselJ_dr(n,x)
+    !! Bessel function of the first kind \( J_{n}(x) \)
+    real(dp) :: n
+      !! input: real for Bessel function of the form /( J_{n}(x) /)
+    real :: x
+      !! input: real value at where Bessel function to be evaluated at
+    real(dp) :: intResults
+    real(dp) :: consts(2)
+    consts(1) = dble(n)
+    consts(2) = dble(x)
+    intResults = gaussLegendre(besselJFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselJFunction2,0.d0,1.d0,2,consts)
+    besselJ_dr = intResults/pi_
+  end function besselJ_dr
+
   real(dp) function besselJ_dd(n,x)
     !! Bessel function of the first kind \( J_{n}(x) \)
     real(dp) :: n
@@ -282,6 +325,32 @@ contains
     besselY_rr = intResults/pi_
   end function besselY_rr
 
+  real(dp) function besselY_rd(n,x)
+    real :: n
+    real(dp) :: x
+    real(dp) :: intResults
+    real(dp) :: consts(2)
+    consts(1) = dble(n)
+    consts(2) = dble(x)
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_rd = intResults/pi_
+  end function besselY_rd
+
+  real(dp) function besselY_dr(n,x)
+    real(dp) :: n
+    real :: x
+    real(dp) :: intResults
+    real(dp) :: consts(2)
+    consts(1) = dble(n)
+    consts(2) = dble(x)
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_dr = intResults/pi_
+  end function besselY_dr
+
   real(dp) function besselY_dd(n,x)
     real(dp) :: n
     real(dp) :: x
@@ -391,6 +460,32 @@ contains
     besselI_rr = intResults/pi_
   end function besselI_rr
 
+  real(dp) function besselI_rd(n,x)
+    real :: n
+    real(dp) :: x
+    real(dp) :: intResults
+    real(dp) :: consts(2)
+    consts(1) = dble(n)
+    consts(2) = dble(x)
+    intResults = gaussLegendre(besselIFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselIFunction2,0.d0,1.d0,2,consts)
+    besselI_rd = intResults/pi_
+  end function besselI_rd
+
+  real(dp) function besselI_dr(n,x)
+    real(dp) :: n
+    real :: x
+    real(dp) :: intResults
+    real(dp) :: consts(2)
+    consts(1) = dble(n)
+    consts(2) = dble(x)
+    intResults = gaussLegendre(besselIFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselIFunction2,0.d0,1.d0,2,consts)
+    besselI_dr = intResults/pi_
+  end function besselI_dr
+
   real(dp) function besselI_dd(n,x)
     real(dp) :: n
     real(dp) :: x
@@ -479,6 +574,28 @@ contains
     besselK_rr = intResults
   end function besselK_rr
 
+  real(dp) function besselK_rd(n,x)
+    real :: n
+    real(dp) :: x
+    real(dp) :: intResults
+    real(dp) :: consts(2)
+    consts(1) = dble(n)
+    consts(2) = dble(x)
+    intResults = gaussLegendre(besselKFunction,0.d0,1.d0,2,consts)
+    besselK_rd = intResults
+  end function besselK_rd
+
+  real(dp) function besselK_dr(n,x)
+    real(dp) :: n
+    real :: x
+    real(dp) :: intResults
+    real(dp) :: consts(2)
+    consts(1) = dble(n)
+    consts(2) = dble(x)
+    intResults = gaussLegendre(besselKFunction,0.d0,1.d0,2,consts)
+    besselK_dr = intResults
+  end function besselK_dr
+
   real(dp) function besselK_dd(n,x)
     real(dp) :: n
     real(dp) :: x
@@ -489,6 +606,114 @@ contains
     intResults = gaussLegendre(besselKFunction,0.d0,1.d0,2,consts)
     besselK_dd = intResults
   end function besselK_dd
+
+  real(dp) function sphBesselJ_ii(n,x)
+    integer :: n
+    integer :: x
+    sphBesselJ_ii = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_ii
+
+  real(dp) function sphBesselJ_ir(n,x)
+    integer :: n
+    real :: x
+    sphBesselJ_ir = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_ir
+
+  real(dp) function sphBesselJ_id(n,x)
+    integer :: n
+    real(dp) :: x
+    sphBesselJ_id = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_id
+
+  real(dp) function sphBesselJ_ri(n,x)
+    real :: n
+    integer :: x
+    sphBesselJ_ri = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_ri
+
+  real(dp) function sphBesselJ_di(n,x)
+    real(dp) :: n
+    integer :: x
+    sphBesselJ_di = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_di
+
+  real(dp) function sphBesselJ_rr(n,x)
+    real :: n
+    real :: x
+    sphBesselJ_rr = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_rr
+
+  real(dp) function sphBesselJ_rd(n,x)
+    real :: n
+    real(dp) :: x
+    sphBesselJ_rd = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_rd
+
+  real(dp) function sphBesselJ_dr(n,x)
+    real(dp) :: n
+    real :: x
+    sphBesselJ_dr = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_dr
+
+  real(dp) function sphBesselJ_dd(n,x)
+    real(dp) :: n
+    real(dp) :: x
+    sphBesselJ_dd = sqrt(pi_/(2.d0*dble(x)))*besselJ(dble(n)+0.5d0,dble(x))
+  end function sphBesselJ_dd
+
+  real(dp) function sphBesselY_ii(n,x)
+    integer :: n
+    integer :: x
+    sphBesselY_ii = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_ii
+
+  real(dp) function sphBesselY_ir(n,x)
+    integer :: n
+    real :: x
+    sphBesselY_ir = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_ir
+
+  real(dp) function sphBesselY_id(n,x)
+    integer :: n
+    real(dp) :: x
+    sphBesselY_id = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_id
+
+  real(dp) function sphBesselY_ri(n,x)
+    real :: n
+    integer :: x
+    sphBesselY_ri = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_ri
+
+  real(dp) function sphBesselY_di(n,x)
+    real(dp) :: n
+    integer :: x
+    sphBesselY_di = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_di
+
+  real(dp) function sphBesselY_rr(n,x)
+    real :: n
+    real :: x
+    sphBesselY_rr = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_rr
+
+  real(dp) function sphBesselY_rd(n,x)
+    real :: n
+    real(dp) :: x
+    sphBesselY_rd = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_rd
+
+  real(dp) function sphBesselY_dr(n,x)
+    real(dp) :: n
+    real :: x
+    sphBesselY_dr = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_dr
+
+  real(dp) function sphBesselY_dd(n,x)
+    real(dp) :: n
+    real(dp) :: x
+    sphBesselY_dd = sqrt(pi_/(2.d0*dble(x)))*besselY(dble(n)+0.5d0,dble(x))
+  end function sphBesselY_dd
 
   real(dp) function airyA_i(x)
     integer :: x
@@ -595,21 +820,12 @@ contains
     airyB_d = airyResult
   end function airyB_d
 
-  ! real(dp) function airyB(x)
-  !   real(dp) :: x
-  !   real(dp) :: intResults
-  !   real(dp) :: consts(1)
-  !   consts(1) = x
-  !   intResults = gaussLegendre(airyBFunction,0.d0,1.d0,1,consts)
-  !   airyB = intResults/pi_
-  ! end function airyB
-
   real(dp) function gammaFunction(n,c,x)
     integer :: n
     real(dp) :: c(n)
     real(dp) :: x
     real(dp) :: func
-    func = log(1.d0/x)**(c(1)-1.d0)
+    func = (-log(x))**(c(1)-1.d0)
     gammaFunction = func
   end function gammaFunction
 
@@ -618,7 +834,16 @@ contains
     real(dp) :: intResults
     real(dp) :: consts(1)
     consts(1) = x
-    intResults = gaussLegendre(gammaFunction,0.d0,0.1d0,1,consts)
+    intResults = gaussLegendre(gammaFunction,0.d0,0.01d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.01d0,0.02d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.02d0,0.03d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.03d0,0.04d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.04d0,0.05d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.05d0,0.06d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.06d0,0.07d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.07d0,0.08d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.08d0,0.09d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.09d0,0.1d0,1,consts)
     intResults = intResults+gaussLegendre(gammaFunction,0.1d0,0.2d0,1,consts)
     intResults = intResults+gaussLegendre(gammaFunction,0.2d0,0.3d0,1,consts)
     intResults = intResults+gaussLegendre(gammaFunction,0.3d0,0.4d0,1,consts)
