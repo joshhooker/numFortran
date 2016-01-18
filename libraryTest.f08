@@ -281,8 +281,8 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING GAMMA FUNCTION:'
-  print *, gamma(5.21d0)
-  print *, gammaFunc(5.21d0)
+  print *, gamma(1.21d0)
+  print *, gammaFunc(1.21d0)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE FIRST KIND:'

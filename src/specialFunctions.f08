@@ -532,7 +532,16 @@ contains
     real(dp) :: intResults
     real(dp) :: consts(1)
     consts(1) = x
-    intResults = gaussLegendre(gammaFunction,0.d0,1.d0,1,consts)
+    intResults = gaussLegendre(gammaFunction,0.d0,0.1d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.1d0,0.2d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.2d0,0.3d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.3d0,0.4d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.4d0,0.5d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.5d0,0.6d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.6d0,0.7d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.7d0,0.8d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.8d0,0.9d0,1,consts)
+    intResults = intResults+gaussLegendre(gammaFunction,0.9d0,1.d0,1,consts)
     gammaFunc = intResults
   end function gammaFunc
 
