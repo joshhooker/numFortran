@@ -25,6 +25,7 @@ module specialFunctions
   integer, parameter :: dp = kind(0.d0)
 
   public :: besselJ, besselY, besselI, besselK
+  public :: airyA
   public :: gammaFunc
 
   interface besselJ
@@ -46,6 +47,11 @@ module specialFunctions
     module procedure besselK_ii, besselK_ir, besselK_id, besselK_ri, &
         besselK_di, besselK_rr, besselK_dd
   end interface
+
+  interface airyA
+    module procedure airyA_i, airyA_r, airyA_d
+  end interface
+
 
 contains
 
@@ -480,34 +486,50 @@ contains
     besselK_dd = intResults
   end function besselK_dd
 
-  ! real(dp) function airyAFunction(n,c,x)
-  !   integer :: n
-  !   real(dp) :: c(n)
-  !   real(dp) :: x
-  !   real(dp) :: func
-  !   func = cos(-(log(x)*log(x)*log(x))/3.d0-c(1)*log(x))
-  !   airyAFunction = func
-  !   !func = cos(x*x*x/3.d0+c(1)*x)
-  !   !airyAFunction = func
-  ! end function airyAFunction
+  real(dp) function airyA_i(x)
+    integer :: x
+    real(dp) :: airyResult
+    airyResult = 0.d0
+    if(x.lt.0.d0) then
+      airyResult = besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult+besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(abs(dble(x))/9.d0)
+    else
+      airyResult = besselK(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(dble(x)/3.d0)/pi_
+    end if
+    airyA_i = airyResult
+  end function airyA_i
 
-  ! real(dp) function airyA(x)
-  !   real(dp) :: x
-  !   real(dp) :: intResults
-  !   real(dp) :: consts(1)
-  !   consts(1) = x
-  !   intResults = gaussLegendre(airyAFunction,0.d0,1.d0,1,consts)
-  !   airyA = intResults/pi_
-  ! end function airyA
+  real(dp) function airyA_r(x)
+    real :: x
+    real(dp) :: airyResult
+    airyResult = 0.d0
+    if(x.lt.0.d0) then
+      airyResult = besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult+besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(abs(dble(x))/9.d0)
+    else
+      airyResult = besselK(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(dble(x)/3.d0)/pi_
+    end if
+    airyA_r = airyResult
+  end function airyA_r
 
-  ! real(dp) function airyBFunction(n,c,x)
-  !   integer :: n
-  !   real(dp) :: c(n)
-  !   real(dp) :: x
-  !   real(dp) :: func
-  !   func = exp(-x*x*x/3.d0+c(1)*x)+sin(x*x*x/3.d0+c(1)*x)
-  !   airyBFunction = func
-  ! end function airyBFunction
+  real(dp) function airyA_d(x)
+    real(dp) :: x
+    real(dp) :: airyResult
+    airyResult = 0.d0
+    if(x.lt.0.d0) then
+      airyResult = besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult+besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(abs(dble(x))/9.d0)
+    else
+      airyResult = besselK(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(dble(x)/3.d0)/pi_
+    end if
+    airyA_d = airyResult
+  end function airyA_d
 
   ! real(dp) function airyB(x)
   !   real(dp) :: x
