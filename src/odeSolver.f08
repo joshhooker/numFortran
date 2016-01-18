@@ -7,8 +7,10 @@
 !    * rk1AdaptStep
 
 module odeSolver
-  use parameters
   implicit none
+
+  private :: dp
+  integer, parameter :: dp = kind(0.d0)
 
   private :: rk1AdaptStepSetupConstants
 contains

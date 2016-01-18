@@ -7,8 +7,10 @@
 ! \(A_i\), \(B_i\), \(C_i\) and \(D_i\) is computed.
 
 module cubicSpline
-  use parameters
   implicit none
+
+  private :: dp
+  integer, parameter :: dp = kind(0.d0)
 
   contains
 

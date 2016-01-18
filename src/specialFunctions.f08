@@ -19,10 +19,11 @@
 module specialFunctions
   use constants
   use integration
-  use parameters
   implicit none
 
   private
+  integer, parameter :: dp = kind(0.d0)
+
   public :: besselJ, besselY, besselI, besselK
   public :: gammaFunc
 

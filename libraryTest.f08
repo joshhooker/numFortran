@@ -3,11 +3,14 @@ program libraryTest
   use cubicSpline
   use integration
   use odeSolver
-  use parameters
   use randomNumbers
   use specialFunctions
   use statTests
+
+  use iso_fortran_env
   implicit none
+
+  integer, parameter :: dp = kind(0.d0)
 
   integer :: i
 

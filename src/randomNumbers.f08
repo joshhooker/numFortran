@@ -14,9 +14,11 @@
 !        * mt19937
 
 module randomNumbers
-  use, intrinsic :: iso_fortran_env
-  use parameters
+  use iso_fortran_env
   implicit none
+
+  private
+  integer, parameter :: dp = kind(0.d0)
 
   integer :: x, y, z, w, v
 
@@ -31,10 +33,10 @@ module randomNumbers
   integer :: mti = nMT+1
   integer :: mt(nMT)
 
-  private :: x, y, z, w, v
-  private :: wMT,nMT,mMT,rMT
-  private :: uMT,sMT,tMT,lMT
-  private :: mti,mt
+  public :: randSeedGenerator
+  public :: xorshift, xorshift64star, xorshift128
+  public :: xorshiftInt, xorshift64starInt, xorshift128Int
+  public :: mt19937
 
 contains
 

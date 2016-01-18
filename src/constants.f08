@@ -4,8 +4,10 @@
 !
 
 module constants
-  use parameters
   implicit none
+
+  private :: dp
+  integer, parameter :: dp = kind(0.d0)
 
   ! Math constants
 

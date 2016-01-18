@@ -5,8 +5,10 @@
 !  * Gauss-Legendre Integration:
 
 module integration
-  use parameters
   implicit none
+
+  private :: dp
+  integer, parameter :: dp = kind(0.d0)
 
   real(dp) :: glx128(64), glw128(64)
   real(dp) :: glx512(256), glw512(256)

@@ -4,8 +4,12 @@
 !
 
 module statTests
-  use parameters
   implicit none
+
+  private
+  integer, parameter :: dp = kind(0.d0)
+
+  public :: stdDev, stdDevInt
 
 contains
 

@@ -14,9 +14,8 @@ MODULEFLAG = -J
 VPATH = $(SRCDIR):$(OBJDIR)
 
 # add any extra objects here
-OBJFILES = libraryTest.o parameters.o constants.o cubicSpline.o \
-           odeSolver.o randomNumbers.o statTests.o integration.o \
-           specialFunctions.o
+OBJFILES = libraryTest.o constants.o cubicSpline.o odeSolver.o \
+           randomNumbers.o statTests.o integration.o specialFunctions.o \
 
 FULLTARGET = $(TARGET)
 
@@ -49,5 +48,5 @@ tidy:
 	@rm -rf $(OBJDIR) $(SRCDIR)/*~ *.out *.err *.log *.ipo
 
 # Add Dependencies here
-libraryTest.o : parameters.o constants.o cubicSpline.o odeSolver.o \
-								randomNumbers.o statTests.o integration.o specialFunctions.o
+libraryTest.o : constants.o cubicSpline.o odeSolver.o randomNumbers.o \
+								statTests.o integration.o specialFunctions.o
