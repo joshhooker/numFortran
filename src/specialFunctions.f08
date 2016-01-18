@@ -25,7 +25,7 @@ module specialFunctions
   integer, parameter :: dp = kind(0.d0)
 
   public :: besselJ, besselY, besselI, besselK
-  public :: airyA
+  public :: airyA, airyB
   public :: gammaFunc
 
   interface besselJ
@@ -50,6 +50,10 @@ module specialFunctions
 
   interface airyA
     module procedure airyA_i, airyA_r, airyA_d
+  end interface
+
+  interface airyB
+    module procedure airyB_i, airyB_r, airyB_d
   end interface
 
 
@@ -490,10 +494,12 @@ contains
     integer :: x
     real(dp) :: airyResult
     airyResult = 0.d0
-    if(x.lt.0.d0) then
+    if(dble(x).lt.0.d0) then
       airyResult = besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
       airyResult = airyResult+besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
       airyResult = airyResult*sqrt(abs(dble(x))/9.d0)
+    elseif(dble(x).eq.0.d0) then
+      airyResult = 1.d0/((3.d0**(2.d0/3.d0))*gamma(2.d0/3.d0))
     else
       airyResult = besselK(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
       airyResult = airyResult*sqrt(dble(x)/3.d0)/pi_
@@ -505,10 +511,12 @@ contains
     real :: x
     real(dp) :: airyResult
     airyResult = 0.d0
-    if(x.lt.0.d0) then
+    if(dble(x).lt.0.d0) then
       airyResult = besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
       airyResult = airyResult+besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
       airyResult = airyResult*sqrt(abs(dble(x))/9.d0)
+    elseif(dble(x).eq.0.d0) then
+      airyResult = 1.d0/((3.d0**(2.d0/3.d0))*gamma(2.d0/3.d0))
     else
       airyResult = besselK(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
       airyResult = airyResult*sqrt(dble(x)/3.d0)/pi_
@@ -520,16 +528,72 @@ contains
     real(dp) :: x
     real(dp) :: airyResult
     airyResult = 0.d0
-    if(x.lt.0.d0) then
+    if(dble(x).lt.0.d0) then
       airyResult = besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
       airyResult = airyResult+besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
       airyResult = airyResult*sqrt(abs(dble(x))/9.d0)
+    elseif(dble(x).eq.0.d0) then
+      airyResult = 1.d0/((3.d0**(2.d0/3.d0))*gamma(2.d0/3.d0))
     else
       airyResult = besselK(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
       airyResult = airyResult*sqrt(dble(x)/3.d0)/pi_
     end if
     airyA_d = airyResult
   end function airyA_d
+
+  real(dp) function airyB_i(x)
+    integer :: x
+    real(dp) :: airyResult
+    airyResult = 0.d0
+    if(dble(x).lt.0.d0) then
+      airyResult = besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult-besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(abs(dble(x))/3.d0)
+    elseif(dble(x).eq.0.d0) then
+      airyResult = 1.d0/((3.d0**(1.d0/6.d0))*gamma(2.d0/3.d0))
+    else
+      airyResult = besselI(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult+besselI(-1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(dble(x)/3.d0)
+    end if
+    airyB_i = airyResult
+  end function airyB_i
+
+  real(dp) function airyB_r(x)
+    real :: x
+    real(dp) :: airyResult
+    airyResult = 0.d0
+    if(dble(x).lt.0.d0) then
+      airyResult = besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult-besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(abs(dble(x))/3.d0)
+    elseif(dble(x).eq.0.d0) then
+      airyResult = 1.d0/((3.d0**(1.d0/6.d0))*gamma(2.d0/3.d0))
+    else
+      airyResult = besselI(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult+besselI(-1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(dble(x)/3.d0)
+    end if
+    airyB_r = airyResult
+  end function airyB_r
+
+  real(dp) function airyB_d(x)
+    real(dp) :: x
+    real(dp) :: airyResult
+    airyResult = 0.d0
+    if(dble(x).lt.0.d0) then
+      airyResult = besselJ(-1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult-besselJ(1.d0/3.d0,(2.d0/3.d0)*(abs(dble(x))**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(abs(dble(x))/3.d0)
+    elseif(dble(x).eq.0.d0) then
+      airyResult = 1.d0/((3.d0**(1.d0/6.d0))*gamma(2.d0/3.d0))
+    else
+      airyResult = besselI(1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult+besselI(-1.d0/3.d0,(2.d0/3.d0)*(dble(x)**(3.d0/2.d0)))
+      airyResult = airyResult*sqrt(dble(x)/3.d0)
+    end if
+    airyB_d = airyResult
+  end function airyB_d
 
   ! real(dp) function airyB(x)
   !   real(dp) :: x

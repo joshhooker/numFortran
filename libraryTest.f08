@@ -287,10 +287,15 @@ program libraryTest
 
   write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE FIRST KIND:'
   print *, airyA(-10.d0)
+  print *, airyA(0.d0)
+  print *, airyA(0.1d0)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE SECOND KIND:'
-  !print *, airyB(0.d0)
+  print *, airyB(0.1d0)
+  print *, airyB(2.d0)
+  print *, airyB(-2.d0)
+  print *, airyB(0.d0)
   write(*,*)
 
 contains
