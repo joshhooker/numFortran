@@ -280,7 +280,6 @@ program libraryTest
   sfSumDiff = 0.d0
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(besselY(testBesselN(i),testBesselX(i))-testBessel(i))
-    write(*,*) testBesselN(i), testBesselX(i), besselY(testBesselN(i),testBesselX(i))
   end do
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
   deallocate(testBesselN, testBesselX, testBessel)

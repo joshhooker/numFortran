@@ -243,7 +243,7 @@ contains
     real(dp) :: x
     real(dp) :: func
     func = 0.d0
-    func = (exp(c(1)*(-log(x)))+((-1.d0)**c(1))*exp(-c(1)*(-log(x))))
+    func = (exp(c(1)*(-log(x)))+(cos(c(1)*pi_))*exp(-c(1)*(-log(x))))
     func = func*exp(-c(2)*sinh((-log(x))))
     besselYFunction2 = func/x
   end function besselYFunction2
@@ -255,17 +255,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    if(mod(consts(1),1.d0).ne.0.d0) then
-      intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-      intResults = intResults-besselJ(-dble(n),dble(x))
-      intResults = intResults/sin(dble(n)*pi_)
-      besselY_ii = intResults
-    else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_ii = intResults/pi_
-    end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_ii = intResults/pi_
   end function besselY_ii
 
   real(dp) function besselY_ir(n,x)
@@ -275,17 +268,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    if(mod(consts(1),1.d0).ne.0.d0) then
-      intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-      intResults = intResults-besselJ(-dble(n),dble(x))
-      intResults = intResults/sin(dble(n)*pi_)
-      besselY_ir = intResults
-    else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_ir = intResults/pi_
-    end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_ir = intResults/pi_
   end function besselY_ir
 
   real(dp) function besselY_id(n,x)
@@ -295,17 +281,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    if(mod(consts(1),1.d0).ne.0.d0) then
-      intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-      intResults = intResults-besselJ(-dble(n),dble(x))
-      intResults = intResults/sin(dble(n)*pi_)
-      besselY_id = intResults
-    else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_id = intResults/pi_
-    end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_id = intResults/pi_
   end function besselY_id
 
   real(dp) function besselY_ri(n,x)
@@ -315,17 +294,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    if(mod(consts(1),1.d0).ne.0.d0) then
-      intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-      intResults = intResults-besselJ(-dble(n),dble(x))
-      intResults = intResults/sin(dble(n)*pi_)
-      besselY_ri = intResults
-    else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_ri = intResults/pi_
-    end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_ri = intResults/pi_
   end function besselY_ri
 
   real(dp) function besselY_di(n,x)
@@ -335,17 +307,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    if(mod(consts(1),1.d0).ne.0.d0) then
-      intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-      intResults = intResults-besselJ(-dble(n),dble(x))
-      intResults = intResults/sin(dble(n)*pi_)
-      besselY_di = intResults
-    else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_di = intResults/pi_
-    end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_di = intResults/pi_
   end function besselY_di
 
   real(dp) function besselY_rr(n,x)
@@ -355,17 +320,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    if(mod(consts(1),1.d0).ne.0.d0) then
-      intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-      intResults = intResults-besselJ(-dble(n),dble(x))
-      intResults = intResults/sin(dble(n)*pi_)
-      besselY_rr = intResults
-    else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_rr = intResults/pi_
-    end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_rr = intResults/pi_
   end function besselY_rr
 
   real(dp) function besselY_rd(n,x)
@@ -375,17 +333,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    if(mod(consts(1),1.d0).ne.0.d0) then
-      intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-      intResults = intResults-besselJ(-dble(n),dble(x))
-      intResults = intResults/sin(dble(n)*pi_)
-      besselY_rd = intResults
-    else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_rd = intResults/pi_
-    end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_rd = intResults/pi_
   end function besselY_rd
 
   real(dp) function besselY_dr(n,x)
@@ -395,17 +346,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    if(mod(consts(1),1.d0).ne.0.d0) then
-      intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-      intResults = intResults-besselJ(-dble(n),dble(x))
-      intResults = intResults/sin(dble(n)*pi_)
-      besselY_dr = intResults
-    else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_dr = intResults/pi_
-    end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_dr = intResults/pi_
   end function besselY_dr
 
   real(dp) function besselY_dd(n,x)
@@ -415,17 +359,10 @@ contains
     real(dp) :: consts(2)
     consts(1) = dble(n)
     consts(2) = dble(x)
-    !if(mod(consts(1),1.d0).ne.0.d0) then
-    !  intResults = besselJ(dble(n),dble(x))*cos(dble(n)*pi_)
-    !  intResults = intResults-besselJ(-dble(n),dble(x))
-    !  intResults = intResults/sin(dble(n)*pi_)
-    !  besselY_dd = intResults
-    !else
-      intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
-      intResults = intResults- &
-          gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
-      besselY_dd = intResults/pi_
-    !end if
+    intResults = gaussLegendre(besselYFunction1,0.d0,pi_,2,consts)
+    intResults = intResults- &
+        gaussLegendre(besselYFunction2,0.d0,1.d0,2,consts)
+    besselY_dd = intResults/pi_
   end function besselY_dd
 
   real(dp) function besselIFunction1(n,c,x)
