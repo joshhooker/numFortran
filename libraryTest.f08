@@ -262,10 +262,13 @@ program libraryTest
   end do
   close(1)
   sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(besselJ(testBesselN(i),testBesselX(i))-testBessel(i))
   end do
+  call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
@@ -278,10 +281,13 @@ program libraryTest
   end do
   close(1)
   sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(besselY(testBesselN(i),testBesselX(i))-testBessel(i))
   end do
+  call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
@@ -294,10 +300,13 @@ program libraryTest
   end do
   close(1)
   sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(besselI(testBesselN(i),testBesselX(i))-testBessel(i))
   end do
+  call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
@@ -310,10 +319,13 @@ program libraryTest
   end do
   close(1)
   sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(besselK(testBesselN(i),testBesselX(i))-testBessel(i))
   end do
+  call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
@@ -326,28 +338,34 @@ program libraryTest
   end do
   close(1)
   sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(sphBesselJ(int(testBesselN(i)),testBesselX(i))-testBessel(i))
   end do
+  call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
-  ! write(*,'(2x,a)') 'TESTING SPHERICAL BESSEL FUNCTION OF THE SECOND KIND:'
-  ! open(unit=1,file='tests/test_sphyn.dat',status='old')
-  ! read(1,*) sfTestsN
-  ! allocate(testBesselN(sfTestsN), testBesselX(sfTestsN), testBessel(sfTestsN))
-  ! do i=1,sfTestsN
-  !   read(1,*) testBesselN(i), testBesselX(i), testBessel(i)
-  ! end do
-  ! close(1)
-  ! sfSumDiff = 0.d0
-  ! do i=1, sfTestsN
-  !   sfSumDiff = sfSumDiff+abs(sphBesselY(int(testBesselN(i)),testBesselX(i))-testBessel(i))
-  ! end do
-  ! write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
-  ! deallocate(testBesselN, testBesselX, testBessel)
-  ! write(*,*)
+  write(*,'(2x,a)') 'TESTING SPHERICAL BESSEL FUNCTION OF THE SECOND KIND:'
+  open(unit=1,file='tests/test_sphyn.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testBesselN(sfTestsN), testBesselX(sfTestsN), testBessel(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testBesselN(i), testBesselX(i), testBessel(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(sphBesselY(testBesselN(i),testBesselX(i))-testBessel(i))
+  end do
+  call system_clock(t2, clock_rate, clock_max)
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
+  deallocate(testBesselN, testBesselX, testBessel)
+  write(*,*)
 
   write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE FIRST KIND:'
   open(unit=1,file='tests/test_airyA.dat',status='old')
@@ -358,10 +376,13 @@ program libraryTest
   end do
   close(1)
   sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(airyA(testAiryX(i))-testAiry(i))
   end do
+  call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testAiryX, testAiry)
   write(*,*)
 
@@ -374,10 +395,13 @@ program libraryTest
   end do
   close(1)
   sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(airyB(testAiryX(i))-testAiry(i))
   end do
+  call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testAiryX, testAiry)
   write(*,*)
 
