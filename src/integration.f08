@@ -74,12 +74,12 @@ contains
     sumIntegral = 0.d0
 
     ! Using glx128 and glw128
-    ! do i=64,1,-1
-    !   sumIntegral = sumIntegral+glw128(i)*f(n,consts,t0-dt*glx128(i))
-    ! end do
-    ! do i=1,64
-    !   sumIntegral = sumIntegral+glw128(i)*f(n,consts,t0+dt*glx128(i))
-    ! end do
+    do i=64,1,-1
+      sumIntegral = sumIntegral+glw128(i)*f(n,consts,t0-dt*glx128(i))
+    end do
+    do i=1,64
+      sumIntegral = sumIntegral+glw128(i)*f(n,consts,t0+dt*glx128(i))
+    end do
 
     ! Using glx512 and glw512
    ! do i=256,1,-1
@@ -90,12 +90,12 @@ contains
    ! end do
 
     ! Using glx1024 and glw1024
-   do i=512,1,-1
-     sumIntegral = sumIntegral+glw1024(i)*f(n,consts,t0-dt*glx1024(i))
-   end do
-   do i=1,512
-     sumIntegral = sumIntegral+glw1024(i)*f(n,consts,t0+dt*glx1024(i))
-   end do
+   ! do i=512,1,-1
+   !   sumIntegral = sumIntegral+glw1024(i)*f(n,consts,t0-dt*glx1024(i))
+   ! end do
+   ! do i=1,512
+   !   sumIntegral = sumIntegral+glw1024(i)*f(n,consts,t0+dt*glx1024(i))
+   ! end do
 
     gaussLegendre = sumIntegral*dt
   end function gaussLegendre

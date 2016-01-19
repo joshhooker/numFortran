@@ -37,7 +37,10 @@ program libraryTest
   real(dp), allocatable :: intConsts(:)
 
   ! Variables to test special functions
-  real(dp) :: sfResult
+  integer :: sfTestsN
+  real(dp) :: sfResult, sfSumDiff
+  real(dp), allocatable :: testBesselN(:), testBesselX(:), testBessel(:)
+  real(dp), allocatable :: testAiryX(:), testAiry(:)
 
   !*******************************
   ! CONSTANT TESTING
@@ -251,58 +254,137 @@ program libraryTest
   write(*,'(a)') 'TESTING SPECIAL FUNCTIONS:'
 
   write(*,'(2x,a)') 'TESTING BESSEL FUNCTION OF THE FIRST KIND:'
-  write(*,'(4x,a,1x,es16.8)') 'J(-3,1) =', besselJ(-3,1)
-  write(*,'(4x,a,1x,es16.8)') 'J(-3.1d0,1) =', besselJ(-3.1d0,1)
-  write(*,'(4x,a,1x,es16.8)') 'J(-3.0d0,1) =', besselJ(-3.0d0,1)
-  write(*,'(4x,a,1x,es16.8)') 'J(-3.0,1) =', besselJ(-3.0,1)
-  write(*,'(4x,a,1x,es16.8)') 'J(-3.1,1) =', besselJ(-3.1,1)
-  write(*,'(4x,a,1x,es16.8)') 'J(3.1,1) =', besselJ(3.1,1)
-  write(*,'(4x,a,1x,es16.8)') 'J(3.1,1.0) =', besselJ(3.1,1.0)
+  open(unit=1,file='tests/test_jn.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testBesselN(sfTestsN), testBesselX(sfTestsN), testBessel(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testBesselN(i), testBesselX(i), testBessel(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(besselJ(testBesselN(i),testBesselX(i))-testBessel(i))
+  end do
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING BESSEL FUNCTION OF THE SECOND KIND:'
-  call system_clock(t1, clock_rate, clock_max)
-  sfResult = besselY(2,2.d0)
-  call system_clock(t2, clock_rate, clock_max)
-  write(*,'(4x,a,2(1x,es16.8))') 'Y(2,2) =', sfResult,dble(t2-t1)/dble(clock_rate)
-  print *, BESSEL_YN(2,2.)
+  open(unit=1,file='tests/test_yn.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testBesselN(sfTestsN), testBesselX(sfTestsN), testBessel(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testBesselN(i), testBesselX(i), testBessel(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(besselY(testBesselN(i),testBesselX(i))-testBessel(i))
+    write(*,*) testBesselN(i), testBesselX(i), besselY(testBesselN(i),testBesselX(i))
+  end do
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING MODIFIED BESSEL FUNCTION OF THE FIRST KIND:'
-  print *, besselI(20,5.5d0)
-  write(*,*)
-
-  write(*,'(2x,a)') 'TESTING MODIFIED BESSEL FUNCTION OF THE FIRST KIND:'
-  print *, besselI(4,5.5d0)
+  open(unit=1,file='tests/test_in.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testBesselN(sfTestsN), testBesselX(sfTestsN), testBessel(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testBesselN(i), testBesselX(i), testBessel(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(besselI(testBesselN(i),testBesselX(i))-testBessel(i))
+  end do
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING MODIFIED BESSEL FUNCTION OF THE SECOND KIND:'
-  print *, besselK(2,5.5d0)
+  open(unit=1,file='tests/test_kn.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testBesselN(sfTestsN), testBesselX(sfTestsN), testBessel(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testBesselN(i), testBesselX(i), testBessel(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(besselK(testBesselN(i),testBesselX(i))-testBessel(i))
+  end do
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  deallocate(testBesselN, testBesselX, testBessel)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING SPHERICAL BESSEL FUNCTION OF THE FIRST KIND:'
-  print *, sphBesselJ(3.d0,2.d0)
-  print *, sphBesselJ(-3,2)
-  print *, sphBesselJ(10,2.d0)
-  print *, sphBesselJ(-10.,2)
+  open(unit=1,file='tests/test_sphjn.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testBesselN(sfTestsN), testBesselX(sfTestsN), testBessel(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testBesselN(i), testBesselX(i), testBessel(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(sphBesselJ(int(testBesselN(i)),testBesselX(i))-testBessel(i))
+  end do
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  deallocate(testBesselN, testBesselX, testBessel)
+  write(*,*)
+
+  ! write(*,'(2x,a)') 'TESTING SPHERICAL BESSEL FUNCTION OF THE SECOND KIND:'
+  ! open(unit=1,file='tests/test_sphyn.dat',status='old')
+  ! read(1,*) sfTestsN
+  ! allocate(testBesselN(sfTestsN), testBesselX(sfTestsN), testBessel(sfTestsN))
+  ! do i=1,sfTestsN
+  !   read(1,*) testBesselN(i), testBesselX(i), testBessel(i)
+  ! end do
+  ! close(1)
+  ! sfSumDiff = 0.d0
+  ! do i=1, sfTestsN
+  !   sfSumDiff = sfSumDiff+abs(sphBesselY(int(testBesselN(i)),testBesselX(i))-testBessel(i))
+  ! end do
+  ! write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  ! deallocate(testBesselN, testBesselX, testBessel)
+  ! write(*,*)
+
+  write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE FIRST KIND:'
+  open(unit=1,file='tests/test_airyA.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testAiryX(sfTestsN), testAiry(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testAiryX(i), testAiry(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(airyA(testAiryX(i))-testAiry(i))
+  end do
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  deallocate(testAiryX, testAiry)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE SECOND KIND:'
+  open(unit=1,file='tests/test_airyB.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testAiryX(sfTestsN), testAiry(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testAiryX(i), testAiry(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(airyB(testAiryX(i))-testAiry(i))
+  end do
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  deallocate(testAiryX, testAiry)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING GAMMA FUNCTION:'
   print *, gamma(10.21d0)
   print *, gammaFunc(10.21d0)
-  write(*,*)
-
-  write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE FIRST KIND:'
-  print *, airyA(-10.d0)
-  print *, airyA(0.d0)
-  print *, airyA(0.1d0)
-  write(*,*)
-
-  write(*,'(2x,a)') 'TESTING AIRY FUNCTION OF THE SECOND KIND:'
-  print *, airyB(0.1d0)
-  print *, airyB(2.d0)
-  print *, airyB(-2.d0)
-  print *, airyB(0.d0)
   write(*,*)
 
 contains
