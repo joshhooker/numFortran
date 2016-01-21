@@ -405,6 +405,16 @@ program libraryTest
   deallocate(testAiryX, testAiry)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING ERROR FUNCTION:'
+  print *, errf(2.d0)
+  print *, errf(-0.2d0)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING COMPLEMENTARY ERROR FUNCTION:'
+  print *, errfc(2.d0)
+  print *, errfc(-0.2d0)
+  write(*,*)
+
   write(*,'(2x,a)') 'TESTING GAMMA FUNCTION:'
   print *, gamma(10.21d0)
   print *, gammaFunc(10.21d0)

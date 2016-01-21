@@ -40,8 +40,7 @@ contains
       read(1,*) glx1024(i), glw1024(i)
     end do
     close(1)
-
-  end subroutine readGLParameters
+  end subroutine
 
   real(dp) function gaussLegendre(f,a,b,n,consts)
     !! date: January 14, 2016
@@ -98,6 +97,6 @@ contains
     ! end do
 
     gaussLegendre = sumIntegral*dt
-  end function gaussLegendre
+  end function
 
 end module integration
