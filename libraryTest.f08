@@ -415,6 +415,11 @@ program libraryTest
   print *, errfc(-0.2d0)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING BETA FUNCTION:'
+  print *, beta(2.d0,3.d0)
+  print *, beta(2,3)
+  write(*,*)
+
   write(*,'(2x,a)') 'TESTING GAMMA FUNCTION:'
   print *, gamma(10.21d0)
   print *, gammaFunc(10.21d0)

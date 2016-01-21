@@ -28,6 +28,7 @@ module specialFunctions
   public :: sphBesselJ, sphBesselY
   public :: airyA, airyB
   public :: errf, errfc
+  public :: beta
   public :: gammaFunc
 
   interface besselJ
@@ -76,6 +77,10 @@ module specialFunctions
     module procedure errfc_i, errfc_r, errfc_d
   end interface
 
+  interface beta
+    module procedure beta_ii, beta_ir, beta_id, beta_ri, beta_di, beta_rr, &
+        beta_rd, beta_dr, beta_dd
+  end interface
 
 contains
 
@@ -905,23 +910,108 @@ contains
 
   real(dp) function errfc_i(x)
     integer :: x
-    real(dp) :: intResults
-    real(dp) :: consts(0)
     errfc_i = 1.d0-errf(dble(x))
   end function
 
   real(dp) function errfc_r(x)
     real :: x
-    real(dp) :: intResults
-    real(dp) :: consts(0)
     errfc_r = 1.d0-errf(dble(x))
   end function
 
   real(dp) function errfc_d(x)
     real(dp) :: x
-    real(dp) :: intResults
-    real(dp) :: consts(0)
     errfc_d = 1.d0-errf(dble(x))
+  end function
+
+  real(dp) function betaFunction(n,c,x)
+    integer :: n
+    real(dp) :: c(n)
+    real(dp) :: x
+    real(dp) :: func
+    func = x**(c(1)-1.d0)
+    func = func*((1-x)**(c(2)-1.d0))
+    betaFunction = func
+  end function
+
+  real(dp) function beta_ii(x,y)
+    integer :: x
+    integer :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_ii = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
+  end function
+
+  real(dp) function beta_ir(x,y)
+    integer :: x
+    real :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_ir = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
+  end function
+
+  real(dp) function beta_id(x,y)
+    integer :: x
+    real(dp) :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_id = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
+  end function
+
+  real(dp) function beta_ri(x,y)
+    real :: x
+    integer :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_ri = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
+  end function
+
+  real(dp) function beta_di(x,y)
+    real(dp) :: x
+    integer :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_di = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
+  end function
+
+  real(dp) function beta_rr(x,y)
+    real :: x
+    real :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_rr = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
+  end function
+
+  real(dp) function beta_rd(x,y)
+    real :: x
+    real(dp) :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_rd = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
+  end function
+
+  real(dp) function beta_dr(x,y)
+    real(dp) :: x
+    real :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_dr = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
+  end function
+
+  real(dp) function beta_dd(x,y)
+    real(dp) :: x
+    real(dp) :: y
+    real(dp) :: consts(2)
+    consts(1) = dble(x)
+    consts(2) = dble(y)
+    beta_dd = gaussLegendre(betaFunction,0.d0,1.d0,2,consts)
   end function
 
   real(dp) function gammaFunction(n,c,x)
