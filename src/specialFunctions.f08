@@ -18,6 +18,7 @@
 !  * Hermite Polynomial
 !  * Laguerre Polynomial
 !  * Chevyshev Polynomial
+!  * Trigonometric Integrals (https://en.wikipedia.org/wiki/Trigonometric_integral)
 
 module specialFunctions
   use constants
