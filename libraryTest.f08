@@ -162,7 +162,7 @@ program libraryTest
   end do
   call system_clock(t2, clock_rate, clock_max)
   write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for', randArrayN, ' numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
-  call stdDevInt(randArrayInt,randMean,randStdDev)
+  call stdDev(randArrayInt,randMean,randStdDev)
   write(*,'(3x,2(1x,a,1x,es12.5),2(1x,a,1x,i0))') 'mean =', randMean, 'stdDev =', randStdDev, &
             'min =', minval(randArrayInt,1), 'max =', maxval(randArrayInt,1)
   write(*,*)
@@ -175,7 +175,7 @@ program libraryTest
   end do
   call system_clock(t2, clock_rate, clock_max)
   write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for', randArrayN, ' numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
-  call stdDevInt(randArrayInt,randMean,randStdDev)
+  call stdDev(randArrayInt,randMean,randStdDev)
   write(*,'(3x,2(1x,a,1x,es12.5),2(1x,a,1x,i0))') 'mean =', randMean, 'stdDev =', randStdDev, &
             'min =', minval(randArrayInt,1), 'max =', maxval(randArrayInt,1)
   write(*,*)
@@ -188,7 +188,7 @@ program libraryTest
   end do
   call system_clock(t2, clock_rate, clock_max)
   write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for', randArrayN, ' numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
-  call stdDevInt(randArrayInt,randMean,randStdDev)
+  call stdDev(randArrayInt,randMean,randStdDev)
   write(*,'(3x,2(1x,a,1x,es12.5),2(1x,a,1x,i0))') 'mean =', randMean, 'stdDev =', randStdDev, &
             'min =', minval(randArrayInt,1), 'max =', maxval(randArrayInt,1)
   write(*,*)
