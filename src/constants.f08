@@ -17,6 +17,9 @@ module constants
   ! eulers number
   real(dp), parameter :: e_ = exp(1.d0)
 
+  ! euler-mascheroni constant
+  real(dp), parameter :: em_ = 0.57721566490153286d0
+
   ! complex i
   complex(dp), parameter :: i_ = (0,1)
 

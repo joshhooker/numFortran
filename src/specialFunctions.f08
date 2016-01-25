@@ -8,6 +8,7 @@
 !  * Airy Function - Ai and Bi
 !  * Error Function and Complementary Error Function
 !  * Beta Function
+!  * Incomplete Beta Function
 !
 ! Not 100% Right:
 !  * Gamma Function
@@ -82,6 +83,14 @@ module specialFunctions
   interface beta
     module procedure beta_ii, beta_ir, beta_id, beta_ri, beta_di, beta_rr, &
         beta_rd, beta_dr, beta_dd
+  end interface
+
+  interface incBeta
+    module procedure incBeta_iii, incBeta_iir, incBeta_iid, incBeta_iri, incBeta_irr, &
+        incBeta_ird, incBeta_idi, incBeta_idr, incBeta_idd, incBeta_rii, incBeta_rir, &
+        incBeta_rid, incBeta_rri, incBeta_rrr, incBeta_rrd, incBeta_rdi, incBeta_rdr, &
+        incBeta_rdd, incBeta_dii, incBeta_dir, incBeta_did, incBeta_dri, incBeta_drr, &
+        incBeta_drd, incBeta_ddi, incBeta_ddr, incBeta_ddd
   end interface
 
 contains
@@ -599,6 +608,7 @@ contains
   real(dp) function errfFunc(x)
     real(dp) :: x, consts(0)
     errfFunc = gaussLegendre(errf_IntFunc,0.d0,x,0,consts)*2.d0/sqrt(pi_)
+  end function
 
   real(dp) function errf_i(x)
     integer :: x
@@ -707,6 +717,182 @@ contains
   real(dp) function beta_dd(x,y)
     real(dp) :: x, y
     beta_dd = betaFunc(dble(x),dble(y))
+  end function
+
+  !**************************!
+  ! Incomplete Beta Function !
+  !**************************!
+
+  real(dp) function incBetaFunc(x,a,b)
+    real(dp) :: x, a, b, consts(2)
+    consts(1) = a
+    consts(2) = b
+    incBetaFunc = gaussLegendre(beta_IntFunc,0.d0,x,2,consts)
+  end function
+
+  real(dp) function incBeta_iii(x,a,b)
+    integer :: x, a, b
+    incBeta_iii = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_iir(x,a,b)
+    integer :: x, a
+    real :: b
+    incBeta_iir = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_iid(x,a,b)
+    integer :: x, a
+    real(dp) :: b
+    incBeta_iid = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_iri(x,a,b)
+    integer :: x, b
+    real :: a
+    incBeta_iri = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_irr(x,a,b)
+    integer :: x
+    real :: a, b
+    incBeta_irr = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_ird(x,a,b)
+    integer :: x
+    real :: a
+    real(dp) :: b
+    incBeta_ird = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_idi(x,a,b)
+    integer :: x, b
+    real(dp) :: a
+    incBeta_idi = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_idr(x,a,b)
+    integer :: x
+    real(dp) :: a
+    real :: b
+    incBeta_idr = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_idd(x,a,b)
+    integer :: x
+    real(dp) :: a, b
+    incBeta_idd = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rii(x,a,b)
+    real :: x
+    integer :: a, b
+    incBeta_rii = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rir(x,a,b)
+    real :: x, b
+    integer :: a
+    incBeta_rir = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rid(x,a,b)
+    real :: x
+    integer :: a
+    real(dp) :: b
+    incBeta_rid = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rri(x,a,b)
+    real :: x, a
+    integer :: b
+    incBeta_rri = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rrr(x,a,b)
+    real :: x, a, b
+    incBeta_rrr = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rrd(x,a,b)
+    real :: x, a
+    real(dp) :: b
+    incBeta_rrd = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rdi(x,a,b)
+    real :: x
+    real(dp) :: a
+    integer :: b
+    incBeta_rdi = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rdr(x,a,b)
+    real :: x, b
+    real(dp) :: a
+    incBeta_rdr = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_rdd(x,a,b)
+    real :: x
+    real(dp) :: a, b
+    incBeta_rdd = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_dii(x,a,b)
+    real(dp) :: x
+    integer :: a, b
+    incBeta_dii = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_dir(x,a,b)
+    real(dp) :: x
+    integer :: a
+    real :: b
+    incBeta_dir = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_did(x,a,b)
+    real(dp) :: x, b
+    integer :: a
+    incBeta_did = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_dri(x,a,b)
+    real(dp) :: x
+    real :: a
+    integer :: b
+    incBeta_dri = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_drr(x,a,b)
+    real(dp) :: x
+    real :: a, b
+    incBeta_drr = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_drd(x,a,b)
+    real(dp) :: x, b
+    real :: a
+    incBeta_drd = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_ddi(x,a,b)
+    real(dp) :: x, a
+    integer :: b
+    incBeta_ddi = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_ddr(x,a,b)
+    real(dp) :: x, a
+    real :: b
+    incBeta_ddr = incBetaFunc(dble(x),dble(a),dble(b))
+  end function
+
+  real(dp) function incBeta_ddd(x,a,b)
+    real(dp) :: x, a, b
+    incBeta_ddd = incBetaFunc(dble(x),dble(a),dble(b))
   end function
 
   !****************!
