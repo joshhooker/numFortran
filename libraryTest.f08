@@ -432,12 +432,22 @@ program libraryTest
 
   write(*,'(2x,a)') 'TESTING HERMITE POLYNOMIALS (PHYSICISTS)'
   print *, hermitePoly(2,2.d0)
-  print *, hermitePoly(2,1.1d0)
+  print *, hermitePoly(5,1.1d0)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING HERMITE POLYNOMIALS (PROBABILISTS)'
   print *, hermitePolyProb(2,2.d0)
-  print *, hermitePolyProb(2,1.1d0)
+  print *, hermitePolyProb(5,1.1d0)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING LAGUERRE POLYNOMIALS'
+  print *, laguerrePoly(2,2.d0)
+  print *, laguerrePoly(5,1.1d0)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING ASSOCIATED LAGUERRE POLYNOMIALS'
+  print *, assocLaguerrePoly(2,2.d0,2.d0)
+  print *, assocLaguerrePoly(5,2.5,1.1d0)
   write(*,*)
 
 

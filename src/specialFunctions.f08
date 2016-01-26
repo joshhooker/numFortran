@@ -11,12 +11,13 @@
 !  * Incomplete Beta Function
 !  * Legendre Polynomial
 !  * Hermite Polynomial (Physicists' and Probabilists')
+!  * Laguerre Polynomial
+!  * Associated Laguerre Polynomial
 !
 ! Not 100% Right:
 !  * Gamma Function
 !
 ! Future:
-!  * Laguerre Polynomial
 !  * Chevyshev Polynomial
 !  * Trigonometric Integrals (https://en.wikipedia.org/wiki/Trigonometric_integral)
 
@@ -36,6 +37,7 @@ module specialFunctions
   public :: gammaFunc
   public :: legendrePoly
   public :: hermitePoly, hermitePolyProb
+  public :: laguerrePoly, assocLaguerrePoly
 
   interface besselJ
     module procedure besselJ_ii, besselJ_ir, besselJ_id, besselJ_ri, &
@@ -106,6 +108,16 @@ module specialFunctions
 
   interface hermitePolyProb
     module procedure hermitePolyProb_i, hermitePolyProb_r, hermitePolyProb_d
+  end interface
+
+  interface laguerrePoly
+    module procedure laguerrePoly_i, laguerrePoly_r, laguerrePoly_d
+  end interface
+
+  interface assocLaguerrePoly
+    module procedure assocLaguerrePoly_ii, assocLaguerrePoly_ir, assocLaguerrePoly_id, &
+        assocLaguerrePoly_ri, assocLaguerrePoly_rr, assocLaguerrePoly_rd, assocLaguerrePoly_di, &
+        assocLaguerrePoly_dr, assocLaguerrePoly_dd
   end interface
 
 contains
@@ -1049,5 +1061,115 @@ contains
     real(dp) :: x
     hermitePolyProb_d = hermitePolyProbFunc(n,dble(x))
   end function
+
+  !**********************!
+  ! Laguerre Polynomials !
+  !**********************!
+
+  recursive function laguerrePolyFunc(n,x) result(res)
+    integer :: n
+    real(dp) :: x, res
+    if(n.eq.0) then
+      res = 1.d0
+    elseif(n.eq.1) then
+      res = 1.d0 - x
+    else
+      res = (2.d0*(n-1)+1.d0-x)*laguerrePolyFunc(n-1,x)
+      res = res - (n-1)*laguerrePolyFunc(n-2,x)
+      res = res/n
+    end if
+  end function
+
+  real(dp) function laguerrePoly_i(n,x)
+    integer :: n, x
+    laguerrePoly_i = laguerrePolyFunc(n,dble(x))
+  end function
+
+  real(dp) function laguerrePoly_r(n,x)
+    integer :: n
+    real :: x
+    laguerrePoly_r = laguerrePolyFunc(n,dble(x))
+  end function
+
+  real(dp) function laguerrePoly_d(n,x)
+    integer :: n
+    real(dp) :: x
+    laguerrePoly_d = laguerrePolyFunc(n,dble(x))
+  end function
+
+  !*********************************!
+  ! Associated Laguerre Polynomials !
+  !*********************************!
+
+  recursive function assocLaguerrePolyFunc(n,a,x) result(res)
+    integer :: n
+    real(dp) :: a, x, res
+    if(n.eq.0) then
+      res = 1.d0
+    elseif(n.eq.1) then
+      res = 1.d0 + a - x
+    else
+      res = (2.d0*(n-1)+1.d0+a-x)*assocLaguerrePolyFunc(n-1,a,x)
+      res = res - (n-1+a)*assocLaguerrePolyFunc(n-2,a,x)
+      res = res/n
+    end if
+  end function
+
+  real(dp) function assocLaguerrePoly_ii(n,a,x)
+    integer :: n, a, x
+    assocLaguerrePoly_ii = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+  real(dp) function assocLaguerrePoly_ir(n,a,x)
+    integer :: n, a
+    real :: x
+    assocLaguerrePoly_ir = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+  real(dp) function assocLaguerrePoly_id(n,a,x)
+    integer :: n, a
+    real(dp) :: x
+    assocLaguerrePoly_id = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+  real(dp) function assocLaguerrePoly_ri(n,a,x)
+    integer :: n, x
+    real :: a
+    assocLaguerrePoly_ri = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+  real(dp) function assocLaguerrePoly_rr(n,a,x)
+    integer :: n
+    real :: a, x
+    assocLaguerrePoly_rr = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+  real(dp) function assocLaguerrePoly_rd(n,a,x)
+    integer :: n
+    real :: a
+    real(dp) :: x
+    assocLaguerrePoly_rd = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+  real(dp) function assocLaguerrePoly_di(n,a,x)
+    integer :: n, x
+    real(dp) :: a
+    assocLaguerrePoly_di = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+  real(dp) function assocLaguerrePoly_dr(n,a,x)
+    integer :: n
+    real(dp) :: a
+    real :: x
+    assocLaguerrePoly_dr = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+  real(dp) function assocLaguerrePoly_dd(n,a,x)
+    integer :: n
+    real(dp) :: a, x
+    assocLaguerrePoly_dd = assocLaguerrePolyFunc(n,dble(a),dble(x))
+  end function
+
+
 
 end module specialFunctions
