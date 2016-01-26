@@ -42,6 +42,7 @@ module specialFunctions
   public :: laguerrePoly, assocLaguerrePoly
   public :: chebyPolyT, chebyPolyU
   public :: cosi, cosin, hypCosi
+  public :: hypSini
 
   interface besselJ
     module procedure besselJ_ii, besselJ_ir, besselJ_id, besselJ_ri, &
@@ -138,6 +139,10 @@ module specialFunctions
 
   interface cosin
     module procedure cosin_i, cosin_r, cosin_d
+  end interface
+
+  interface hypSini
+    module procedure hypSini_i, hypSini_r, hypSini_d
   end interface
 
   interface hypCosi
@@ -1316,6 +1321,36 @@ contains
   real(dp) function cosin_d(x)
     real(dp) :: x
     cosin_d = cosinFunc(dble(x))
+  end function
+
+  !***************************!
+  ! Hyperbolic Sine Integrals !
+  !***************************!
+
+  real(dp) function hypSini_IntFunc(n,c,x)
+    integer :: n
+    real(dp) :: c(n),x
+    hypSini_IntFunc = sinh(x)/x
+  end function
+
+  real(dp) function hypSiniFunc(x)
+    real(dp) :: x, consts(0)
+    hypSiniFunc = gaussLegendre(hypSini_IntFunc,0.d0,x,0,consts)
+  end function
+
+  real(dp) function hypSini_i(x)
+    integer :: x
+    hypSini_i = hypSiniFunc(dble(x))
+  end function
+
+  real(dp) function hypSini_r(x)
+    real :: x
+    hypSini_r = hypSiniFunc(dble(x))
+  end function
+
+  real(dp) function hypSini_d(x)
+    real(dp) :: x
+    hypSini_d = hypSiniFunc(dble(x))
   end function
 
   !*****************************!

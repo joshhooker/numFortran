@@ -465,6 +465,11 @@ program libraryTest
   print *, cosi(1.1d0)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING HYPERBOLIC SINE INTEGRAL'
+  print *, hypSini(2.d0)
+  print *, hypSini(1.1d0)
+  write(*,*)
+
   write(*,'(2x,a)') 'TESTING HYPERBOLIC COSINE INTEGRAL'
   print *, hypCosi(2.d0)
   print *, hypCosi(1.1d0)
