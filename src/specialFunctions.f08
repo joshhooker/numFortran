@@ -14,6 +14,8 @@
 !  * Laguerre Polynomial
 !  * Associated Laguerre Polynomial
 !  * Chebyshev Polynomial - T and U
+!  * Cosine Integrals
+!  * Hyperbolic Cosine Integrals
 !
 ! Not 100% Right:
 !  * Gamma Function
@@ -39,6 +41,7 @@ module specialFunctions
   public :: hermitePoly, hermitePolyProb
   public :: laguerrePoly, assocLaguerrePoly
   public :: chebyPolyT, chebyPolyU
+  public :: cosi, cosin, hypCosi
 
   interface besselJ
     module procedure besselJ_ii, besselJ_ir, besselJ_id, besselJ_ri, &
@@ -127,6 +130,18 @@ module specialFunctions
 
   interface chebyPolyU
     module procedure chebyPolyU_i, chebyPolyU_r, chebyPolyU_d
+  end interface
+
+  interface cosi
+    module procedure cosi_i, cosi_r, cosi_d
+  end interface
+
+  interface cosin
+    module procedure cosin_i, cosin_r, cosin_d
+  end interface
+
+  interface hypCosi
+    module procedure hypCosi_i, hypCosi_r, hypCosi_d
   end interface
 
 contains
@@ -377,7 +392,7 @@ contains
   end function besselK_IntFunc
 
   real(dp) function besselKFunc(n,x)
-    real(dp) :: n, x, intResults, consts(2)
+    real(dp) :: n, x, consts(2)
     consts(1) = n
     consts(2) = x
     besselKFunc = gaussLegendre(besselK_IntFunc,0.d0,1.d0,2,consts)
@@ -1245,6 +1260,92 @@ contains
     integer :: n
     real(dp) :: x
     chebyPolyU_d = chebyPolyUFunc(n,dble(x))
+  end function
+
+  !******************!
+  ! Cosine Integrals !
+  !******************!
+
+  real(dp) function cosi_IntFunc(n,c,x)
+    integer :: n
+    real(dp) :: c(n),x
+    cosi_IntFunc = (cos(x) - 1.d0)/x
+  end function
+
+  real(dp) function cosiFunc(x)
+    real(dp) :: x, consts(0)
+    cosiFunc = em_ + log(x) + gaussLegendre(cosi_IntFunc,0.d0,x,0,consts)
+  end function
+
+  real(dp) function cosi_i(x)
+    integer :: x
+    cosi_i = cosiFunc(dble(x))
+  end function
+
+  real(dp) function cosi_r(x)
+    real :: x
+    cosi_r = cosiFunc(dble(x))
+  end function
+
+  real(dp) function cosi_d(x)
+    real(dp) :: x
+    cosi_d = cosiFunc(dble(x))
+  end function
+
+  real(dp) function cosin_IntFunc(n,c,x)
+    integer :: n
+    real(dp) :: c(n),x
+    cosin_IntFunc = (1.d0 - cos(x))/x
+  end function
+
+  real(dp) function cosinFunc(x)
+    real(dp) :: x, consts(0)
+    cosinFunc = gaussLegendre(cosin_IntFunc,0.d0,x,0,consts)
+  end function
+
+  real(dp) function cosin_i(x)
+    integer :: x
+    cosin_i = cosinFunc(dble(x))
+  end function
+
+  real(dp) function cosin_r(x)
+    real :: x
+    cosin_r = cosinFunc(dble(x))
+  end function
+
+  real(dp) function cosin_d(x)
+    real(dp) :: x
+    cosin_d = cosinFunc(dble(x))
+  end function
+
+  !*****************************!
+  ! Hyperbolic Cosine Integrals !
+  !*****************************!
+
+  real(dp) function hypCosi_IntFunc(n,c,x)
+    integer :: n
+    real(dp) :: c(n),x
+    hypCosi_IntFunc = (cosh(x) - 1.d0)/x
+  end function
+
+  real(dp) function hypCosiFunc(x)
+    real(dp) :: x, consts(0)
+    hypCosiFunc = em_ + log(x) + gaussLegendre(hypCosi_IntFunc,0.d0,x,0,consts)
+  end function
+
+  real(dp) function hypCosi_i(x)
+    integer :: x
+    hypCosi_i = hypCosiFunc(dble(x))
+  end function
+
+  real(dp) function hypCosi_r(x)
+    real :: x
+    hypCosi_r = hypCosiFunc(dble(x))
+  end function
+
+  real(dp) function hypCosi_d(x)
+    real(dp) :: x
+    hypCosi_d = hypCosiFunc(dble(x))
   end function
 
 end module specialFunctions

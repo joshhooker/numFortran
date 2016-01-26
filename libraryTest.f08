@@ -460,6 +460,15 @@ program libraryTest
   print *, chebyPolyU(5,1.1d0)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING COSINE INTEGRAL'
+  print *, cosi(2.d0)
+  print *, cosi(1.1d0)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING HYPERBOLIC COSINE INTEGRAL'
+  print *, hypCosi(2.d0)
+  print *, hypCosi(1.1d0)
+  write(*,*)
 
 contains
 
