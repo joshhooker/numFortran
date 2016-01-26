@@ -1,19 +1,20 @@
 !*********************************************************
 !>
 ! Special Functions:
-!
+!  * Airy Function - Ai and Bi
 !  * Bessel Functions - J and Y
 !  * Bessel Function - I and K
 !  * Spherical Bessel Functions
-!  * Airy Function - Ai and Bi
-!  * Error Function and Complementary Error Function
 !  * Beta Function
 !  * Incomplete Beta Function
-!  * Legendre Polynomial
+!  * Chebyshev Polynomial - T and U
+!  * Error Function and Complementary Error Function
 !  * Hermite Polynomial (Physicists' and Probabilists')
 !  * Laguerre Polynomial
 !  * Associated Laguerre Polynomial
-!  * Chebyshev Polynomial - T and U
+!  * Legendre Polynomial
+!  * Sine Integrals
+!  * Hyperbolic Sine Integrals
 !  * Cosine Integrals
 !  * Hyperbolic Cosine Integrals
 !
@@ -21,7 +22,19 @@
 !  * Gamma Function
 !
 ! Future:
-!  * Trigonometric Integrals (https://en.wikipedia.org/wiki/Trigonometric_integral)
+!  * Clausen Functions
+!  * Coulomb Wave Functions
+!  * Coupling Coefficients (Wigner 3-j, 6-j, 9-j)
+!  * Dawson Function
+!  * Debye Functions
+!  * Elliptic Integrals
+!  * Fermi-Dirac Function
+!  * Gegenbauer Functions
+!  * Lambert W Functions
+!  * Hypergeometric Functions
+!  * Synchrotron Functions
+!  * Zeta Functions
+
 
 module specialFunctions
   use constants
