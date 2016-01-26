@@ -425,6 +425,22 @@ program libraryTest
   print *, gammaFunc(10.21d0)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING LEGENDRE POLYNOMIALS'
+  print *, legendrePoly(2,2.d0)
+  print *, legendrePoly(5,1.1d0)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING HERMITE POLYNOMIALS (PHYSICISTS)'
+  print *, hermitePoly(2,2.d0)
+  print *, hermitePoly(2,1.1d0)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING HERMITE POLYNOMIALS (PROBABILISTS)'
+  print *, hermitePolyProb(2,2.d0)
+  print *, hermitePolyProb(2,1.1d0)
+  write(*,*)
+
+
 contains
 
   real(dp) function integralFunction1(n,c,x)

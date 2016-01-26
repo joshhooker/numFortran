@@ -102,9 +102,9 @@ module cubicSpline
     splineB(1:n) = 0.d0
     splineC(1:n) = 0.d0
     splineD(1:n) = 0.d0
-    h(1:n) = abs(xi(2:n+1) - xi(1:n))
+    h(1:n) = abs(xi(2:n+1)-xi(1:n))
     a(2:n) = h(1:n-1)
-    b(2:n) = 2.d0*(h(1:n-1) + h(2:n))
+    b(2:n) = 2.d0*(h(1:n-1)+h(2:n))
     c(2:n) = h(2:n)
     f(2:n) = abs(3.d0*(yi(3:n+1)-yi(2:n))/h(2:n) - 3.d0*(yi(2:n)-yi(1:n-1))/h(1:n-1))
     a(n) = 0.d0

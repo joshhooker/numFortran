@@ -9,13 +9,13 @@
 !  * Error Function and Complementary Error Function
 !  * Beta Function
 !  * Incomplete Beta Function
+!  * Legendre Polynomial
+!  * Hermite Polynomial (Physicists' and Probabilists')
 !
 ! Not 100% Right:
 !  * Gamma Function
 !
 ! Future:
-!  * Legendre Polynomial
-!  * Hermite Polynomial
 !  * Laguerre Polynomial
 !  * Chevyshev Polynomial
 !  * Trigonometric Integrals (https://en.wikipedia.org/wiki/Trigonometric_integral)
@@ -34,6 +34,8 @@ module specialFunctions
   public :: errf, errfc
   public :: beta
   public :: gammaFunc
+  public :: legendrePoly
+  public :: hermitePoly, hermitePolyProb
 
   interface besselJ
     module procedure besselJ_ii, besselJ_ir, besselJ_id, besselJ_ri, &
@@ -92,6 +94,18 @@ module specialFunctions
         incBeta_rid, incBeta_rri, incBeta_rrr, incBeta_rrd, incBeta_rdi, incBeta_rdr, &
         incBeta_rdd, incBeta_dii, incBeta_dir, incBeta_did, incBeta_dri, incBeta_drr, &
         incBeta_drd, incBeta_ddi, incBeta_ddr, incBeta_ddd
+  end interface
+
+  interface legendrePoly
+    module procedure legendrePoly_i, legendrePoly_r, legendrePoly_d
+  end interface
+
+  interface hermitePoly
+    module procedure hermitePoly_i, hermitePoly_r, hermitePoly_d
+  end interface
+
+  interface hermitePolyProb
+    module procedure hermitePolyProb_i, hermitePolyProb_r, hermitePolyProb_d
   end interface
 
 contains
@@ -933,5 +947,107 @@ contains
     gammaFunc = intResults
   end function
 
+  !**********************!
+  ! Legendre Polynomials !
+  !**********************!
+
+  recursive function legendrePolyFunc(n,x) result(res)
+    integer :: n
+    real(dp) :: x, res
+    if(n.eq.0) then
+      res = 1
+    elseif(n.eq.1) then
+      res = x
+    else
+      res = (2*(n-1)+1)*x*legendrePolyFunc(n-1,x)
+      res = res - (n-1)*legendrePolyFunc(n-2,x)
+      res = res/n
+    end if
+  end function
+
+  real(dp) function legendrePoly_i(n,x)
+    integer :: n, x
+    legendrePoly_i = legendrePolyFunc(n,dble(x))
+  end function
+
+  real(dp) function legendrePoly_r(n,x)
+    integer :: n
+    real :: x
+    legendrePoly_r = legendrePolyFunc(n,dble(x))
+  end function
+
+  real(dp) function legendrePoly_d(n,x)
+    integer :: n
+    real(dp) :: x
+    legendrePoly_d = legendrePolyFunc(n,dble(x))
+  end function
+
+  !***********************************!
+  ! Hermite Polynomials (Physicists') !
+  !***********************************!
+
+  recursive function hermitePolyFunc(n,x) result(res)
+    integer :: n
+    real(dp) :: x, res
+    if(n.eq.0) then
+      res = 1.d0
+    elseif(n.eq.1) then
+      res = 2.d0*x
+    else
+      res = 2.d0*x*hermitePolyFunc(n-1,x)
+      res = res - 2.d0*(n-1)*hermitePolyFunc(n-2,x)
+    end if
+  end function
+
+  real(dp) function hermitePoly_i(n,x)
+    integer :: n, x
+    hermitePoly_i = hermitePolyFunc(n,dble(x))
+  end function
+
+  real(dp) function hermitePoly_r(n,x)
+    integer :: n
+    real :: x
+    hermitePoly_r = hermitePolyFunc(n,dble(x))
+  end function
+
+  real(dp) function hermitePoly_d(n,x)
+    integer :: n
+    real(dp) :: x
+    hermitePoly_d = hermitePolyFunc(n,dble(x))
+  end function
+
+  !*************************************!
+  ! Hermite Polynomials (Probabilists') !
+  !*************************************!
+
+  recursive function hermitePolyProbFunc(n,x) result(res)
+    integer :: n
+    real(dp) :: x, res
+    if(n.eq.0) then
+      res = 1.d0
+    elseif(n.eq.1) then
+      res = x
+    else
+      res = x*hermitePolyProbFunc(n-1,x)
+      res = res - (n-1)*hermitePolyProbFunc(n-2,x)
+    end if
+  end function
+
+  real(dp) function hermitePolyProb_i(n,x)
+    integer :: n, x
+    hermitePolyProb_i = hermitePolyProbFunc(n,dble(x))
+  end function
+
+  real(dp) function hermitePolyProb_r(n,x)
+    integer :: n
+    real :: x
+    hermitePolyProb_r = hermitePolyProbFunc(n,dble(x))
+  end function
+
+  real(dp) function hermitePolyProb_d(n,x)
+    integer :: n
+    real(dp) :: x
+    hermitePolyProb_d = hermitePolyProbFunc(n,dble(x))
+  end function
 
 end module specialFunctions
