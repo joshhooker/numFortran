@@ -450,6 +450,16 @@ program libraryTest
   print *, assocLaguerrePoly(5,2.5,1.1d0)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING CHEBYSHEV POLYNOMIALS OF THE FIRST KIND'
+  print *, chebyPolyT(2,2.d0)
+  print *, chebyPolyT(5,1.1d0)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING CHEBYSHEV POLYNOMIALS OF THE SECOND KIND'
+  print *, chebyPolyU(2,2.d0)
+  print *, chebyPolyU(5,1.1d0)
+  write(*,*)
+
 
 contains
 

@@ -13,12 +13,12 @@
 !  * Hermite Polynomial (Physicists' and Probabilists')
 !  * Laguerre Polynomial
 !  * Associated Laguerre Polynomial
+!  * Chebyshev Polynomial - T and U
 !
 ! Not 100% Right:
 !  * Gamma Function
 !
 ! Future:
-!  * Chevyshev Polynomial
 !  * Trigonometric Integrals (https://en.wikipedia.org/wiki/Trigonometric_integral)
 
 module specialFunctions
@@ -38,6 +38,7 @@ module specialFunctions
   public :: legendrePoly
   public :: hermitePoly, hermitePolyProb
   public :: laguerrePoly, assocLaguerrePoly
+  public :: chebyPolyT, chebyPolyU
 
   interface besselJ
     module procedure besselJ_ii, besselJ_ir, besselJ_id, besselJ_ri, &
@@ -118,6 +119,14 @@ module specialFunctions
     module procedure assocLaguerrePoly_ii, assocLaguerrePoly_ir, assocLaguerrePoly_id, &
         assocLaguerrePoly_ri, assocLaguerrePoly_rr, assocLaguerrePoly_rd, assocLaguerrePoly_di, &
         assocLaguerrePoly_dr, assocLaguerrePoly_dd
+  end interface
+
+  interface chebyPolyT
+    module procedure chebyPolyT_i, chebyPolyT_r, chebyPolyT_d
+  end interface
+
+  interface chebyPolyU
+    module procedure chebyPolyU_i, chebyPolyU_r, chebyPolyU_d
   end interface
 
 contains
@@ -1170,6 +1179,72 @@ contains
     assocLaguerrePoly_dd = assocLaguerrePolyFunc(n,dble(a),dble(x))
   end function
 
+  !*****************************************!
+  ! Chebyshev Polynomials of the First Kind !
+  !*****************************************!
 
+  recursive function chebyPolyTFunc(n,x) result(res)
+    integer :: n
+    real(dp) :: x, res
+    if(n.eq.0) then
+      res = 1.d0
+    elseif(n.eq.1) then
+      res = x
+    else
+      res = 2.d0*x*chebyPolyTFunc(n-1,x)
+      res = res - chebyPolyTFunc(n-2,x)
+    end if
+  end function
+
+  real(dp) function chebyPolyT_i(n,x)
+    integer :: n, x
+    chebyPolyT_i = chebyPolyTFunc(n,dble(x))
+  end function
+
+  real(dp) function chebyPolyT_r(n,x)
+    integer :: n
+    real :: x
+    chebyPolyT_r = chebyPolyTFunc(n,dble(x))
+  end function
+
+  real(dp) function chebyPolyT_d(n,x)
+    integer :: n
+    real(dp) :: x
+    chebyPolyT_d = chebyPolyTFunc(n,dble(x))
+  end function
+
+  !******************************************!
+  ! Chebyshev Polynomials of the Second Kind !
+  !******************************************!
+
+  recursive function chebyPolyUFunc(n,x) result(res)
+    integer :: n
+    real(dp) :: x, res
+    if(n.eq.0) then
+      res = 1.d0
+    elseif(n.eq.1) then
+      res = 2.d0*x
+    else
+      res = 2.d0*x*chebyPolyUFunc(n-1,x)
+      res = res - chebyPolyUFunc(n-2,x)
+    end if
+  end function
+
+  real(dp) function chebyPolyU_i(n,x)
+    integer :: n, x
+    chebyPolyU_i = chebyPolyUFunc(n,dble(x))
+  end function
+
+  real(dp) function chebyPolyU_r(n,x)
+    integer :: n
+    real :: x
+    chebyPolyU_r = chebyPolyUFunc(n,dble(x))
+  end function
+
+  real(dp) function chebyPolyU_d(n,x)
+    integer :: n
+    real(dp) :: x
+    chebyPolyU_d = chebyPolyUFunc(n,dble(x))
+  end function
 
 end module specialFunctions
