@@ -5,6 +5,7 @@ More information about the library can be found in the [Wiki](https://github.com
 
 
 Ideas to add:
+ * Add complex inputs to special functions
  * Sorting
  * Random Number Distributions
  * FFT

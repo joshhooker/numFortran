@@ -17,6 +17,8 @@
 !  * Hyperbolic Sine Integrals
 !  * Cosine Integrals
 !  * Hyperbolic Cosine Integrals
+!  * Add complex inputs to all functions that can have complex input
+!
 !
 ! Not 100% Right:
 !  * Gamma Function
