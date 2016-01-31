@@ -35,6 +35,8 @@ program libraryTest
   integer :: intN
   real(dp) :: intA, intB, intResult
   real(dp), allocatable :: intConsts(:)
+  complex(dp) :: intCmplxResult
+  complex(dp), allocatable :: intCmplxConsts(:)
 
   ! Variables to test special functions
   integer :: sfTestsN
@@ -218,13 +220,13 @@ program libraryTest
   intB = 54.d0
   intN = 0
   allocate(intConsts(intN))
-  write(*,'(1x,2(1x,a,1x,e10.4))') 'Function = tan(x)*cos(x) from ', intA, 'to', intB
+  write(*,'(1x,2(1x,a,1x,es12.5))') 'Function = tan(x)*cos(x) from ', intA, 'to', intB
   write(*,'(2x,a)') 'Result = cos(a)-cos(b)'
   write(*,*)
 
   write(*,'(2x,a)') 'Gauss-Legendre Integration:'
   intResult = gaussLegendre(integralFunction1,intA,intB,intN,intConsts)
-  write(*,'(3x,2(1x,a,1x,e10.4))') 'Result =', intResult, ', Diff =', intResult-(cos(intA)-cos(intB))
+  write(*,'(3x,2(1x,a,1x,es12.5))') 'Result =', intResult, ', Diff =', intResult-(cos(intA)-cos(intB))
   deallocate(intConsts)
   write(*,*)
 
@@ -241,10 +243,18 @@ program libraryTest
 
   write(*,'(2x,a)') 'Gauss-Legendre Integration:'
   intResult = gaussLegendre(integralFunction2,intA,intB,intN,intConsts)
-  write(*,'(3x,2(1x,a,1x,e10.4))') 'Result =', intResult, ', Diff =', &
+  write(*,'(3x,2(1x,a,1x,es12.5))') 'Result =', intResult, ', Diff =', &
       intResult-(-0.115505630597095)
   deallocate(intConsts)
   write(*,*)
+
+  write(*,'(2x,a)') 'Function = (1-x)^2*(2+3i) from 0 to 1.8'
+  write(*,'(2x,a)') 'Answer = 1.008 + 1.512i'
+  allocate(intCmplxConsts(1))
+  intCmplxConsts(1) = cmplx(2.d0,3.d0)
+  intCmplxResult = gaussLegendreCmplx(integralFunction3,0.d0,1.8d0,1,intCmplxConsts)
+  write (*, '(3x,es12.5," + ",es12.5,"*i")') intCmplxResult
+  deallocate(intCmplxConsts)
   write(*,*)
 
   !*******************************
@@ -496,5 +506,12 @@ contains
     real(dp) :: x
     integralFunction2 = c(1)*x*x*x-c(2)*x*x*cos(c(3)*x)
   end function integralFunction2
+
+  complex(dp) function integralFunction3(n,c,x)
+    integer :: n
+    complex(dp) :: c(n)
+    real(dp) :: x
+    integralFunction3 = (1.d0-x)*(1.d0-x)*c(1)
+  end function
 
 end program libraryTest
