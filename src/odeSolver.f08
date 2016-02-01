@@ -9,10 +9,12 @@
 module odeSolver
   implicit none
 
-  private :: dp
+  private
   integer, parameter :: dp = kind(0.d0)
 
-  private :: rk1AdaptStepSetupConstants
+  private :: dp, rk1AdaptStepSetupConstants
+
+  public :: rk1FixedStep, rk1AdaptStep
 contains
 
   real(dp) function odeFunction(x,y)
@@ -24,36 +26,33 @@ contains
     odeFunction = y*y+1.d0
   end function odeFunction
 
-  real(dp) function rk1FixedStep(a,b,h,y0)
-    !! date: January 8, 2016
-    !! version: v0.1
-    !!
+  function rk1FixedStep(f,nF,a,b,h,y0,nC,consts)
     !! 4th order Runga Kutta ODE Solver with fixed step h and initial
     !! value \(y(a) = y_0\). If the fixed step does not evenly divide
     !! into \(b-a\), a smaller step is placed at the end so the final
     !! \(x\) position is at \(b\)
 
-    integer :: i
-    real(dp) :: xn, yn, k1, k2, k3, k4
-    real(dp) :: a
-      !! input: starting x value
-    real(dp) :: b
-      !! input: final x value
-    real(dp) :: h
-      !! input: step size
-    real(dp) :: y0
-      !! input: inital value \(y(a) = y0\)
-
+    integer :: i, nF, nC
+    real(dp) :: xn, k1(nF), k2(nF), k3(nF), k4(nF), a, b, h
+    real(dp) :: y0(nF), yi(nF), yn(nF), consts(nC)
+    real(dp) :: rk1FixedStep(nF)
+    interface
+      function f(nF,nC,c,x,y)
+        integer, parameter :: dp = kind(0.d0)
+        integer :: nF, nC
+        real(dp) :: c(nC), x, y(nF), f(nF)
+      end function f
+    end interface
     xn = a
     yn = y0
-    do while (xn.lt.b)
+    do while(xn.lt.b)
       if(xn+h.gt.b) then
         h = b-xn
       end if
-      k1 = h*odeFunction(xn,yn)
-      k2 = h*odeFunction(xn+h/2.d0,yn+k1/2.d0)
-      k3 = h*odeFunction(xn+h/2.d0,yn+k2/2.d0)
-      k4 = h*odeFunction(xn+h,yn+k3)
+      k1 = h*f(nF,nC,consts,xn,yn)
+      k2 = h*f(nF,nC,consts,xn+h/2.d0,yn+k1/2.d0)
+      k3 = h*f(nF,nC,consts,xn+h/2.d0,yn+k2/2.d0)
+      k4 = h*f(nF,nC,consts,xn+h,yn+k3)
       xn = xn+h
       yn = yn+(1.d0/6.d0)*(k1+2.d0*k2+2.d0*k3+k4)
     end do

@@ -24,6 +24,7 @@ program libraryTest
 
   ! Variables to test ode solver
   real(dp) :: h, h0, odeResult
+  real(dp), allocatable :: y0Arr(:), odeResultArr(:), odeConsts(:)
 
   ! Variables to test random number generators
   integer, parameter :: randArrayN = 5000000
@@ -43,6 +44,7 @@ program libraryTest
   real(dp) :: sfResult, sfSumDiff
   real(dp), allocatable :: testBesselN(:), testBesselX(:), testBessel(:)
   real(dp), allocatable :: testAiryX(:), testAiry(:)
+  complex(dp) :: sfCmplxResult
 
   !*******************************
   ! CONSTANT TESTING
@@ -91,16 +93,19 @@ program libraryTest
   write(*,'(2x,a)') 'Solution function: tan(x)'
   write(*,'(2x,a,1x,es12.5)') 'Numerical solution: tan(1.5) =', tan(1.5d0)
   write(*,*)
+  allocate(y0Arr(1), odeResultArr(1), odeConsts(0))
+  y0Arr(1) = 0.d0
   write(*,'(4x,a)') '4th order RK Fixed Step:'
   do i=1,10
     h = 0.2/i
     h0 = h
     call system_clock(t1, clock_rate, clock_max)
-    odeResult = rk1FixedStep(0.d0,1.5d0,h,0.d0)
+    odeResultArr = rk1FixedStep(odeFunction1,1,0.d0,1.5d0,h,y0Arr,0,odeConsts)
     call system_clock(t2, clock_rate, clock_max)
-    write(*,'(6x,a,1x,f6.4,3(1x,a,1x,es12.5),1x,a)') 'h =', h0, 'result =', odeResult, &
-      'diff =', odeResult-tan(1.5d0), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'
+    write(*,'(6x,a,1x,f6.4,3(1x,a,1x,es12.5),1x,a)') 'h =', h0, 'result =', odeResultArr(1), &
+      'diff =', odeResultArr(1)-tan(1.5d0), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'
   end do
+  deallocate(y0Arr, odeResultArr, odeConsts)
   write(*,*)
   write(*,'(4x,a)') 'RK Adaptive Step:'
   call system_clock(t1, clock_rate, clock_max)
@@ -490,20 +495,30 @@ program libraryTest
   print *, hypCosi(1.1d0)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING HYPERGEOMETRIC FUNCTION 2F1'
+  sfCmplxResult = hypGeo2F1(1,1,2,0.3d0)
+  print *, sfCmplxResult
+  write(*,*)
+
 contains
+
+  function odeFunction1(nF,nC,c,x,y)
+    integer :: nF, nC
+    real(dp) :: odeFunction1(nF), c(nC), x, y(nF)
+    odeFunction1(1) = y(1)*y(1)+1.d0
+  end function
+
 
   real(dp) function integralFunction1(n,c,x)
     integer :: n
-    real(dp) :: c(n)
-    real(dp) :: x
+    real(dp) :: c(n), x
     c = 0.d0
     integralFunction1 = tan(x)*cos(x)
   end function integralFunction1
 
   real(dp) function integralFunction2(n,c,x)
     integer :: n
-    real(dp) :: c(n)
-    real(dp) :: x
+    real(dp) :: c(n), x
     integralFunction2 = c(1)*x*x*x-c(2)*x*x*cos(c(3)*x)
   end function integralFunction2
 

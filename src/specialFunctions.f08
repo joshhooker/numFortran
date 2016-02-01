@@ -9,6 +9,7 @@
 !  * Incomplete Beta Function
 !  * Chebyshev Polynomial - T and U
 !  * Error Function and Complementary Error Function
+!  * Factorial
 !  * Hermite Polynomial (Physicists' and Probabilists')
 !  * Laguerre Polynomial
 !  * Associated Laguerre Polynomial
@@ -39,6 +40,7 @@
 
 
 module specialFunctions
+  use iso_fortran_env
   use constants
   use integration
   implicit none
@@ -46,6 +48,7 @@ module specialFunctions
   private
   integer, parameter :: dp = kind(0.d0)
 
+  public :: pochhammerF, pochhammerR
   public :: besselJ, besselY, besselI, besselK, besselY_dd
   public :: sphBesselJ, sphBesselY
   public :: airyA, airyB
@@ -58,6 +61,15 @@ module specialFunctions
   public :: chebyPolyT, chebyPolyU
   public :: sini, hypSini
   public :: cosi, hypCosi
+  public :: hypGeo2F1
+
+  interface pochhammerF
+    module procedure pochhammerF_i, pochhammerF_r, pochhammerF_d
+  end interface
+
+  interface pochhammerR
+    module procedure pochhammerR_i, pochhammerR_r, pochhammerR_d
+  end interface
 
   interface besselJ
     module procedure besselJ_ii, besselJ_ir, besselJ_id, besselJ_ri, &
@@ -164,7 +176,81 @@ module specialFunctions
     module procedure hypCosi_i, hypCosi_r, hypCosi_d
   end interface
 
+  interface hypGeo2F1
+    module procedure hypGeo2F1_iiid
+  end interface
+
 contains
+
+  !********************!
+  ! Pochhammer Falling !
+  !********************!
+
+  real(dp) function pochhammerFFunc(x,n)
+    integer :: i, n
+    real(dp) :: x, result
+    if(n.eq.0) then
+      pochhammerFFunc = 1.d0
+    else
+      result = x
+      do i=1,n+1
+        result = result*(x-dble(i))
+      end do
+      pochhammerFFunc = result
+    end if
+  end function
+
+  real(dp) function pochhammerF_i(x,n)
+    integer :: x, n
+    pochhammerF_i = pochhammerFFunc(dble(x),n)
+  end function
+
+  real(dp) function pochhammerF_r(x,n)
+    integer :: n
+    real :: x
+    pochhammerF_r = pochhammerFFunc(dble(x),n)
+  end function
+
+  real(dp) function pochhammerF_d(x,n)
+    integer :: n
+    real(dp) :: x
+    pochhammerF_d = pochhammerFFunc(dble(x),n)
+  end function
+
+  !*******************!
+  ! Pochhammer Rising !
+  !*******************!
+
+  real(dp) function pochhammerRFunc(x,n)
+    integer :: i, n
+    real(dp) :: x, result
+    if(n.eq.0) then
+      pochhammerRFunc = 1.d0
+    else
+      result = x
+      do i=1,n-1
+        result = result*(x+dble(i))
+      end do
+      pochhammerRFunc = result
+    end if
+  end function
+
+  real(dp) function pochhammerR_i(x,n)
+    integer :: x, n
+    pochhammerR_i = pochhammerRFunc(dble(x),n)
+  end function
+
+  real(dp) function pochhammerR_r(x,n)
+    integer :: n
+    real :: x
+    pochhammerR_r = pochhammerRFunc(dble(x),n)
+  end function
+
+  real(dp) function pochhammerR_d(x,n)
+    integer :: n
+    real(dp) :: x
+    pochhammerR_d = pochhammerRFunc(dble(x),n)
+  end function
 
   !***********************************!
   ! Bessel Function of the First Kind !
@@ -1400,6 +1486,32 @@ contains
   real(dp) function hypCosi_d(x)
     real(dp) :: x
     hypCosi_d = hypCosiFunc(dble(x))
+  end function
+
+  !*****************************!
+  ! Hypergeometric Function 2F1 !
+  !*****************************!
+
+  complex(dp) function hypGeo2F1Func(a,b,c,z)
+    integer :: i
+    real(dp) :: a, b, c
+    complex(dp) :: z, consts(4), result, indvResult, oldResult
+    result = cmplx(0.d0,0.d0)
+    oldResult = result
+    do i=0, 10000
+      indvResult = ((pochhammerR(a,i)*pochhammerR(b,i))/pochhammerR(c,i))*(z**i)/gamma(dble(i)+1.d0)
+      if (indvResult /= indvResult) exit
+      result = result + indvResult
+      if (abs(result-oldResult).le.1.d-16) exit
+      oldResult = result
+    end do
+    hypGeo2F1Func = result
+  end function
+
+  complex(dp) function hypGeo2F1_iiid(a,b,c,z)
+    integer :: a, b, c
+    real(dp) :: z
+    hypGeo2F1_iiid = hypGeo2F1Func(dble(a),dble(b),dble(c),cmplx(z,0.d0,dp))
   end function
 
 end module specialFunctions
