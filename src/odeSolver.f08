@@ -108,9 +108,11 @@ contains
     real(dp) :: a, b, h
     real(dp) :: y0(nF), yi(nF), yn(nF), yns(nF), dyn
     real(dp) :: xni, yni(nF), kci(nF), kcip(nF)
+    real(dp) :: ynT(nF), ynsT(nF)
     real(dp) :: ai(6),bi(6,6),ci(6),cip(6)
     real(dp) :: rk1AdaptStepCmplxC(nF)
     complex(dp) :: consts(nC)
+    logical :: goodStep
     interface
       function f(nF,nC,c,x,y)
         integer, parameter :: dp = kind(0.d0)
@@ -123,22 +125,35 @@ contains
     xn = a
     yn = y0
     h = 0.001d0
-    do while(xn<b)
-      if(xn+h>b) then
-        h = b-xn
-      end if
-      k1 = h*f(nF,nC,consts,xn,yn)
-      k2 = h*f(nF,nC,consts,xn+ai(2)*h,yn+bi(2,1)*k1)
-      k3 = h*f(nF,nC,consts,xn+ai(3)*h,yn+bi(3,1)*k1+bi(3,2)*k2)
-      k4 = h*f(nF,nC,consts,xn+ai(4)*h,yn+bi(4,1)*k1+bi(4,2)*k2+bi(4,3)*k3)
-      k5 = h*f(nF,nC,consts,xn+ai(5)*h,yn+bi(5,1)*k1+bi(5,2)*k2+bi(5,3)*k3+bi(5,4)*k4)
-      k6 = h*f(nF,nC,consts,xn+ai(6)*h,yn+bi(6,1)*k1+bi(6,2)*k2+bi(6,3)*k3+bi(6,4)*k4+bi(6,5)*k5)
-      kci = k1*ci(1)+k2*ci(2)+k3*ci(3)+k4*ci(4)+k5*ci(5)+k6*ci(6)
-      kcip = k1*cip(1)+k2*cip(2)+k3*cip(3)+k4*cip(4)+k5*cip(5)+k6*cip(6)
+    do while(xn.le.b)
+      if(xn.eq.b) exit
+      goodStep = .false.
+      do while(goodStep .eqv. .false.)
+        if(xn+h>b) then
+          h = b-xn
+        end if
+        k1 = h*f(nF,nC,consts,xn,yn)
+        k2 = h*f(nF,nC,consts,xn+ai(2)*h,yn+bi(2,1)*k1)
+        k3 = h*f(nF,nC,consts,xn+ai(3)*h,yn+bi(3,1)*k1+bi(3,2)*k2)
+        k4 = h*f(nF,nC,consts,xn+ai(4)*h,yn+bi(4,1)*k1+bi(4,2)*k2+bi(4,3)*k3)
+        k5 = h*f(nF,nC,consts,xn+ai(5)*h,yn+bi(5,1)*k1+bi(5,2)*k2+bi(5,3)*k3+bi(5,4)*k4)
+        k6 = h*f(nF,nC,consts,xn+ai(6)*h,yn+bi(6,1)*k1+bi(6,2)*k2+bi(6,3)*k3+bi(6,4)*k4+bi(6,5)*k5)
+        kci = k1*ci(1)+k2*ci(2)+k3*ci(3)+k4*ci(4)+k5*ci(5)+k6*ci(6)
+        kcip = k1*cip(1)+k2*cip(2)+k3*cip(3)+k4*cip(4)+k5*cip(5)+k6*cip(6)
+        ynT = yn+kci
+        ynsT = yn+kcip
+        dyn = abs(ynT(1)-ynsT(1))
+        if(dyn .gt. 1.d-10) then
+          h = h*((1.d-12/dyn)**(0.2d0))
+        else
+          goodStep = .true.
+        end if
+      end do
       xn = xn+h
       yns = yn+kcip
       yn = yn+kci
       dyn = abs(yn(1)-yns(1))
+      !print *, dyn
       h = h*((1.d-12/dyn)**(0.2d0))
     end do
     rk1AdaptStepCmplxC = yn

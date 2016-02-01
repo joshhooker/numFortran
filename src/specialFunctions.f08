@@ -1502,13 +1502,26 @@ contains
   function hypGeo2F1_odeFunc(nF,nC,c,x,y)
     integer :: nF, nC
     real(dp) :: hypGeo2F1_odeFunc(nF), x, y(nF)
-    complex(dp) :: c(nC), zs
+    complex(dp) :: c(nC), zs, fT, fpT, f, fp
     zs = c(1) + x*(c(2)-c(1))
-    hypGeo2F1_odeFunc(1) = real((c(2)-c(1))*y(3))
-    hypGeo2F1_odeFunc(2) = aimag((c(2)-c(1))*y(4))
-    hypGeo2F1_odeFunc(3) = real((c(3)*c(4)*y(1)-(c(5)-(c(3)+c(4)+1.d0))*y(3))*(c(2)-c(1))/(zs*(1.d0-zs)))
-    hypGeo2F1_odeFunc(4) = aimag((c(3)*c(4)*y(2)-(c(5)-(c(3)+c(4)+1.d0))*y(4))*(c(2)-c(1))/(zs*(1.d0-zs)))
-    print *, zs, y
+    fT = cmplx(y(1),y(2))
+    fpT = cmplx(y(3),y(4))
+    !hypGeo2F1_odeFunc(1) = real((c(2)-c(1))*y(3))
+    !hypGeo2F1_odeFunc(2) = aimag((c(2)-c(1))*y(4))
+    !hypGeo2F1_odeFunc(3) = real((c(3)*c(4)*y(1)-(c(5)-(c(3)+c(4)+1.d0))*y(3))*(c(2)-c(1))/(zs*(1.d0-zs)))
+    !hypGeo2F1_odeFunc(4) = aimag((c(3)*c(4)*y(2)-(c(5)-(c(3)+c(4)+1.d0))*y(4))*(c(2)-c(1))/(zs*(1.d0-zs)))
+    ! hypGeo2F1_odeFunc(1) = real((c(2)-c(1))*fpT)
+    ! hypGeo2F1_odeFunc(2) = aimag((c(2)-c(1))*fpT)
+    ! hypGeo2F1_odeFunc(3) = real((c(3)*c(4)*fT-(c(5)-(c(3)+c(4)+1.d0))*fpT)*(c(2)-c(1))/(zs*(1.d0-zs)))
+    ! hypGeo2F1_odeFunc(4) = aimag((c(3)*c(4)*fT-(c(5)-(c(3)+c(4)+1.d0))*fpT)*(c(2)-c(1))/(zs*(1.d0-zs)))
+    f = (c(2)-c(1))*fpT
+    fp = (c(3)*c(4)*fT-(c(5)-(c(3)+c(4)+1.d0))*fpT)*(c(2)-c(1))/(zs*(1.d0-zs))
+    hypGeo2F1_odeFunc(1) = real(f)
+    hypGeo2F1_odeFunc(2) = aimag(f)
+    hypGeo2F1_odeFunc(3) = real(fp)
+    hypGeo2F1_odeFunc(4) = aimag(fp)
+    !print *, zs, fT, fpT
+    !print *, f, fp
     !print *, x, hypGeo2F1_odeFunc
   end function
 
@@ -1545,13 +1558,13 @@ contains
       z0 = cmplx(-0.5d0,0.d0)
     else if(real(z).gt.1.d0) then
       z0 = cmplx(0.d0,0.5d0)
-      !z0 = cmplx(0.5d0,0.d0)
     else if(real(z).lt.-1.d0) then
       z0 = cmplx(0.d0,-0.5d0)
-      !z0 = cmplx(-0.5d0,0.d0)
     end if
-    series(1) = hypGeo2F1_series(a,b,c,z0)
-    series(2) = a*b/c * hypGeo2F1_series(a+1.d0,b+1.d0,c+1.d0,z0)
+    ! series(1) = hypGeo2F1_series(a,b,c,z0)
+    ! series(2) = a*b/c * hypGeo2F1_series(a+1.d0,b+1.d0,c+1.d0,z0)
+    series(1) = hypGeo2F1_series(a,b,c,z0)*(z-z0)
+    series(2) = a*b/c * hypGeo2F1_series(a+1.d0,b+1.d0,c+1.d0,z0)*(z-z0)
     consts(1) = z0
     consts(2) = z
     consts(3) = a
@@ -1562,8 +1575,7 @@ contains
     y0(3) = real(series(2))
     y0(4) = aimag(series(2))
     print *, z0
-    print *, y0
-    !odeResult = rk1FixedStep(hypGeo2F1_odeFunc,4,0.d0,1.d0,0.005d0,y0,5,consts)
+    print *, series
     odeResult = rk1AdaptStepCmplxC(hypGeo2F1_odeFunc,4,0.d0,1.d0,y0,5,consts)
     hypGeo2F1Func = cmplx(odeResult(1),odeResult(2))
   end function
