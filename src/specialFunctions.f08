@@ -40,9 +40,9 @@
 
 
 module specialFunctions
-  use iso_fortran_env
   use constants
   use integration
+  use odeSolver
   implicit none
 
   private
@@ -68,7 +68,8 @@ module specialFunctions
   end interface
 
   interface pochhammerR
-    module procedure pochhammerR_i, pochhammerR_r, pochhammerR_d
+    module procedure pochhammerR_i, pochhammerR_r, pochhammerR_d, &
+        pochhammerR_cd
   end interface
 
   interface besselJ
@@ -221,35 +222,41 @@ contains
   ! Pochhammer Rising !
   !*******************!
 
-  real(dp) function pochhammerRFunc(x,n)
+  complex(dp) function pochhammerRFunc(x,n)
     integer :: i, n
-    real(dp) :: x, result
+    complex(dp) :: x, result
     if(n.eq.0) then
-      pochhammerRFunc = 1.d0
+      pochhammerRFunc = cmplx(1.d0,0.d0)
     else
       result = x
       do i=1,n-1
-        result = result*(x+dble(i))
+        result = result*(x+i)
       end do
       pochhammerRFunc = result
     end if
   end function
 
-  real(dp) function pochhammerR_i(x,n)
+  complex(dp) function pochhammerR_i(x,n)
     integer :: x, n
-    pochhammerR_i = pochhammerRFunc(dble(x),n)
+    pochhammerR_i = pochhammerRFunc(cmplx(x,0.d0,dp),n)
   end function
 
-  real(dp) function pochhammerR_r(x,n)
+  complex(dp) function pochhammerR_r(x,n)
     integer :: n
     real :: x
-    pochhammerR_r = pochhammerRFunc(dble(x),n)
+    pochhammerR_r = pochhammerRFunc(cmplx(x,0.d0,dp),n)
   end function
 
-  real(dp) function pochhammerR_d(x,n)
+  complex(dp) function pochhammerR_d(x,n)
     integer :: n
     real(dp) :: x
-    pochhammerR_d = pochhammerRFunc(dble(x),n)
+    pochhammerR_d = pochhammerRFunc(cmplx(x,0.d0,dp),n)
+  end function
+
+  complex(dp) function pochhammerR_cd(x,n)
+    integer :: n
+    complex(dp) :: x
+    pochhammerR_cd = pochhammerRFunc(x,n)
   end function
 
   !***********************************!
@@ -1492,26 +1499,79 @@ contains
   ! Hypergeometric Function 2F1 !
   !*****************************!
 
-  complex(dp) function hypGeo2F1Func(a,b,c,z)
+  function hypGeo2F1_odeFunc(nF,nC,c,x,y)
+    integer :: nF, nC
+    real(dp) :: hypGeo2F1_odeFunc(nF), x, y(nF)
+    complex(dp) :: c(nC), zs
+    zs = c(1) + x*(c(2)-c(1))
+    hypGeo2F1_odeFunc(1) = real((c(2)-c(1))*y(3))
+    hypGeo2F1_odeFunc(2) = aimag((c(2)-c(1))*y(4))
+    hypGeo2F1_odeFunc(3) = real((c(3)*c(4)*y(1)-(c(5)-(c(3)+c(4)+1.d0))*y(3))*(c(2)-c(1))/(zs*(1.d0-zs)))
+    hypGeo2F1_odeFunc(4) = aimag((c(3)*c(4)*y(2)-(c(5)-(c(3)+c(4)+1.d0))*y(4))*(c(2)-c(1))/(zs*(1.d0-zs)))
+    print *, zs, y
+    !print *, x, hypGeo2F1_odeFunc
+  end function
+
+  complex(dp) function hypGeo2F1_series(a,b,c,z)
+    !! Returns Hypergeometric Function and its derivative
+    !! Should be only used for |z|<0.5
     integer :: i
-    real(dp) :: a, b, c
-    complex(dp) :: z, consts(4), result, indvResult, oldResult
+    complex(dp) :: a, b, c, z
+    complex(dp) :: result, oldResult, indvResult, deriv
     result = cmplx(0.d0,0.d0)
     oldResult = result
-    do i=0, 10000
+    do i=0, 100000
       indvResult = ((pochhammerR(a,i)*pochhammerR(b,i))/pochhammerR(c,i))*(z**i)/gamma(dble(i)+1.d0)
       if (indvResult /= indvResult) exit
       result = result + indvResult
       if (abs(result-oldResult).le.1.d-16) exit
       oldResult = result
     end do
-    hypGeo2F1Func = result
+  hypGeo2F1_series = result
+  end function
+
+  complex(dp) function hypGeo2F1Func(a,b,c,z)
+    integer :: i
+    complex(dp) :: a, b, c, z, result, indvResult, oldResult
+    real(dp) :: y0(4), odeResult(4)
+    complex(dp) :: z0, series(2), consts(5)
+    z0 = cmplx(0.5d0,0.d0)
+    if(abs(z).le.0.5d0) then
+      hypGeo2F1Func = hypGeo2F1_series(a,b,c,z)
+      return
+    else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
+      z0 = cmplx(0.5d0,0.d0)
+    else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
+      z0 = cmplx(-0.5d0,0.d0)
+    else if(real(z).gt.1.d0) then
+      z0 = cmplx(0.d0,0.5d0)
+      !z0 = cmplx(0.5d0,0.d0)
+    else if(real(z).lt.-1.d0) then
+      z0 = cmplx(0.d0,-0.5d0)
+      !z0 = cmplx(-0.5d0,0.d0)
+    end if
+    series(1) = hypGeo2F1_series(a,b,c,z0)
+    series(2) = a*b/c * hypGeo2F1_series(a+1.d0,b+1.d0,c+1.d0,z0)
+    consts(1) = z0
+    consts(2) = z
+    consts(3) = a
+    consts(4) = b
+    consts(5) = c
+    y0(1) = real(series(1))
+    y0(2) = aimag(series(1))
+    y0(3) = real(series(2))
+    y0(4) = aimag(series(2))
+    print *, z0
+    print *, y0
+    !odeResult = rk1FixedStep(hypGeo2F1_odeFunc,4,0.d0,1.d0,0.005d0,y0,5,consts)
+    odeResult = rk1AdaptStepCmplxC(hypGeo2F1_odeFunc,4,0.d0,1.d0,y0,5,consts)
+    hypGeo2F1Func = cmplx(odeResult(1),odeResult(2))
   end function
 
   complex(dp) function hypGeo2F1_iiid(a,b,c,z)
     integer :: a, b, c
     real(dp) :: z
-    hypGeo2F1_iiid = hypGeo2F1Func(dble(a),dble(b),dble(c),cmplx(z,0.d0,dp))
+    hypGeo2F1_iiid = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
   end function
 
 end module specialFunctions

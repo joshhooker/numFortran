@@ -13,6 +13,7 @@ module odeSolver
   integer, parameter :: dp = kind(0.d0)
 
   public :: rk1FixedStep, rk1AdaptStep
+  public :: rk1AdaptStepCmplxC
 contains
 
   function rk1FixedStep(f,nF,a,b,h,y0,nC,consts)
@@ -46,7 +47,7 @@ contains
       yn = yn+(1.d0/6.d0)*(k1+2.d0*k2+2.d0*k3+k4)
     end do
     rk1FixedStep = yn
-  end function rk1FixedStep
+  end function
 
   function rk1AdaptStep(f,nF,a,b,y0,nC,consts)
     !! Runga Kutta ODE Solver with adaptive h size to satisfy a fixed
@@ -71,7 +72,57 @@ contains
     call rk1AdaptStepSetupConstants(ai,bi,ci,cip)
     xn = a
     yn = y0
-    h = 0.1d0
+    h = 0.001d0
+    do while(xn<b)
+      if(xn+h>b) then
+        h = b-xn
+      end if
+      k1 = h*f(nF,nC,consts,xn,yn)
+      k2 = h*f(nF,nC,consts,xn+ai(2)*h,yn+bi(2,1)*k1)
+      k3 = h*f(nF,nC,consts,xn+ai(3)*h,yn+bi(3,1)*k1+bi(3,2)*k2)
+      k4 = h*f(nF,nC,consts,xn+ai(4)*h,yn+bi(4,1)*k1+bi(4,2)*k2+bi(4,3)*k3)
+      k5 = h*f(nF,nC,consts,xn+ai(5)*h,yn+bi(5,1)*k1+bi(5,2)*k2+bi(5,3)*k3+bi(5,4)*k4)
+      k6 = h*f(nF,nC,consts,xn+ai(6)*h,yn+bi(6,1)*k1+bi(6,2)*k2+bi(6,3)*k3+bi(6,4)*k4+bi(6,5)*k5)
+      print *, k1
+      print *, k2
+      print *, k3
+      kci = k1*ci(1)+k2*ci(2)+k3*ci(3)+k4*ci(4)+k5*ci(5)+k6*ci(6)
+      kcip = k1*cip(1)+k2*cip(2)+k3*cip(3)+k4*cip(4)+k5*cip(5)+k6*cip(6)
+      xn = xn+h
+      yns = yn+kcip
+      yn = yn+kci
+      dyn = abs(yn(1)-yns(1))
+      h = h*((1.d-12/dyn)**(0.2d0))
+    end do
+    rk1AdaptStep = yn
+  end function
+
+  function rk1AdaptStepCmplxC(f,nF,a,b,y0,nC,consts)
+    !! Runga Kutta ODE Solver with adaptive h size to satisfy a fixed
+    !! error and initial value \(y(a) = y_0\). Calculates \(y\) for two
+    !! different \(c_i\)'s in \(y = y + \sum_i c_i*k_i\) and compares
+    !! them to determine if the step size is too big or small.
+
+    integer :: i, j, nF, nC
+    real(dp) :: xn, k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF)
+    real(dp) :: a, b, h
+    real(dp) :: y0(nF), yi(nF), yn(nF), yns(nF), dyn
+    real(dp) :: xni, yni(nF), kci(nF), kcip(nF)
+    real(dp) :: ai(6),bi(6,6),ci(6),cip(6)
+    real(dp) :: rk1AdaptStepCmplxC(nF)
+    complex(dp) :: consts(nC)
+    interface
+      function f(nF,nC,c,x,y)
+        integer, parameter :: dp = kind(0.d0)
+        integer :: nF, nC
+        real(dp) :: x, y(nF), f(nF)
+        complex(dp) :: c(nC)
+      end function f
+    end interface
+    call rk1AdaptStepSetupConstants(ai,bi,ci,cip)
+    xn = a
+    yn = y0
+    h = 0.001d0
     do while(xn<b)
       if(xn+h>b) then
         h = b-xn
@@ -90,25 +141,13 @@ contains
       dyn = abs(yn(1)-yns(1))
       h = h*((1.d-12/dyn)**(0.2d0))
     end do
-    rk1AdaptStep = yn
-  end function rk1AdaptStep
+    rk1AdaptStepCmplxC = yn
+  end function
 
   subroutine rk1AdaptStepSetupConstants(ai,bi,ci,cip)
-    !! date: January 8, 2016
-    !! version: v0.1
-    !!
     !! Assigns values of constants for RK adaptive routine
 
-    real(dp) :: ai(6)
-      !! output: \(a_i\) array, of size 6, used for steps in \(x\)
-    real(dp) :: bi(6,6)
-      !! output: \(b_i\) array, of size 6x6, used for steps in \(y\)
-    real(dp) :: ci(6)
-      !! output: \(c_i\) array, of size 6, used to add \(c_i k\) for \(y\)
-    real(dp) :: cip(6)
-      !! output: \(c_{ip}\) array, of size 6, used to add \(c_{ip} k\) for \(y_p\)
-
-
+    real(dp) :: ai(6), bi(6,6), ci(6), cip(6)
     ai(1:6) = 0.d0
     bi(1:6,1:6) = 0.d0
     ci(1:6) = 0.d0
