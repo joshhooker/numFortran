@@ -107,12 +107,15 @@ program libraryTest
   end do
   deallocate(y0Arr, odeResultArr, odeConsts)
   write(*,*)
+  allocate(y0Arr(1), odeResultArr(1), odeConsts(0))
+  y0Arr(1) = 0.d0
   write(*,'(4x,a)') 'RK Adaptive Step:'
   call system_clock(t1, clock_rate, clock_max)
-  odeResult = rk1AdaptStep(0.d0,1.5d0,0.d0)
+  odeResultArr = rk1AdaptStep(odeFunction1,1,0.d0,1.5d0,y0Arr,0,odeConsts)
   call system_clock(t2, clock_rate, clock_max)
-  write(*,'(5x,3(1x,a,1x,es12.5),1x,a)') 'result =', odeResult, &
-      'diff =', odeResult-tan(1.5d0), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'
+  write(*,'(5x,3(1x,a,1x,es12.5),1x,a)') 'result =', odeResultArr(1), &
+      'diff =', odeResultArr(1)-tan(1.5d0), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'
+  deallocate(y0Arr, odeResultArr, odeConsts)
   write(*,*)
   write(*,*)
 

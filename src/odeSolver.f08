@@ -12,19 +12,8 @@ module odeSolver
   private
   integer, parameter :: dp = kind(0.d0)
 
-  private :: dp, rk1AdaptStepSetupConstants
-
   public :: rk1FixedStep, rk1AdaptStep
 contains
-
-  real(dp) function odeFunction(x,y)
-    !! Function in the form \[y' = f(x,y)\] to be solved
-    real(dp) :: x
-      !! input: x value in f(x,y)
-    real(dp) :: y
-      !! input: y value in f(x,y)
-    odeFunction = y*y+1.d0
-  end function odeFunction
 
   function rk1FixedStep(f,nF,a,b,h,y0,nC,consts)
     !! 4th order Runga Kutta ODE Solver with fixed step h and initial
@@ -59,26 +48,26 @@ contains
     rk1FixedStep = yn
   end function rk1FixedStep
 
-  real(dp) function rk1AdaptStep(a,b,y0)
-    !! date: January 8, 2016
-    !! version: v0.1
-    !!
+  function rk1AdaptStep(f,nF,a,b,y0,nC,consts)
     !! Runga Kutta ODE Solver with adaptive h size to satisfy a fixed
     !! error and initial value \(y(a) = y_0\). Calculates \(y\) for two
     !! different \(c_i\)'s in \(y = y + \sum_i c_i*k_i\) and compares
     !! them to determine if the step size is too big or small.
 
-    integer :: i,j
-    real(dp) :: a
-      !! input: starting x value
-    real(dp) :: b
-      !! input: final x value
-    real(dp) :: y0
-      !! input: inital value \(y(a) = y0\)
-    real(dp) :: xn,yn,yns,dyn
-    real(dp) :: xni,yni,kci,kcip,k(6)
+    integer :: i, j, nF, nC
+    real(dp) :: xn, k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF)
+    real(dp) :: a, b, h
+    real(dp) :: y0(nF), yi(nF), yn(nF), yns(nF), dyn, consts(nC)
+    real(dp) :: xni, yni(nF), kci(nF), kcip(nF)
     real(dp) :: ai(6),bi(6,6),ci(6),cip(6)
-    real(dp) :: h
+    real(dp) :: rk1AdaptStep(nF)
+    interface
+      function f(nF,nC,c,x,y)
+        integer, parameter :: dp = kind(0.d0)
+        integer :: nF, nC
+        real(dp) :: c(nC), x, y(nF), f(nF)
+      end function f
+    end interface
     call rk1AdaptStepSetupConstants(ai,bi,ci,cip)
     xn = a
     yn = y0
@@ -87,24 +76,18 @@ contains
       if(xn+h>b) then
         h = b-xn
       end if
-      kci = 0.d0
-      kcip = 0.d0
-      do i=1,6
-        xni = xn+ai(i)*h
-        yni = yn
-        if (i.gt.1) then
-          do j=1,i-1
-            yni = yni+bi(i,j)*k(j)
-          end do
-        end if
-        k(i) = h*odeFunction(xni,yni)
-        kci = kci+k(i)*ci(i)
-        kcip = kcip+k(i)*cip(i)
-      end do
+      k1 = h*f(nF,nC,consts,xn,yn)
+      k2 = h*f(nF,nC,consts,xn+ai(2)*h,yn+bi(2,1)*k1)
+      k3 = h*f(nF,nC,consts,xn+ai(3)*h,yn+bi(3,1)*k1+bi(3,2)*k2)
+      k4 = h*f(nF,nC,consts,xn+ai(4)*h,yn+bi(4,1)*k1+bi(4,2)*k2+bi(4,3)*k3)
+      k5 = h*f(nF,nC,consts,xn+ai(5)*h,yn+bi(5,1)*k1+bi(5,2)*k2+bi(5,3)*k3+bi(5,4)*k4)
+      k6 = h*f(nF,nC,consts,xn+ai(6)*h,yn+bi(6,1)*k1+bi(6,2)*k2+bi(6,3)*k3+bi(6,4)*k4+bi(6,5)*k5)
+      kci = k1*ci(1)+k2*ci(2)+k3*ci(3)+k4*ci(4)+k5*ci(5)+k6*ci(6)
+      kcip = k1*cip(1)+k2*cip(2)+k3*cip(3)+k4*cip(4)+k5*cip(5)+k6*cip(6)
       xn = xn+h
       yns = yn+kcip
       yn = yn+kci
-      dyn = abs(yn-yns)
+      dyn = abs(yn(1)-yns(1))
       h = h*((1.d-12/dyn)**(0.2d0))
     end do
     rk1AdaptStep = yn
