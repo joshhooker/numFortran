@@ -18,7 +18,7 @@
 !  * Hyperbolic Sine Integrals
 !  * Cosine Integrals
 !  * Hyperbolic Cosine Integrals
-!  * Hypergeometric Function 2F1
+!  * Hypergeometric Series: 2F1
 !  * Add complex inputs to all functions that can have complex input
 !
 !
@@ -26,8 +26,11 @@
 !  * Gamma Function
 !
 ! Future:
+!  * Hypergeometric Series: 0F1, 1F1 (Kummer Function), 3F2
+!  * Dilogarithm (3F2)
+!  * Hahn polynomials (3F2)
 !  * Clausen Functions
-!  * Coulomb Wave Functions
+!  * Coulomb Wave Functions (1F1)
 !  * Coupling Coefficients (Wigner 3-j, 6-j, 9-j)
 !  * Dawson Function
 !  * Debye Functions
