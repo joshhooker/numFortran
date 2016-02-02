@@ -23,8 +23,9 @@ program libraryTest
   real(dp) :: splineA(10), splineB(10), splineC(10), splineD(10)
 
   ! Variables to test ode solver
-  real(dp) :: h, h0, odeResult
-  real(dp), allocatable :: y0Arr(:), odeResultArr(:), odeConsts(:)
+  real(dp) :: h, h0
+  real(dp), allocatable :: y0(:), odeResult(:), odeConsts(:)
+  complex(dp), allocatable :: odeConstsC(:)
 
   ! Variables to test random number generators
   integer, parameter :: randArrayN = 5000000
@@ -93,29 +94,45 @@ program libraryTest
   write(*,'(2x,a)') 'Solution function: tan(x)'
   write(*,'(2x,a,1x,es12.5)') 'Numerical solution: tan(1.5) =', tan(1.5d0)
   write(*,*)
-  allocate(y0Arr(1), odeResultArr(1), odeConsts(0))
-  y0Arr(1) = 0.d0
   write(*,'(4x,a)') '4th order RK Fixed Step:'
+  allocate(y0(1), odeResult(1), odeConsts(0))
+  y0(1) = 0.d0
   do i=1,10
     h = 0.2/i
     h0 = h
     call system_clock(t1, clock_rate, clock_max)
-    odeResultArr = rk1FixedStep(odeFunction1,1,0.d0,1.5d0,h,y0Arr,0,odeConsts)
+    odeResult = rk1FixedStep(odeFunction1,1,0.d0,1.5d0,h,y0,0,odeConsts)
     call system_clock(t2, clock_rate, clock_max)
-    write(*,'(6x,a,1x,f6.4,3(1x,a,1x,es12.5),1x,a)') 'h =', h0, 'result =', odeResultArr(1), &
-      'diff =', odeResultArr(1)-tan(1.5d0), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'
+    write(*,'(6x,a,1x,f6.4,3(1x,a,1x,es12.5),1x,a)') 'h =', h0, 'result =', odeResult(1), &
+      'diff =', odeResult(1)-tan(1.5d0), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'
   end do
-  deallocate(y0Arr, odeResultArr, odeConsts)
+  deallocate(y0, odeResult, odeConsts)
   write(*,*)
-  allocate(y0Arr(1), odeResultArr(1), odeConsts(0))
-  y0Arr(1) = 0.d0
+
   write(*,'(4x,a)') 'RK Adaptive Step:'
+  allocate(y0(1), odeResult(1), odeConsts(0))
+  y0(1) = 0.d0
   call system_clock(t1, clock_rate, clock_max)
-  odeResultArr = rk1AdaptStep(odeFunction1,1,0.d0,1.5d0,y0Arr,0,odeConsts)
+  odeResult = rk1AdaptStep(odeFunction1,1,0.d0,1.5d0,y0,0,odeConsts)
   call system_clock(t2, clock_rate, clock_max)
-  write(*,'(5x,3(1x,a,1x,es12.5),1x,a)') 'result =', odeResultArr(1), &
-      'diff =', odeResultArr(1)-tan(1.5d0), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'
-  deallocate(y0Arr, odeResultArr, odeConsts)
+  write(*,'(5x,3(1x,a,1x,es12.5),1x,a)') 'result =', odeResult(1), &
+      'diff =', odeResult(1)-tan(1.5d0), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'
+  deallocate(y0, odeResult, odeConsts)
+  write(*,*)
+
+  write(*,'(2x,a)') "Function: y'' + z*y^2 = 0"
+  write(*,'(2x,a)') 'From (0,0) to (1.5,1.2) with y((0,0)) = (0,1) and yp((0,0)) = (1,2)'
+  write(*,'(2x,a)') 'Solution = -20.444 - 18.1534*i'
+  allocate(y0(4), odeResult(4), odeConstsC(2))
+  y0(1) = 0.d0
+  y0(2) = 1.d0
+  y0(3) = 1.d0
+  y0(4) = 2.d0
+  odeConstsC(1) = cmplx(0.d0,0.d0)
+  odeConstsC(2) = cmplx(1.5d0,1.2d0)
+  odeResult = rk1AdaptStepCmplxC(odeFunction2,4,0.d0,1.d0,y0,2,odeConstsC)
+  write(*,'(6x,a,1x,es12.5," + ",es12.5,"i")') 'Result =', odeResult(1), odeResult(2)
+  deallocate(y0, odeResult ,odeConstsC)
   write(*,*)
   write(*,*)
 
@@ -499,7 +516,7 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING HYPERGEOMETRIC FUNCTION 2F1'
-  sfCmplxResult = hypGeo2F1(1,3,2,0.75d0)
+  sfCmplxResult = hypGeo2F1(1,3,2,2.65d0)
   print *, sfCmplxResult
   write(*,*)
 
@@ -509,6 +526,19 @@ contains
     integer :: nF, nC
     real(dp) :: odeFunction1(nF), c(nC), x, y(nF)
     odeFunction1(1) = y(1)*y(1)+1.d0
+  end function
+
+  function odeFunction2(nF,nC,c,x,y)
+    integer :: nF, nC
+    real(dp) :: odeFunction2(nF), x, y(nF)
+    complex(dp) :: c(nC), fn, fnp, zn
+    zn = c(1) + x*(c(2)-c(1))
+    fn = cmplx(y(1),y(2))
+    fnp = cmplx(y(3),y(4))
+    odeFunction2(1) = real((c(2)-c(1))*fnp)
+    odeFunction2(2) = aimag((c(2)-c(1))*fnp)
+    odeFunction2(3) = real(-(c(2)-c(1))*zn*fn*fn)
+    odeFunction2(4) = aimag(-(c(2)-c(1))*zn*fn*fn)
   end function
 
   real(dp) function integralFunction1(n,c,x)
