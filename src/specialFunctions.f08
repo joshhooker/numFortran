@@ -1509,6 +1509,47 @@ contains
   end function
 
   !*****************************!
+  ! Hypergeometric Function 1F1 !
+  !*****************************!
+
+  function hypGeo1F1_odeFunc(nF,nC,c,x,y)
+    integer :: nF, nC
+    real(dp) :: hypGeo1F1_odeFunc(nF), x, y(nF)
+    complex(dp) :: c(nC), zs, fT, fpT, f, fp, dz
+    dz = c(2)-c(1)
+    zs = c(1) + x*dz
+    fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4))
+    f = dz*fpT
+    fp = (c(3)*fT-(c(4)-zs)*fpT)*dz/zs
+    hypGeo1F1_odeFunc(1) = real(f); hypGeo1F1_odeFunc(2) = aimag(f)
+    hypGeo1F1_odeFunc(3) = real(fp); hypGeo1F1_odeFunc(4) = aimag(fp)
+  end function
+
+  complex(dp) function hypGeo1F1_series(a,b,z)
+    !! Returns Hypergeometric Function 1F1
+    !! Should be only used for |z|<1.0
+    integer :: i
+    complex(dp) :: a, b, z, result, oldResult, indvResult, deriv
+    result = cmplx(0.d0,0.d0)
+    oldResult = result
+    do i=0, 100000
+      indvResult = (pochhammerR(a,i)/pochhammerR(b,i))*(z**i)/gamma(dble(i)+1.d0)
+      if (indvResult /= indvResult) exit
+      result = result + indvResult
+      if (abs(result-oldResult).le.1.d-16) exit
+      oldResult = result
+    end do
+  hypGeo1F1_series = result
+  end function
+
+  complex(dp) function hypGeo1F1Deriv_series(a,b,z)
+    !! Returns Derivative of the Hypergeometric Function 1F1
+    !! Should be only used for |z|<1.0
+    complex(dp) :: a, b, z
+    hypGeo1F1Deriv_series = (a/b)*hypGeo1F1_series(a+1.d0,b+1.d0,z)
+  end function
+
+  !*****************************!
   ! Hypergeometric Function 2F1 !
   !*****************************!
 
@@ -1518,14 +1559,11 @@ contains
     complex(dp) :: c(nC), zs, fT, fpT, f, fp, dz
     dz = c(2)-c(1)
     zs = c(1) + x*dz
-    fT = cmplx(y(1),y(2))
-    fpT = cmplx(y(3),y(4))
+    fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4))
     f = dz*fpT
     fp = (c(3)*c(4)*fT-(c(5)-(c(3)+c(4)+1.d0)*zs)*fpT)*dz/(zs*(1.d0-zs))
-    hypGeo2F1_odeFunc(1) = real(f)
-    hypGeo2F1_odeFunc(2) = aimag(f)
-    hypGeo2F1_odeFunc(3) = real(fp)
-    hypGeo2F1_odeFunc(4) = aimag(fp)
+    hypGeo2F1_odeFunc(1) = real(f); hypGeo2F1_odeFunc(2) = aimag(f)
+    hypGeo2F1_odeFunc(3) = real(fp); hypGeo2F1_odeFunc(4) = aimag(fp)
   end function
 
   complex(dp) function hypGeo2F1_series(a,b,c,z)
@@ -1573,10 +1611,8 @@ contains
     series(2) = hypGeo2F1Deriv_series(a,b,c,z0)
     consts(1) = z0; consts(2) = z
     consts(3) = a; consts(4) = b; consts(5) = c
-    y0(1) = real(series(1))
-    y0(2) = aimag(series(1))
-    y0(3) = real(series(2))
-    y0(4) = aimag(series(2))
+    y0(1) = real(series(1)); y0(2) = aimag(series(1))
+    y0(3) = real(series(2)); y0(4) = aimag(series(2))
     odeResult = rk1AdaptStepCmplxC(hypGeo2F1_odeFunc,4,0.d0,1.d0,y0,5,consts)
     hypGeo2F1Func = cmplx(odeResult(1),odeResult(2))
   end function
@@ -1602,10 +1638,8 @@ contains
     series(2) = hypGeo2F1Deriv_series(a,b,c,z0)
     consts(1) = z0; consts(2) = z
     consts(3) = a; consts(4) = b; consts(5) = c
-    y0(1) = real(series(1))
-    y0(2) = aimag(series(1))
-    y0(3) = real(series(2))
-    y0(4) = aimag(series(2))
+    y0(1) = real(series(1)); y0(2) = aimag(series(1))
+    y0(3) = real(series(2)); y0(4) = aimag(series(2))
     odeResult = rk1AdaptStepCmplxC(hypGeo2F1_odeFunc,4,0.d0,1.d0,y0,5,consts)
     hypGeo2F1DerivFunc = cmplx(odeResult(3),odeResult(4))
   end function
