@@ -178,7 +178,10 @@ module specialFunctions
   end interface
 
   interface hypGeo2F1
-    module procedure hypGeo2F1_iiid
+    module procedure hypGeo2F1_iiii, hypGeo2F1_iiir, hypGeo2F1_iiid, hypGeo2F1_rrri, &
+        hypGeo2F1_rrrr, hypGeo2F1_rrrd, hypGeo2F1_dddi, hypGeo2F1_dddr, hypGeo2F1_dddd, &
+        hypGeo2F1_iiiCr, hypGeo2F1_rrrCr, hypGeo2F1_dddCr, hypGeo2F1_iiiCd, hypGeo2F1_rrrCd, &
+        hypGeo2F1_dddCd, hypGeo2F1_CrCrCrCd, hypGeo2F1_CdCdCdCd
   end interface
 
 contains
@@ -1566,10 +1569,102 @@ contains
     hypGeo2F1Func = cmplx(odeResult(1),odeResult(2))
   end function
 
+  complex(dp) function hypGeo2F1_iiii(a,b,c,z)
+    integer :: a, b, c, z
+    hypGeo2F1_iiii = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo2F1_rrri(a,b,c,z)
+    real :: a, b, c
+    integer :: z
+    hypGeo2F1_rrri = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo2F1_dddi(a,b,c,z)
+    real(dp) :: a, b, c
+    integer :: z
+    hypGeo2F1_dddi = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo2F1_iiir(a,b,c,z)
+    integer :: a, b, c
+    real :: z
+    hypGeo2F1_iiir = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo2F1_rrrr(a,b,c,z)
+    real :: a, b, c, z
+    hypGeo2F1_rrrr = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo2F1_dddr(a,b,c,z)
+    real(dp) :: a, b, c
+    real :: z
+    hypGeo2F1_dddr = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
   complex(dp) function hypGeo2F1_iiid(a,b,c,z)
     integer :: a, b, c
     real(dp) :: z
     hypGeo2F1_iiid = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo2F1_rrrd(a,b,c,z)
+    real :: a, b, c
+    real(dp) :: z
+    hypGeo2F1_rrrd = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo2F1_dddd(a,b,c,z)
+    real(dp) :: a, b, c, z
+    hypGeo2F1_dddd = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo2F1_iiiCr(a,b,c,z)
+    integer :: a, b, c
+    complex :: z
+    hypGeo2F1_iiiCr = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo2F1_rrrCr(a,b,c,z)
+    real :: a, b, c
+    complex :: z
+    hypGeo2F1_rrrCr = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo2F1_dddCr(a,b,c,z)
+    real(dp) :: a, b, c
+    complex :: z
+    hypGeo2F1_dddCr = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo2F1_iiiCd(a,b,c,z)
+    integer :: a, b, c
+    complex(dp) :: z
+    hypGeo2F1_iiiCd = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo2F1_rrrCd(a,b,c,z)
+    real :: a, b, c
+    complex(dp) :: z
+    hypGeo2F1_rrrCd = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo2F1_dddCd(a,b,c,z)
+    real(dp) :: a, b, c
+    complex(dp) :: z
+    hypGeo2F1_dddCd = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo2F1_CrCrCrCd(a,b,c,z)
+    complex :: a, b, c
+    complex(dp) :: z
+    hypGeo2F1_CrCrCrCd = hypGeo2F1Func(cmplx(real(a),aimag(a),dp),cmplx(real(b),aimag(b),dp),cmplx(real(c),aimag(c),dp),z)
+  end function
+
+  complex(dp) function hypGeo2F1_CdCdCdCd(a,b,c,z)
+    complex(dp) :: a, b, c, z
+    hypGeo2F1_CdCdCdCd = hypGeo2F1Func(a,b,c,z)
   end function
 
 end module specialFunctions
