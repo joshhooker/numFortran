@@ -18,7 +18,7 @@
 !  * Hyperbolic Sine Integrals
 !  * Cosine Integrals
 !  * Hyperbolic Cosine Integrals
-!  * Hypergeometric Series: 1F1, 2F1
+!  * Hypergeometric Series: 1F0, 1F1, 2F1
 !  * Add complex inputs to all functions that can have complex input
 !
 !
@@ -26,7 +26,7 @@
 !  * Gamma Function
 !
 ! Future:
-!  * Hypergeometric Series: 0F1, 1F0, 3F2
+!  * Hypergeometric Series: 0F1, 3F2
 !  * Dilogarithm (3F2)
 !  * Hahn polynomials (3F2)
 !  * Clausen Functions
@@ -2343,6 +2343,28 @@ contains
   complex(dp) function hypGeo2F1Deriv_CdCdCdCd(a,b,c,z)
     complex(dp) :: a, b, c, z
     hypGeo2F1Deriv_CdCdCdCd = hypGeo2F1DerivFunc(a,b,c,z)
+  end function
+
+  !*****************************!
+  ! Hypergeometric Function 3F2 !
+  !*****************************!
+
+  complex(dp) function hypGeo3F2_series(a,b,c,d,e,z)
+    !! Returns Hypergeometric Function 3F2
+    !! Should be only used for |z|<1.0
+    integer :: i
+    complex(dp) :: a, b, c, d, e, z, result, oldResult, indvResult, deriv
+    result = cmplx(0.d0,0.d0)
+    oldResult = result
+    do i=0, 100000
+      indvResult = ((pochhammerR(a,i)*pochhammerR(b,i)*pochhammerR(c,i))/pochhammerR(d,i)*pochhammerR(e,i))* &
+        (z**i)/gamma(dble(i)+1.d0)
+      if (indvResult /= indvResult) exit
+      result = result + indvResult
+      if (abs(result-oldResult).le.1.d-16) exit
+      oldResult = result
+    end do
+  hypGeo3F2_series = result
   end function
 
 end module specialFunctions
