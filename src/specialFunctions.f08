@@ -26,7 +26,7 @@
 !  * Gamma Function
 !
 ! Future:
-!  * Hypergeometric Series: 0F1, 3F2
+!  * Hypergeometric Series: 0F1, 1F0, 3F2
 !  * Dilogarithm (3F2)
 !  * Hahn polynomials (3F2)
 !  * Clausen Functions
@@ -64,6 +64,7 @@ module specialFunctions
   public :: chebyPolyT, chebyPolyU
   public :: sini, hypSini
   public :: cosi, hypCosi
+  public :: hypGeo1F0
   public :: hypGeo1F1
   public :: hypGeo2F1, hypGeo2F1Deriv
 
@@ -179,6 +180,11 @@ module specialFunctions
 
   interface hypCosi
     module procedure hypCosi_i, hypCosi_r, hypCosi_d
+  end interface
+
+  interface hypGeo1F0
+    module procedure hypGeo1F0_ii, hypGeo1F0_ir, hypGeo1F0_id, hypGeo1F0_ri, hypGeo1F0_rr, hypGeo1F0_rd, hypGeo1F0_di, &
+      hypGeo1F0_dr, hypGeo1F0_dd
   end interface
 
   interface hypGeo1F1
@@ -1513,6 +1519,131 @@ contains
   real(dp) function hypCosi_d(x)
     real(dp) :: x
     hypCosi_d = hypCosiFunc(dble(x))
+  end function
+
+  !*****************************!
+  ! Hypergeometric Function 0F1 !
+  !*****************************!
+
+  !*****************************!
+  ! Hypergeometric Function 1F0 !
+  !*****************************!
+
+  function hypGeo1F0_odeFunc(nF,nC,c,x,y)
+    integer :: nF, nC
+    real(dp) :: hypGeo1F0_odeFunc(nF), x, y(nF)
+    complex(dp) :: c(nC), zs, fT, fpT, f, fp, dz
+    dz = c(2)-c(1)
+    zs = c(1) + x*dz
+    fT = cmplx(y(1),y(2))
+    f = dz*fT*c(3)/(1.d0-zs)
+    hypGeo1F0_odeFunc(1) = real(f)
+    hypGeo1F0_odeFunc(2) = aimag(f)
+  end function
+
+  complex(dp) function hypGeo1F0_series(a,z)
+    !! Returns Hypergeometric Function 1F0
+    !! Should be only used for |z|<1.0
+    integer :: i
+    complex(dp) :: a, z, result, oldResult, indvResult, deriv
+    result = cmplx(0.d0,0.d0)
+    oldResult = result
+    do i=0, 100000
+      indvResult = pochhammerR(a,i)*(z**i)/gamma(dble(i)+1.d0)
+      if (indvResult /= indvResult) exit
+      result = result + indvResult
+      if (abs(result-oldResult).le.1.d-16) exit
+      oldResult = result
+    end do
+  hypGeo1F0_series = result
+  end function
+
+  complex(dp) function hypGeo1F0Deriv_series(a,z)
+    !! Returns Derivative of the Hypergeometric Function 1F0
+    !! Should be only used for |z|<1.0
+    complex(dp) :: a, z
+    hypGeo1F0Deriv_series = a*hypGeo1F0_series(a+1.d0,z)
+  end function
+
+  complex(dp) function hypGeo1F0Func(a,z)
+    integer :: i
+    complex(dp) :: a, z, result, indvResult, oldResult
+    real(dp) :: y0(2), odeResult(2)
+    complex(dp) :: z0, series, consts(3)
+    if(abs(z).lt.1.d0) then
+      hypGeo1F0Func = hypGeo1F0_series(a,z)
+      return
+    else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
+      z0 = cmplx(0.5d0,0.d0)
+    else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
+      z0 = cmplx(-0.5d0,0.d0)
+    else if(real(z).gt.1.d0) then
+      z0 = cmplx(0.d0,0.5d0)
+    else if(real(z).lt.-1.d0) then
+      z0 = cmplx(0.d0,-0.5d0)
+    end if
+    series = hypGeo1F0_series(a,z0)
+    consts(1) = z0; consts(2) = z; consts(3) = a;
+    y0(1) = real(series); y0(2) = aimag(series)
+    odeResult = rk1AdaptStepCmplxC(hypGeo1F0_odeFunc,2,0.d0,1.d0,y0,3,consts)
+    hypGeo1F0Func = cmplx(odeResult(1),odeResult(2))
+  end function
+
+  complex(dp) function hypGeo1F0DerivFunc(a,z)
+    integer :: i
+    complex(dp) :: a, z
+    hypGeo1F0DerivFunc = a*hypGeo1F0Func(a,z)
+  end function
+
+  complex(dp) function hypGeo1F0_ii(a,z)
+    integer :: a, z
+    hypGeo1F0_ii = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F0_ri(a,z)
+    integer :: z
+    real :: a
+    hypGeo1F0_ri = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F0_di(a,z)
+    integer :: z
+    real(dp) :: a
+    hypGeo1F0_di = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F0_ir(a,z)
+    integer :: a
+    real :: z
+    hypGeo1F0_ir = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F0_rr(a,z)
+    real :: a, z
+    hypGeo1F0_rr = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F0_dr(a,z)
+    real :: z
+    real(dp) :: a
+    hypGeo1F0_dr = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F0_id(a,z)
+    integer :: a
+    real(dp) :: z
+    hypGeo1F0_id = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F0_rd(a,z)
+    real :: a
+    real(dp) :: z
+    hypGeo1F0_rd = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F0_dd(a,z)
+    real(dp) :: a, z
+    hypGeo1F0_dd = hypGeo1F0Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
   end function
 
   !*****************************!
