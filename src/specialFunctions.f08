@@ -18,7 +18,7 @@
 !  * Hyperbolic Sine Integrals
 !  * Cosine Integrals
 !  * Hyperbolic Cosine Integrals
-!  * Hypergeometric Series: 2F1
+!  * Hypergeometric Series: 1F1, 2F1
 !  * Add complex inputs to all functions that can have complex input
 !
 !
@@ -26,7 +26,7 @@
 !  * Gamma Function
 !
 ! Future:
-!  * Hypergeometric Series: 0F1, 1F1 (Kummer Function), 3F2
+!  * Hypergeometric Series: 0F1, 3F2
 !  * Dilogarithm (3F2)
 !  * Hahn polynomials (3F2)
 !  * Clausen Functions
@@ -182,7 +182,9 @@ module specialFunctions
   end interface
 
   interface hypGeo1F1
-    module procedure hypGeo1F1_iii, hypGeo1F1_rri, hypGeo1F1_ddi
+    module procedure hypGeo1F1_iii, hypGeo1F1_rri, hypGeo1F1_ddi, hypGeo1F1_iir, hypGeo1F1_rrr, hypGeo1F1_ddr, &
+      hypGeo1F1_iid, hypGeo1F1_rrd, hypGeo1F1_ddd, hypGeo1F1_iiCr, hypGeo1F1_rrCr, hypGeo1F1_ddCr, hypGeo1F1_iiCd, &
+      hypGeo1F1_rrCd, hypGeo1F1_ddCd, hypGeo1F1_CrCrCr, hypGeo1F1_CrCrCd, hypGeo1F1_CdCdCd
   end interface
 
   interface hypGeo2F1
@@ -1624,6 +1626,93 @@ contains
     real(dp) :: a, b
     hypGeo1F1_ddi = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
   end function
+
+  complex(dp) function hypGeo1F1_iir(a,b,z)
+    integer :: a, b
+    real :: z
+    hypGeo1F1_iir = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F1_rrr(a,b,z)
+    real :: a, b, z
+    hypGeo1F1_rrr = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F1_ddr(a,b,z)
+    real :: z
+    real(dp) :: a, b
+    hypGeo1F1_ddr = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F1_iid(a,b,z)
+    integer :: a, b
+    real(dp) :: z
+    hypGeo1F1_iid = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F1_rrd(a,b,z)
+    real :: a, b
+    real(dp) :: z
+    hypGeo1F1_rrd = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F1_ddd(a,b,z)
+    real(dp) :: a, b, z
+    hypGeo1F1_ddd = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F1_iiCr(a,b,z)
+    integer :: a, b
+    complex :: z
+    hypGeo1F1_iiCr = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo1F1_rrCr(a,b,z)
+    real :: a, b
+    complex :: z
+    hypGeo1F1_rrCr = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo1F1_ddCr(a,b,z)
+    real(dp) :: a, b
+    complex :: z
+    hypGeo1F1_ddCr = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo1F1_iiCd(a,b,z)
+    integer :: a, b
+    complex(dp) :: z
+    hypGeo1F1_iiCd = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo1F1_rrCd(a,b,z)
+    real :: a, b
+    complex(dp) :: z
+    hypGeo1F1_rrCd = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo1F1_ddCd(a,b,z)
+    real(dp) :: a, b
+    complex(dp) :: z
+    hypGeo1F1_ddCd = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo1F1_CrCrCr(a,b,z)
+    complex :: a, b, z
+    hypGeo1F1_CrCrCr = hypGeo1F1Func(cmplx(real(a),aimag(a),dp),cmplx(real(b),aimag(b),dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo1F1_CrCrCd(a,b,z)
+    complex :: a, b
+    complex(dp) :: z
+    hypGeo1F1_CrCrCd = hypGeo1F1Func(cmplx(real(a),aimag(a),dp),cmplx(real(b),aimag(b),dp),z)
+  end function
+
+  complex(dp) function hypGeo1F1_CdCdCd(a,b,z)
+    complex(dp) :: a, b, z
+    hypGeo1F1_CdCdCd = hypGeo1F1Func(a,b,z)
+  end function
+
 
   !*****************************!
   ! Hypergeometric Function 2F1 !
