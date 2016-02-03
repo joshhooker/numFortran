@@ -64,6 +64,7 @@ module specialFunctions
   public :: chebyPolyT, chebyPolyU
   public :: sini, hypSini
   public :: cosi, hypCosi
+  public :: hypGeo1F1
   public :: hypGeo2F1, hypGeo2F1Deriv
 
   interface pochhammerF
@@ -72,27 +73,27 @@ module specialFunctions
 
   interface pochhammerR
     module procedure pochhammerR_i, pochhammerR_r, pochhammerR_d, &
-        pochhammerR_cd
+      pochhammerR_cd
   end interface
 
   interface besselJ
     module procedure besselJ_ii, besselJ_ir, besselJ_id, besselJ_ri, &
-        besselJ_di, besselJ_rr, besselJ_rd, besselJ_dr, besselJ_dd
+      besselJ_di, besselJ_rr, besselJ_rd, besselJ_dr, besselJ_dd
   end interface
 
   interface besselY
     module procedure besselY_ii, besselY_ir, besselY_id, besselY_ri, &
-        besselY_di, besselY_rr, besselY_rd, besselY_dr, besselY_dd
+      besselY_di, besselY_rr, besselY_rd, besselY_dr, besselY_dd
   end interface
 
   interface besselI
     module procedure besselI_ii, besselI_ir, besselI_id, besselI_ri, &
-        besselI_di, besselI_rr, besselI_rd, besselI_dr, besselI_dd
+      besselI_di, besselI_rr, besselI_rd, besselI_dr, besselI_dd
   end interface
 
   interface besselK
     module procedure besselK_ii, besselK_ir, besselK_id, besselK_ri, &
-        besselK_di, besselK_rr, besselK_rd, besselK_dr, besselK_dd
+      besselK_di, besselK_rr, besselK_rd, besselK_dr, besselK_dd
   end interface
 
   interface sphBesselJ
@@ -102,7 +103,7 @@ module specialFunctions
 
   interface sphBesselY
     module procedure sphBesselY_ii, sphBesselY_ir, sphBesselY_id, sphBesselY_ri, &
-        sphBesselY_di, sphBesselY_rr, sphBesselY_rd, sphBesselY_dr, sphBesselY_dd
+      sphBesselY_di, sphBesselY_rr, sphBesselY_rd, sphBesselY_dr, sphBesselY_dd
   end interface
 
   interface airyA
@@ -123,15 +124,15 @@ module specialFunctions
 
   interface beta
     module procedure beta_ii, beta_ir, beta_id, beta_ri, beta_di, beta_rr, &
-        beta_rd, beta_dr, beta_dd
+      beta_rd, beta_dr, beta_dd
   end interface
 
   interface incBeta
     module procedure incBeta_iii, incBeta_iir, incBeta_iid, incBeta_iri, incBeta_irr, &
-        incBeta_ird, incBeta_idi, incBeta_idr, incBeta_idd, incBeta_rii, incBeta_rir, &
-        incBeta_rid, incBeta_rri, incBeta_rrr, incBeta_rrd, incBeta_rdi, incBeta_rdr, &
-        incBeta_rdd, incBeta_dii, incBeta_dir, incBeta_did, incBeta_dri, incBeta_drr, &
-        incBeta_drd, incBeta_ddi, incBeta_ddr, incBeta_ddd
+      incBeta_ird, incBeta_idi, incBeta_idr, incBeta_idd, incBeta_rii, incBeta_rir, &
+      incBeta_rid, incBeta_rri, incBeta_rrr, incBeta_rrd, incBeta_rdi, incBeta_rdr, &
+      incBeta_rdd, incBeta_dii, incBeta_dir, incBeta_did, incBeta_dri, incBeta_drr, &
+      incBeta_drd, incBeta_ddi, incBeta_ddr, incBeta_ddd
   end interface
 
   interface legendrePoly
@@ -152,8 +153,8 @@ module specialFunctions
 
   interface assocLaguerrePoly
     module procedure assocLaguerrePoly_ii, assocLaguerrePoly_ir, assocLaguerrePoly_id, &
-        assocLaguerrePoly_ri, assocLaguerrePoly_rr, assocLaguerrePoly_rd, assocLaguerrePoly_di, &
-        assocLaguerrePoly_dr, assocLaguerrePoly_dd
+      assocLaguerrePoly_ri, assocLaguerrePoly_rr, assocLaguerrePoly_rd, assocLaguerrePoly_di, &
+      assocLaguerrePoly_dr, assocLaguerrePoly_dd
   end interface
 
   interface chebyPolyT
@@ -180,18 +181,22 @@ module specialFunctions
     module procedure hypCosi_i, hypCosi_r, hypCosi_d
   end interface
 
+  interface hypGeo1F1
+    module procedure hypGeo1F1_iii, hypGeo1F1_rri, hypGeo1F1_ddi
+  end interface
+
   interface hypGeo2F1
     module procedure hypGeo2F1_iiii, hypGeo2F1_iiir, hypGeo2F1_iiid, hypGeo2F1_rrri, &
         hypGeo2F1_rrrr, hypGeo2F1_rrrd, hypGeo2F1_dddi, hypGeo2F1_dddr, hypGeo2F1_dddd, &
         hypGeo2F1_iiiCr, hypGeo2F1_rrrCr, hypGeo2F1_dddCr, hypGeo2F1_iiiCd, hypGeo2F1_rrrCd, &
-        hypGeo2F1_dddCd, hypGeo2F1_CrCrCrCd, hypGeo2F1_CdCdCdCd
+        hypGeo2F1_dddCd, hypGeo2F1_CrCrCrCr, hypGeo2F1_CrCrCrCd, hypGeo2F1_CdCdCdCd
   end interface
 
   interface hypGeo2F1Deriv
     module procedure hypGeo2F1Deriv_iiii, hypGeo2F1Deriv_iiir, hypGeo2F1Deriv_iiid, hypGeo2F1Deriv_rrri, &
-        hypGeo2F1Deriv_rrrr, hypGeo2F1Deriv_rrrd, hypGeo2F1Deriv_dddi, hypGeo2F1Deriv_dddr, hypGeo2F1Deriv_dddd, &
-        hypGeo2F1Deriv_iiiCr, hypGeo2F1Deriv_rrrCr, hypGeo2F1Deriv_dddCr, hypGeo2F1Deriv_iiiCd, hypGeo2F1Deriv_rrrCd, &
-        hypGeo2F1Deriv_dddCd, hypGeo2F1Deriv_CrCrCrCd, hypGeo2F1Deriv_CdCdCdCd
+      hypGeo2F1Deriv_rrrr, hypGeo2F1Deriv_rrrd, hypGeo2F1Deriv_dddi, hypGeo2F1Deriv_dddr, hypGeo2F1Deriv_dddd, &
+      hypGeo2F1Deriv_iiiCr, hypGeo2F1Deriv_rrrCr, hypGeo2F1Deriv_dddCr, hypGeo2F1Deriv_iiiCd, hypGeo2F1Deriv_rrrCd, &
+      hypGeo2F1Deriv_dddCd, hypGeo2F1Deriv_CrCrCrCr, hypGeo2F1Deriv_CrCrCrCd, hypGeo2F1Deriv_CdCdCdCd
   end interface
 
 contains
@@ -1549,6 +1554,77 @@ contains
     hypGeo1F1Deriv_series = (a/b)*hypGeo1F1_series(a+1.d0,b+1.d0,z)
   end function
 
+  complex(dp) function hypGeo1F1Func(a,b,z)
+    integer :: i
+    complex(dp) :: a, b, z, result, indvResult, oldResult
+    real(dp) :: y0(4), odeResult(4)
+    complex(dp) :: z0, series(2), consts(4)
+    if(abs(z).lt.1.d0) then
+      hypGeo1F1Func = hypGeo1F1_series(a,b,z)
+      return
+    else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
+      z0 = cmplx(0.5d0,0.d0)
+    else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
+      z0 = cmplx(-0.5d0,0.d0)
+    else if(real(z).gt.1.d0) then
+      z0 = cmplx(0.d0,0.5d0)
+    else if(real(z).lt.-1.d0) then
+      z0 = cmplx(0.d0,-0.5d0)
+    end if
+    series(1) = hypGeo1F1_series(a,b,z0)
+    series(2) = hypGeo1F1Deriv_series(a,b,z0)
+    consts(1) = z0; consts(2) = z
+    consts(3) = a; consts(4) = b;
+    y0(1) = real(series(1)); y0(2) = aimag(series(1))
+    y0(3) = real(series(2)); y0(4) = aimag(series(2))
+    odeResult = rk1AdaptStepCmplxC(hypGeo1F1_odeFunc,4,0.d0,1.d0,y0,4,consts)
+    hypGeo1F1Func = cmplx(odeResult(1),odeResult(2))
+  end function
+
+  complex(dp) function hypGeo1F1DerivFunc(a,b,z)
+    integer :: i
+    complex(dp) :: a, b, z, result, indvResult, oldResult
+    real(dp) :: y0(4), odeResult(4)
+    complex(dp) :: z0, series(2), consts(4)
+    if(abs(z).lt.1.d0) then
+      hypGeo1F1DerivFunc = hypGeo1F1Deriv_series(a,b,z)
+      return
+    else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
+      z0 = cmplx(0.5d0,0.d0)
+    else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
+      z0 = cmplx(-0.5d0,0.d0)
+    else if(real(z).gt.1.d0) then
+      z0 = cmplx(0.d0,0.5d0)
+    else if(real(z).lt.-1.d0) then
+      z0 = cmplx(0.d0,-0.5d0)
+    end if
+    series(1) = hypGeo1F1_series(a,b,z0)
+    series(2) = hypGeo1F1Deriv_series(a,b,z0)
+    consts(1) = z0; consts(2) = z
+    consts(3) = a; consts(4) = b;
+    y0(1) = real(series(1)); y0(2) = aimag(series(1))
+    y0(3) = real(series(2)); y0(4) = aimag(series(2))
+    odeResult = rk1AdaptStepCmplxC(hypGeo1F1_odeFunc,4,0.d0,1.d0,y0,4,consts)
+    hypGeo1F1DerivFunc = cmplx(odeResult(3),odeResult(4))
+  end function
+
+  complex(dp) function hypGeo1F1_iii(a,b,z)
+    integer :: a, b, z
+    hypGeo1F1_iii = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F1_rri(a,b,z)
+    integer :: z
+    real :: a, b
+    hypGeo1F1_rri = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo1F1_ddi(a,b,z)
+    integer :: z
+    real(dp) :: a, b
+    hypGeo1F1_ddi = hypGeo1F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
   !*****************************!
   ! Hypergeometric Function 2F1 !
   !*****************************!
@@ -1731,6 +1807,12 @@ contains
     hypGeo2F1_dddCd = hypGeo2F1Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),z)
   end function
 
+  complex(dp) function hypGeo2F1_CrCrCrCr(a,b,c,z)
+    complex :: a, b, c, z
+    hypGeo2F1_CrCrCrCr = hypGeo2F1Func(cmplx(real(a),aimag(a),dp),cmplx(real(b),aimag(b),dp),cmplx(real(c),aimag(c),dp),&
+      cmplx(real(z),aimag(z),dp))
+  end function
+
   complex(dp) function hypGeo2F1_CrCrCrCd(a,b,c,z)
     complex :: a, b, c
     complex(dp) :: z
@@ -1827,6 +1909,12 @@ contains
     real(dp) :: a, b, c
     complex(dp) :: z
     hypGeo2F1Deriv_dddCd = hypGeo2F1DerivFunc(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo2F1Deriv_CrCrCrCr(a,b,c,z)
+    complex :: a, b, c, z
+    hypGeo2F1Deriv_CrCrCrCr = hypGeo2F1DerivFunc(cmplx(real(a),aimag(a),dp),cmplx(real(b),aimag(b),dp),cmplx(real(c),aimag(c),dp),&
+      cmplx(real(z),aimag(z),dp))
   end function
 
   complex(dp) function hypGeo2F1Deriv_CrCrCrCd(a,b,c,z)
