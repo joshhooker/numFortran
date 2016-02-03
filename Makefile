@@ -3,7 +3,7 @@ SHELL = /bin/sh
 # FORTRAN compiler
 FC = gfortran-mp-5
 
-FFLAGS = -O2 -std=f2008 -fno-range-check
+FFLAGS = -O2 -std=f2008 -fno-range-check -ffree-form
 
 TARGET = libraryTest
 DATADIR = data
