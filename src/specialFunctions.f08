@@ -2383,7 +2383,7 @@ contains
     result = cmplx(0.d0,0.d0)
     oldResult = result
     do i=0, 100000
-      indvResult = ((pochhammerR(a,i)*pochhammerR(b,i)*pochhammerR(c,i))/pochhammerR(d,i)*pochhammerR(e,i))* &
+      indvResult = ((pochhammerR(a,i)*pochhammerR(b,i)*pochhammerR(c,i))/(pochhammerR(d,i)*pochhammerR(e,i)))* &
         (z**i)/gamma(dble(i)+1.d0)
       if (indvResult /= indvResult) exit
       result = result + indvResult
@@ -2420,7 +2420,12 @@ contains
     end if
     series(1) = hypGeo3F2_series(a,b,c,d,e,z0)
     series(2) = hypGeo3F2Deriv_series(a,b,c,d,e,z0)
-    series(3) = (a*b*c/(d*e))*hypGeo3F2Deriv_series(a+1.d0,b+1.d0,c+1.d0,d+1.d0,e+1.d0,z0)
+    series(3) = ((a+1.d0)*(b+1.d0)*(c+1.d0)/((d+1.d0)*(e+1.d0)))*&
+      hypGeo3F2Deriv_series(a+1.d0,b+1.d0,c+1.d0,d+1.d0,e+1.d0,z0)
+    print *, z0
+    print *, series(1)
+    print *, series(2)
+    print *, series(3)
     consts(1) = z0; consts(2) = z
     consts(3) = a; consts(4) = b; consts(5) = c; consts(6) = d; consts(7) = e
     y0(1) = real(series(1)); y0(2) = aimag(series(1))
