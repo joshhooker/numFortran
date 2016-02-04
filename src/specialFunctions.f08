@@ -2420,8 +2420,8 @@ contains
     end if
     series(1) = hypGeo3F2_series(a,b,c,d,e,z0)
     series(2) = hypGeo3F2Deriv_series(a,b,c,d,e,z0)
-    series(3) = ((a+1.d0)*(b+1.d0)*(c+1.d0)/((d+1.d0)*(e+1.d0)))*&
-      hypGeo3F2Deriv_series(a+1.d0,b+1.d0,c+1.d0,d+1.d0,e+1.d0,z0)
+    series(3) = (a*(a+1.d0)*b*(b+1.d0)*c*(c+1.d0))/(d*(d+1.d0)*e*(e+1.d0))*&
+      hypGeo3F2_series(a+2.d0,b+2.d0,c+2.d0,d+2.d0,e+2.d0,z0)
     print *, z0
     print *, series(1)
     print *, series(2)
