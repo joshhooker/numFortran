@@ -531,7 +531,7 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING HYPERGEOMETRIC FUNCTION 3F2'
-  sfCmplxResult = hypGeo3F2(1,3,2,2,2,4.5)
+  sfCmplxResult = hypGeo3F2(1,3,2,2,2,cmplx(4.5d0,1.5d0))
   print *, sfCmplxResult
   write(*,*)
 
