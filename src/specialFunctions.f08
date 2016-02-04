@@ -67,6 +67,7 @@ module specialFunctions
   public :: hypGeo1F0, hypGeo1F0Deriv
   public :: hypGeo1F1, hypGeo1F1Deriv
   public :: hypGeo2F1, hypGeo2F1Deriv
+  public :: hypGeo3F2
 
   interface pochhammerF
     module procedure pochhammerF_i, pochhammerF_r, pochhammerF_d
@@ -218,6 +219,11 @@ module specialFunctions
       hypGeo2F1Deriv_rrrr, hypGeo2F1Deriv_rrrd, hypGeo2F1Deriv_dddi, hypGeo2F1Deriv_dddr, hypGeo2F1Deriv_dddd, &
       hypGeo2F1Deriv_iiiCr, hypGeo2F1Deriv_rrrCr, hypGeo2F1Deriv_dddCr, hypGeo2F1Deriv_iiiCd, hypGeo2F1Deriv_rrrCd, &
       hypGeo2F1Deriv_dddCd, hypGeo2F1Deriv_CrCrCrCr, hypGeo2F1Deriv_CrCrCrCd, hypGeo2F1Deriv_CdCdCdCd
+  end interface
+
+  interface hypGeo3F2
+    module procedure hypGeo3F2_iiiiii, hypGeo3F2_iiiiir, hypGeo3F2_iiiiid, hypGeo3F2_rrrrri, hypGeo3F2_rrrrrr, hypGeo3F2_rrrrrd, &
+      hypGeo3F2_dddddi, hypGeo3F2_dddddr, hypGeo3F2_dddddd
   end interface
 
 contains
@@ -2349,6 +2355,26 @@ contains
   ! Hypergeometric Function 3F2 !
   !*****************************!
 
+  function hypGeo3F2_odeFunc(nF,nC,c,x,y)
+    integer :: nF, nC
+    real(dp) :: hypGeo3F2_odeFunc(nF), x, y(nF)
+    complex(dp) :: c(nC), zs, fT, fpT, fppT, f, fp, fpp, dz
+    complex(dp) :: factfT, factfpT, factfpT2, factfppT
+    dz = c(2)-c(1)
+    zs = c(1) + x*dz
+    factfT = -c(3)*c(4)*c(5)
+    factfpT = c(4)*c(3)+c(5)*c(3)+c(3)+c(4)+c(4)*c(5)+c(5)+1
+    factfpT2 = c(6)*c(7) - factfpT*zs
+    factfppT = (-(c(3)+c(4)+c(5)+3.d0)*zs+c(6)+c(7)+1.d0)*zs
+    fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4)); fppT = cmplx(y(5),y(6))
+    f = dz*fpT
+    fp = dz*fppT
+    fpp = -(factfppT*fppT+factfpT2*fpT+factfT*fT)/(zs*zs*(1.d0-zs))
+    hypGeo3F2_odeFunc(1) = real(f); hypGeo3F2_odeFunc(2) = aimag(f)
+    hypGeo3F2_odeFunc(3) = real(fp); hypGeo3F2_odeFunc(4) = aimag(fp)
+    hypGeo3F2_odeFunc(5) = real(fpp); hypGeo3F2_odeFunc(6) = aimag(fpp)
+  end function
+
   complex(dp) function hypGeo3F2_series(a,b,c,d,e,z)
     !! Returns Hypergeometric Function 3F2
     !! Should be only used for |z|<1.0
@@ -2364,7 +2390,111 @@ contains
       if (abs(result-oldResult).le.1.d-16) exit
       oldResult = result
     end do
-  hypGeo3F2_series = result
+    hypGeo3F2_series = result
   end function
+
+  complex(dp) function hypGeo3F2Deriv_series(a,b,c,d,e,z)
+    !! Returns Hypergeometric Function 3F2
+    !! Should be only used for |z|<1.0
+    integer :: i
+    complex(dp) :: a, b, c, d, e, z
+    hypGeo3F2Deriv_series = (a*b*c/(d*e))*hypGeo3F2_series(a+1.d0,b+1.d0,c+1.d0,d+1.d0,e+1.d0,z)
+  end function
+
+  complex(dp) function hypGeo3F2Func(a,b,c,d,e,z)
+    integer :: i
+    complex(dp) :: a, b, c, d, e, z, result, indvResult, oldResult
+    real(dp) :: y0(6), odeResult(6)
+    complex(dp) :: z0, series(3), consts(7)
+    if(abs(z).lt.1.d0) then
+      hypGeo3F2Func = hypGeo3F2_series(a,b,c,d,e,z)
+      return
+    else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
+      z0 = cmplx(0.5d0,0.d0)
+    else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
+      z0 = cmplx(-0.5d0,0.d0)
+    else if(real(z).gt.1.d0) then
+      z0 = cmplx(0.d0,0.5d0)
+    else if(real(z).lt.-1.d0) then
+      z0 = cmplx(0.d0,-0.5d0)
+    end if
+    series(1) = hypGeo3F2_series(a,b,c,d,e,z0)
+    series(2) = hypGeo3F2Deriv_series(a,b,c,d,e,z0)
+    series(3) = (a*b*c/(d*e))*hypGeo3F2Deriv_series(a+1.d0,b+1.d0,c+1.d0,d+1.d0,e+1.d0,z0)
+    consts(1) = z0; consts(2) = z
+    consts(3) = a; consts(4) = b; consts(5) = c; consts(6) = d; consts(7) = e
+    y0(1) = real(series(1)); y0(2) = aimag(series(1))
+    y0(3) = real(series(2)); y0(4) = aimag(series(2))
+    y0(5) = real(series(3)); y0(6) = aimag(series(3))
+    odeResult = rk1AdaptStepCmplxC(hypGeo3F2_odeFunc,6,0.d0,1.d0,y0,7,consts)
+    hypGeo3F2Func = cmplx(odeResult(1),odeResult(2))
+  end function
+
+  complex(dp) function hypGeo3F2DerivFunc(a,b,c,d,e,z)
+    integer :: i
+    complex(dp) :: a, b, c, d, e, z
+    hypGeo3F2DerivFunc = (a*b*c/(d*e))*hypGeo3F2Func(a+1.d0,b+1.d0,c+1.d0,d+1.d0,e+1.d0,z)
+  end function
+
+  complex(dp) function hypGeo3F2_iiiiii(a,b,c,d,e,z)
+    integer :: a, b, c, d, e, z
+    hypGeo3F2_iiiiii = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo3F2_iiiiir(a,b,c,d,e,z)
+    integer :: a, b, c, d, e
+    real :: z
+    hypGeo3F2_iiiiir = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo3F2_iiiiid(a,b,c,d,e,z)
+    integer :: a, b, c, d, e
+    real(dp) :: z
+    hypGeo3F2_iiiiid = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo3F2_rrrrri(a,b,c,d,e,z)
+    real :: a, b, c, d, e
+    integer :: z
+    hypGeo3F2_rrrrri = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo3F2_rrrrrr(a,b,c,d,e,z)
+    real :: a, b, c, d, e, z
+    hypGeo3F2_rrrrrr = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo3F2_rrrrrd(a,b,c,d,e,z)
+    real :: a, b, c, d, e
+    real(dp) :: z
+    hypGeo3F2_rrrrrd = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo3F2_dddddi(a,b,c,d,e,z)
+    real(dp) :: a, b, c, d, e
+    integer :: z
+    hypGeo3F2_dddddi = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo3F2_dddddr(a,b,c,d,e,z)
+    real(dp) :: a, b, c, d, e
+    real :: z
+    hypGeo3F2_dddddr = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo3F2_dddddd(a,b,c,d,e,z)
+    real(dp) :: a, b, c, d, e, z
+    hypGeo3F2_dddddd = hypGeo3F2Func(cmplx(a,0.d0,dp),cmplx(b,0.d0,dp),cmplx(c,0.d0,dp), &
+      cmplx(d,0.d0,dp),cmplx(e,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
 
 end module specialFunctions

@@ -530,6 +530,11 @@ program libraryTest
   print *, sfCmplxResult
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING HYPERGEOMETRIC FUNCTION 3F2'
+  sfCmplxResult = hypGeo3F2(1,3,2,2,2,1.5)
+  print *, sfCmplxResult
+  write(*,*)
+
 contains
 
   function odeFunction1(nF,nC,c,x,y)
