@@ -2363,13 +2363,13 @@ contains
     dz = c(2)-c(1)
     zs = c(1) + x*dz
     factfT = -c(3)*c(4)*c(5)
-    factfpT = c(4)*c(3)+c(5)*c(3)+c(3)+c(4)+c(4)*c(5)+c(5)+1
+    factfpT = c(4)*c(3)+c(5)*c(3)+c(3)+c(4)+c(4)*c(5)+c(5)+1.d0
     factfpT2 = c(6)*c(7) - factfpT*zs
     factfppT = (-(c(3)+c(4)+c(5)+3.d0)*zs+c(6)+c(7)+1.d0)*zs
     fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4)); fppT = cmplx(y(5),y(6))
     f = dz*fpT
     fp = dz*fppT
-    fpp = -(factfppT*fppT+factfpT2*fpT+factfT*fT)/(zs*zs*(1.d0-zs))
+    fpp = -dz*(factfppT*fppT+factfpT2*fpT+factfT*fT)/(zs*zs*(1.d0-zs))
     hypGeo3F2_odeFunc(1) = real(f); hypGeo3F2_odeFunc(2) = aimag(f)
     hypGeo3F2_odeFunc(3) = real(fp); hypGeo3F2_odeFunc(4) = aimag(fp)
     hypGeo3F2_odeFunc(5) = real(fpp); hypGeo3F2_odeFunc(6) = aimag(fpp)
@@ -2422,10 +2422,6 @@ contains
     series(2) = hypGeo3F2Deriv_series(a,b,c,d,e,z0)
     series(3) = (a*(a+1.d0)*b*(b+1.d0)*c*(c+1.d0))/(d*(d+1.d0)*e*(e+1.d0))*&
       hypGeo3F2_series(a+2.d0,b+2.d0,c+2.d0,d+2.d0,e+2.d0,z0)
-    print *, z0
-    print *, series(1)
-    print *, series(2)
-    print *, series(3)
     consts(1) = z0; consts(2) = z
     consts(3) = a; consts(4) = b; consts(5) = c; consts(6) = d; consts(7) = e
     y0(1) = real(series(1)); y0(2) = aimag(series(1))
