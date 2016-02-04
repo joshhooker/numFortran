@@ -18,7 +18,7 @@
 !  * Hyperbolic Sine Integrals
 !  * Cosine Integrals
 !  * Hyperbolic Cosine Integrals
-!  * Hypergeometric Series: 1F0, 1F1, 2F1, 3F2
+!  * Hypergeometric Series: 0F1, 1F0, 1F1, 2F1, 3F2
 !  * Add complex inputs to all functions that can have complex input
 !
 !
@@ -26,7 +26,6 @@
 !  * Gamma Function
 !
 ! Future:
-!  * Hypergeometric Series: 0F1
 !  * Dilogarithm (3F2)
 !  * Hahn polynomials (3F2)
 !  * Clausen Functions
@@ -69,6 +68,7 @@ module specialFunctions
   public :: hypGeo1F1, hypGeo1F1Deriv
   public :: hypGeo2F1, hypGeo2F1Deriv
   public :: hypGeo3F2, hypGeo3F2Deriv
+  public :: diLog
 
   interface pochhammerF
     module procedure pochhammerF_i, pochhammerF_r, pochhammerF_d
@@ -570,7 +570,7 @@ contains
 
   real(dp) function besselK_IntFunc(n,c,x)
     integer :: n
-    real(dp) :: c(n),x, func
+    real(dp) :: c(n),x
     besselK_IntFunc = (exp(-c(2)*cosh(-log(x)))*cosh(-c(1)*log(x)))/x
   end function besselK_IntFunc
 
@@ -3010,5 +3010,50 @@ contains
     complex(dp) :: a, b, c, d, e, z
     hypGeo3F2Deriv_CdCdCdCdCdCd = hypGeo3F2DerivFunc(a,b,c,d,e,z)
   end function
+
+  !*************!
+  ! Dilogarithm !
+  !*************!
+
+  real(dp) function diLog_IntFunc(n,c,x)
+    integer :: n
+    real(dp) :: c(n), x
+    diLog_IntFunc = -log(1-x)/x
+  end function
+
+  real(dp) function diLog_series(x)
+    integer :: i
+    real(dp) :: x, result, oldResult, indvResult
+    result = 0.d0
+    oldResult = result
+    do i=1, 1000000
+      indvResult = (x**i)/(i**2)
+      if (indvResult /= indvResult) exit
+      result = result + indvResult
+      if (abs(result-oldResult).le.1.d-16) exit
+      oldResult = result
+    end do
+    diLog_series = result
+  end function
+
+  real(dp) function diLogFunc(x)
+    real(dp) :: x, consts(0)
+    if(x.lt.1.d0) then
+      diLogFunc = diLog_series(x)
+      return
+    else
+      diLogFunc = gaussLegendre(diLog_IntFunc,0.d0,x,0,consts)
+    end if
+  end function
+
+  real(dp) function diLog(x)
+    real(dp) :: x
+    diLog = diLogFunc(x)
+  end function
+
+  real(dp) function diLogCmplx(x)
+    real(dp) :: x
+  end function
+
 
 end module specialFunctions

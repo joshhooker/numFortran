@@ -540,6 +540,12 @@ program libraryTest
   print *, sfCmplxResult
   write(*,*)
 
+  write(*,'(2x,a)') 'DILOGARITHM FUNCTION'
+  sfResult = diLog(.5d0)
+  print *, sfResult
+  write(*,*)
+
+
 contains
 
   function odeFunction1(nF,nC,c,x,y)
