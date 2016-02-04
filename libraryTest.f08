@@ -515,6 +515,11 @@ program libraryTest
   print *, hypCosi(1.1d0)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING HYPERGEOMETRIC FUNCTION 0F1'
+  sfCmplxResult = hypGeo0F1(8,6.55)
+  print *, sfCmplxResult
+  write(*,*)
+
   write(*,'(2x,a)') 'TESTING HYPERGEOMETRIC FUNCTION 1F0'
   sfCmplxResult = hypGeo1F0(1,0.5)
   print *, sfCmplxResult

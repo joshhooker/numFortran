@@ -64,6 +64,7 @@ module specialFunctions
   public :: chebyPolyT, chebyPolyU
   public :: sini, hypSini
   public :: cosi, hypCosi
+  public :: hypGeo0F1, hypGeo0F1Deriv
   public :: hypGeo1F0, hypGeo1F0Deriv
   public :: hypGeo1F1, hypGeo1F1Deriv
   public :: hypGeo2F1, hypGeo2F1Deriv
@@ -183,15 +184,30 @@ module specialFunctions
     module procedure hypCosi_i, hypCosi_r, hypCosi_d
   end interface
 
+  interface hypGeo0F1
+    module procedure hypGeo0F1_ii, hypGeo0F1_ir, hypGeo0F1_id, hypGeo0F1_ri, hypGeo0F1_rr, hypGeo0F1_rd, hypGeo0F1_di, &
+      hypGeo0F1_dr, hypGeo0F1_dd, hypGeo0F1_iCr, hypGeo0F1_rCr, hypGeo0F1_dCr, hypGeo0F1_iCd, hypGeo0F1_rCd, hypGeo0F1_dCd, &
+      hypGeo0F1_CrCr, hypGeo0F1_CrCd, hypGeo0F1_CdCd
+  end interface
+
+  interface hypGeo0F1Deriv
+    module procedure hypGeo0F1Deriv_ii, hypGeo0F1Deriv_ir, hypGeo0F1Deriv_id, hypGeo0F1Deriv_ri, hypGeo0F1Deriv_rr, &
+      hypGeo0F1Deriv_rd, hypGeo0F1Deriv_di, hypGeo0F1Deriv_dr, hypGeo0F1Deriv_dd, hypGeo0F1Deriv_iCr, hypGeo0F1Deriv_rCr, &
+      hypGeo0F1Deriv_dCr, hypGeo0F1Deriv_iCd, hypGeo0F1Deriv_rCd, hypGeo0F1Deriv_dCd, hypGeo0F1Deriv_CrCr, hypGeo0F1Deriv_CrCd, &
+      hypGeo0F1Deriv_CdCd
+  end interface
+
   interface hypGeo1F0
     module procedure hypGeo1F0_ii, hypGeo1F0_ir, hypGeo1F0_id, hypGeo1F0_ri, hypGeo1F0_rr, hypGeo1F0_rd, hypGeo1F0_di, &
-      hypGeo1F0_dr, hypGeo1F0_dd, hypGeo1F0_iCr, hypGeo1F0_rCr, hypGeo1F0_dCr, hypGeo1F0_iCd, hypGeo1F0_rCd, hypGeo1F0_dCd
+      hypGeo1F0_dr, hypGeo1F0_dd, hypGeo1F0_iCr, hypGeo1F0_rCr, hypGeo1F0_dCr, hypGeo1F0_iCd, hypGeo1F0_rCd, hypGeo1F0_dCd, &
+      hypGeo1F0_CrCr, hypGeo1F0_CrCd, hypGeo1F0_CdCd
   end interface
 
   interface hypGeo1F0Deriv
     module procedure hypGeo1F0Deriv_ii, hypGeo1F0Deriv_ir, hypGeo1F0Deriv_id, hypGeo1F0Deriv_ri, hypGeo1F0Deriv_rr, &
       hypGeo1F0Deriv_rd, hypGeo1F0Deriv_di, hypGeo1F0Deriv_dr, hypGeo1F0Deriv_dd, hypGeo1F0Deriv_iCr, hypGeo1F0Deriv_rCr, &
-      hypGeo1F0Deriv_dCr, hypGeo1F0Deriv_iCd, hypGeo1F0Deriv_rCd, hypGeo1F0Deriv_dCd
+      hypGeo1F0Deriv_dCr, hypGeo1F0Deriv_iCd, hypGeo1F0Deriv_rCd, hypGeo1F0Deriv_dCd, hypGeo1F0Deriv_CrCr, hypGeo1F0Deriv_CrCd, &
+      hypGeo1F0Deriv_CdCd
   end interface
 
   interface hypGeo1F1
@@ -1553,6 +1569,281 @@ contains
   ! Hypergeometric Function 0F1 !
   !*****************************!
 
+  function hypGeo0F1_odeFunc(nF,nC,c,x,y)
+    integer :: nF, nC
+    real(dp) :: hypGeo0F1_odeFunc(nF), x, y(nF)
+    complex(dp) :: c(nC), zs, fT, fpT, f, fp, dz
+    dz = c(2)-c(1)
+    zs = c(1) + x*dz
+    fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4))
+    f = dz*fpT
+    fp = (fT-c(3)*fpT)*(dz/zs)
+    hypGeo0F1_odeFunc(1) = real(f); hypGeo0F1_odeFunc(2) = aimag(f)
+    hypGeo0F1_odeFunc(3) = real(fp); hypGeo0F1_odeFunc(4) = aimag(fp)
+  end function
+
+  complex(dp) function hypGeo0F1_series(a,z)
+    !! Returns Hypergeometric Function 0F1
+    !! Should be only used for |z|<1.0
+    integer :: i
+    complex(dp) :: a, z, result, oldResult, indvResult, deriv
+    result = cmplx(0.d0,0.d0)
+    oldResult = result
+    do i=0, 100000
+      indvResult = (z**i)/(pochhammerR(a,i)*gamma(dble(i)+1.d0))
+      if (indvResult /= indvResult) exit
+      result = result + indvResult
+      if (abs(result-oldResult).le.1.d-16) exit
+      oldResult = result
+    end do
+  hypGeo0F1_series = result
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_series(a,z)
+    !! Returns Derivative of the Hypergeometric Function 0F1
+    !! Should be only used for |z|<1.0
+    complex(dp) :: a, z
+    hypGeo0F1Deriv_series = hypGeo1F0_series(a+1.d0,z)/a
+  end function
+
+  complex(dp) function hypGeo0F1Func(a,z)
+    integer :: i
+    complex(dp) :: a, z, result, indvResult, oldResult
+    real(dp) :: y0(4), odeResult(4)
+    complex(dp) :: z0, series(2), consts(3)
+    if(abs(z).lt.1.d0) then
+      hypGeo0F1Func = hypGeo0F1_series(a,z)
+      return
+    else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
+      z0 = cmplx(0.5d0,0.d0)
+    else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
+      z0 = cmplx(-0.5d0,0.d0)
+    else if(real(z).gt.1.d0) then
+      z0 = cmplx(0.d0,0.5d0)
+    else if(real(z).lt.-1.d0) then
+      z0 = cmplx(0.d0,-0.5d0)
+    end if
+    series(1) = hypGeo0F1_series(a,z0)
+    series(2) = hypGeo0F1Deriv_series(a,z0)
+    consts(1) = z0; consts(2) = z; consts(3) = a;
+    y0(1) = real(series(1)); y0(2) = aimag(series(1))
+    y0(3) = real(series(2)); y0(4) = aimag(series(2))
+    odeResult = rk1AdaptStepCmplxC(hypGeo0F1_odeFunc,4,0.d0,1.d0,y0,3,consts)
+    hypGeo0F1Func = cmplx(odeResult(1),odeResult(2))
+  end function
+
+  complex(dp) function hypGeo0F1DerivFunc(a,z)
+    integer :: i
+    complex(dp) :: a, z
+    hypGeo0F1DerivFunc = hypGeo0F1Func(a+1.d0,z)/a
+  end function
+
+  complex(dp) function hypGeo0F1_ii(a,z)
+    integer :: a, z
+    hypGeo0F1_ii = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_ri(a,z)
+    integer :: z
+    real :: a
+    hypGeo0F1_ri = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_di(a,z)
+    integer :: z
+    real(dp) :: a
+    hypGeo0F1_di = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_ir(a,z)
+    integer :: a
+    real :: z
+    hypGeo0F1_ir = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_rr(a,z)
+    real :: a, z
+    hypGeo0F1_rr = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_dr(a,z)
+    real :: z
+    real(dp) :: a
+    hypGeo0F1_dr = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_id(a,z)
+    integer :: a
+    real(dp) :: z
+    hypGeo0F1_id = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_rd(a,z)
+    real :: a
+    real(dp) :: z
+    hypGeo0F1_rd = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_dd(a,z)
+    real(dp) :: a, z
+    hypGeo0F1_dd = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1_iCr(a,z)
+    integer :: a
+    complex :: z
+    hypGeo0F1_iCr = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo0F1_rCr(a,z)
+    real :: a
+    complex :: z
+    hypGeo0F1_rCr = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo0F1_dCr(a,z)
+    real(dp) :: a
+    complex :: z
+    hypGeo0F1_dCr = hypGeo0F1Func(cmplx(a,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo0F1_iCd(a,z)
+    integer :: a
+    complex(dp) :: z
+    hypGeo0F1_iCd = hypGeo0F1Func(cmplx(a,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo0F1_rCd(a,z)
+    real :: a
+    complex(dp) :: z
+    hypGeo0F1_rCd = hypGeo0F1Func(cmplx(a,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo0F1_dCd(a,z)
+    real(dp) :: a
+    complex(dp) :: z
+    hypGeo0F1_dCd = hypGeo0F1Func(cmplx(a,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo0F1_CrCr(a,z)
+    complex :: a, z
+    hypGeo0F1_CrCr = hypGeo0F1Func(cmplx(real(a),aimag(a),dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo0F1_CrCd(a,z)
+    complex :: a
+    complex(dp) :: z
+    hypGeo0F1_CrCd = hypGeo0F1Func(cmplx(real(a),aimag(a),dp),z)
+  end function
+
+  complex(dp) function hypGeo0F1_CdCd(a,z)
+    complex(dp) :: a, z
+    hypGeo0F1_CdCd = hypGeo0F1Func(a,z)
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_ii(a,z)
+    integer :: a, z
+    hypGeo0F1Deriv_ii = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_ri(a,z)
+    integer :: z
+    real :: a
+    hypGeo0F1Deriv_ri = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_di(a,z)
+    integer :: z
+    real(dp) :: a
+    hypGeo0F1Deriv_di = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_ir(a,z)
+    integer :: a
+    real :: z
+    hypGeo0F1Deriv_ir = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_rr(a,z)
+    real :: a, z
+    hypGeo0F1Deriv_rr = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_dr(a,z)
+    real :: z
+    real(dp) :: a
+    hypGeo0F1Deriv_dr = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_id(a,z)
+    integer :: a
+    real(dp) :: z
+    hypGeo0F1Deriv_id = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_rd(a,z)
+    real :: a
+    real(dp) :: z
+    hypGeo0F1Deriv_rd = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_dd(a,z)
+    real(dp) :: a, z
+    hypGeo0F1Deriv_dd = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_iCr(a,z)
+    integer :: a
+    complex :: z
+    hypGeo0F1Deriv_iCr = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_rCr(a,z)
+    real :: a
+    complex :: z
+    hypGeo0F1Deriv_rCr = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_dCr(a,z)
+    real(dp) :: a
+    complex :: z
+    hypGeo0F1Deriv_dCr = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_iCd(a,z)
+    integer :: a
+    complex(dp) :: z
+    hypGeo0F1Deriv_iCd = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_rCd(a,z)
+    real :: a
+    complex(dp) :: z
+    hypGeo0F1Deriv_rCd = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_dCd(a,z)
+    real(dp) :: a
+    complex(dp) :: z
+    hypGeo0F1Deriv_dCd = hypGeo0F1DerivFunc(cmplx(a,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_CrCr(a,z)
+    complex :: a, z
+    hypGeo0F1Deriv_CrCr = hypGeo0F1DerivFunc(cmplx(real(a),aimag(a),dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_CrCd(a,z)
+    complex :: a
+    complex(dp) :: z
+    hypGeo0F1Deriv_CrCd = hypGeo0F1DerivFunc(cmplx(real(a),aimag(a),dp),z)
+  end function
+
+  complex(dp) function hypGeo0F1Deriv_CdCd(a,z)
+    complex(dp) :: a, z
+    hypGeo0F1Deriv_CdCd = hypGeo0F1DerivFunc(a,z)
+  end function
+
   !*****************************!
   ! Hypergeometric Function 1F0 !
   !*****************************!
@@ -1560,7 +1851,7 @@ contains
   function hypGeo1F0_odeFunc(nF,nC,c,x,y)
     integer :: nF, nC
     real(dp) :: hypGeo1F0_odeFunc(nF), x, y(nF)
-    complex(dp) :: c(nC), zs, fT, fpT, f, fp, dz
+    complex(dp) :: c(nC), zs, fT, f, dz
     dz = c(2)-c(1)
     zs = c(1) + x*dz
     fT = cmplx(y(1),y(2))
@@ -1620,7 +1911,7 @@ contains
   complex(dp) function hypGeo1F0DerivFunc(a,z)
     integer :: i
     complex(dp) :: a, z
-    hypGeo1F0DerivFunc = a*hypGeo1F0Func(a,z)
+    hypGeo1F0DerivFunc = a*hypGeo1F0Func(a+1.d0,z)
   end function
 
   complex(dp) function hypGeo1F0_ii(a,z)
@@ -1710,6 +2001,22 @@ contains
     hypGeo1F0_dCd = hypGeo1F0Func(cmplx(a,0.d0,dp),z)
   end function
 
+  complex(dp) function hypGeo1F0_CrCr(a,z)
+    complex :: a, z
+    hypGeo1F0_CrCr = hypGeo1F0Func(cmplx(real(a),aimag(a),dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo1F0_CrCd(a,z)
+    complex :: a
+    complex(dp) :: z
+    hypGeo1F0_CrCd = hypGeo1F0Func(cmplx(real(a),aimag(a),dp),z)
+  end function
+
+  complex(dp) function hypGeo1F0_CdCd(a,z)
+    complex(dp) :: a, z
+    hypGeo1F0_CdCd = hypGeo1F0Func(a,z)
+  end function
+
   complex(dp) function hypGeo1F0Deriv_ii(a,z)
     integer :: a, z
     hypGeo1F0Deriv_ii = hypGeo1F0DerivFunc(cmplx(a,0.d0,dp),cmplx(z,0.d0,dp))
@@ -1795,6 +2102,22 @@ contains
     real(dp) :: a
     complex(dp) :: z
     hypGeo1F0Deriv_dCd = hypGeo1F0DerivFunc(cmplx(a,0.d0,dp),z)
+  end function
+
+  complex(dp) function hypGeo1F0Deriv_CrCr(a,z)
+    complex :: a, z
+    hypGeo1F0Deriv_CrCr = hypGeo1F0DerivFunc(cmplx(real(a),aimag(a),dp),cmplx(real(z),aimag(z),dp))
+  end function
+
+  complex(dp) function hypGeo1F0Deriv_CrCd(a,z)
+    complex :: a
+    complex(dp) :: z
+    hypGeo1F0Deriv_CrCd = hypGeo1F0DerivFunc(cmplx(real(a),aimag(a),dp),z)
+  end function
+
+  complex(dp) function hypGeo1F0Deriv_CdCd(a,z)
+    complex(dp) :: a, z
+    hypGeo1F0Deriv_CdCd = hypGeo1F0DerivFunc(a,z)
   end function
 
   !*****************************!
