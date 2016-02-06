@@ -71,12 +71,11 @@ module specialFunctions
   public :: diLog
 
   interface pochhammerF
-    module procedure pochhammerF_i, pochhammerF_r, pochhammerF_d
+    module procedure pochhammerF_i, pochhammerF_r, pochhammerF_d, pochhammerF_Cr, pochhammerF_Cd
   end interface
 
   interface pochhammerR
-    module procedure pochhammerR_i, pochhammerR_r, pochhammerR_d, &
-      pochhammerR_cd
+    module procedure pochhammerR_i, pochhammerR_r, pochhammerR_d, pochhammerR_Cr, pochhammerR_Cd
   end interface
 
   interface besselJ
@@ -261,9 +260,9 @@ contains
   ! Pochhammer Falling !
   !********************!
 
-  real(dp) function pochhammerFFunc(x,n)
+  complex(dp) function pochhammerFFunc(x,n)
     integer :: i, n
-    real(dp) :: x, result
+    complex(dp) :: x, result
     if(n.eq.0) then
       pochhammerFFunc = 1.d0
     else
@@ -277,19 +276,31 @@ contains
 
   real(dp) function pochhammerF_i(x,n)
     integer :: x, n
-    pochhammerF_i = pochhammerFFunc(dble(x),n)
+    pochhammerF_i = real(pochhammerFFunc(cmplx(real(x),0.d0,dp),n))
   end function
 
   real(dp) function pochhammerF_r(x,n)
     integer :: n
     real :: x
-    pochhammerF_r = pochhammerFFunc(dble(x),n)
+    pochhammerF_r = real(pochhammerFFunc(cmplx(real(x),0.d0,dp),n))
   end function
 
   real(dp) function pochhammerF_d(x,n)
     integer :: n
     real(dp) :: x
-    pochhammerF_d = pochhammerFFunc(dble(x),n)
+    pochhammerF_d = real(pochhammerFFunc(cmplx(real(x),0.d0,dp),n))
+  end function
+
+  complex(dp) function pochhammerF_Cr(x,n)
+    integer :: n
+    complex :: x
+    pochhammerF_Cr = real(pochhammerFFunc(cmplx(real(x),aimag(x),dp),n))
+  end function
+
+  complex(dp) function pochhammerF_Cd(x,n)
+    integer :: n
+    complex(dp) :: x
+    pochhammerF_Cd = real(pochhammerFFunc(x,n))
   end function
 
   !*******************!
@@ -310,27 +321,33 @@ contains
     end if
   end function
 
-  complex(dp) function pochhammerR_i(x,n)
+  real(dp) function pochhammerR_i(x,n)
     integer :: x, n
-    pochhammerR_i = pochhammerRFunc(cmplx(x,0.d0,dp),n)
+    pochhammerR_i = real(pochhammerRFunc(cmplx(x,0.d0,dp),n))
   end function
 
-  complex(dp) function pochhammerR_r(x,n)
+  real(dp) function pochhammerR_r(x,n)
     integer :: n
     real :: x
-    pochhammerR_r = pochhammerRFunc(cmplx(x,0.d0,dp),n)
+    pochhammerR_r = real(pochhammerRFunc(cmplx(x,0.d0,dp),n))
   end function
 
-  complex(dp) function pochhammerR_d(x,n)
+  real(dp) function pochhammerR_d(x,n)
     integer :: n
     real(dp) :: x
-    pochhammerR_d = pochhammerRFunc(cmplx(x,0.d0,dp),n)
+    pochhammerR_d = real(pochhammerRFunc(cmplx(x,0.d0,dp),n))
   end function
 
-  complex(dp) function pochhammerR_cd(x,n)
+  complex(dp) function pochhammerR_Cr(x,n)
+    integer :: n
+    complex :: x
+    pochhammerR_Cr = pochhammerRFunc(cmplx(real(x),aimag(x),dp),n)
+  end function
+
+  complex(dp) function pochhammerR_Cd(x,n)
     integer :: n
     complex(dp) :: x
-    pochhammerR_cd = pochhammerRFunc(x,n)
+    pochhammerR_Cd = pochhammerRFunc(x,n)
   end function
 
   !***********************************!
