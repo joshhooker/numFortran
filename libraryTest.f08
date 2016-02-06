@@ -541,8 +541,8 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'DILOGARITHM FUNCTION'
-  sfResult = diLog(.5d0)
-  print *, sfResult
+  sfCmplxResult = diLog(1.5d0)
+  print *, sfCmplxResult
   write(*,*)
 
 

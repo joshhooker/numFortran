@@ -251,6 +251,10 @@ module specialFunctions
       hypGeo3F2Deriv_dddddCd, hypGeo3F2Deriv_CrCrCrCrCrCr, hypGeo3F2Deriv_CrCrCrCrCrCd, hypGeo3F2Deriv_CdCdCdCdCdCd
   end interface
 
+  interface diLog
+    module procedure diLog_i, diLog_r, diLog_d, diLog_Cr, diLog_Cd
+  end interface
+
 contains
 
   !********************!
@@ -3015,15 +3019,9 @@ contains
   ! Dilogarithm !
   !*************!
 
-  real(dp) function diLog_IntFunc(n,c,x)
-    integer :: n
-    real(dp) :: c(n), x
-    diLog_IntFunc = -log(1-x)/x
-  end function
-
-  real(dp) function diLog_series(x)
+  complex(dp) function diLog_series(x)
     integer :: i
-    real(dp) :: x, result, oldResult, indvResult
+    complex(dp) :: x, result, oldResult, indvResult
     result = 0.d0
     oldResult = result
     do i=1, 1000000
@@ -3036,23 +3034,40 @@ contains
     diLog_series = result
   end function
 
-  real(dp) function diLogFunc(x)
-    real(dp) :: x, consts(0)
-    if(x.lt.1.d0) then
+  complex(dp) function diLogFunc(x)
+    complex(dp) :: x
+    if(abs(x).lt.1.d0) then
       diLogFunc = diLog_series(x)
       return
     else
-      diLogFunc = gaussLegendre(diLog_IntFunc,0.d0,x,0,consts)
+      diLogFunc = x*hypGeo3F2(1.d0,1.d0,1.d0,2.d0,2.d0,x)
+      return
     end if
   end function
 
-  real(dp) function diLog(x)
-    real(dp) :: x
-    diLog = diLogFunc(x)
+  complex(dp) function diLog_i(x)
+    integer :: x
+    diLog_i = diLogFunc(cmplx(x,0.d0,dp))
   end function
 
-  real(dp) function diLogCmplx(x)
+  complex(dp) function diLog_r(x)
+    real :: x
+    diLog_r = diLogFunc(cmplx(x,0.d0,dp))
+  end function
+
+  complex(dp) function diLog_d(x)
     real(dp) :: x
+    diLog_d = diLogFunc(cmplx(x,0.d0,dp))
+  end function
+
+  complex(dp) function diLog_Cr(x)
+    complex :: x
+    diLog_Cr = diLogFunc(cmplx(real(x),aimag(x),dp))
+  end function
+
+  complex(dp) function diLog_Cd(x)
+    complex(dp) :: x
+    diLog_Cd = diLogFunc(x)
   end function
 
 
