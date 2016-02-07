@@ -95,4 +95,11 @@ module constants
   ! magnetic constant (vacuum permeability) in N A^-2
   real(dp), parameter :: mu0_ = 1.2566370614d-6
 
+  ! solar mass in g
+  real(dp), parameter :: msolar_ = 1.988435d33
+  ! solar radius in cm
+  real(dp), parameter :: rsolar_ = 6.955d10
+  ! solar luminosity in erg s^-1
+  real(dp), parameter :: lumsolar_ = 3.839d33
+
 end module constants

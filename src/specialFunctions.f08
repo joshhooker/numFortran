@@ -19,14 +19,13 @@
 !  * Cosine Integrals
 !  * Hyperbolic Cosine Integrals
 !  * Hypergeometric Series: 0F1, 1F0, 1F1, 2F1, 3F2
+!  * Dilogarithm (3F2)
 !  * Add complex inputs to all functions that can have complex input
-!
 !
 ! Not 100% Right:
 !  * Gamma Function
 !
 ! Future:
-!  * Dilogarithm (3F2)
 !  * Hahn polynomials (3F2)
 !  * Clausen Functions
 !  * Coulomb Wave Functions (1F1)
