@@ -17,9 +17,9 @@ module odeSolver
   public :: rk1AdaptStepCmplxC
 contains
 
-  function rk1FixedDriver(f,nF,x,y,h,nC,consts)
-    integer :: i, nF, nC
-    real(dp) :: x, y(nF), k1(nF), k2(nF), k3(nF), k4(nF), h, consts(nC), rk1FixedDriver(nF)
+  subroutine rk1FixedDriver(f,nF,x,y,h,nC,consts)
+    integer :: nF, nC
+    real(dp) :: x, y(nF), k1(nF), k2(nF), k3(nF), k4(nF), h, consts(nC)
     interface
       function f(nF,nC,c,x,y)
         integer, parameter :: dp = kind(0.d0)
@@ -31,8 +31,8 @@ contains
     k2 = h*f(nF,nC,consts,x+h/2.d0,y+k1/2.d0)
     k3 = h*f(nF,nC,consts,x+h/2.d0,y+k2/2.d0)
     k4 = h*f(nF,nC,consts,x+h,y+k3)
-    rk1FixedDriver = y+(1.d0/6.d0)*(k1+2.d0*k2+2.d0*k3+k4)
-  end function
+    y = y+(1.d0/6.d0)*(k1+2.d0*k2+2.d0*k3+k4)
+  end subroutine
 
   function rk1FixedStep(f,nF,a,b,h,y0,nC,consts)
     !! 4th order Runga Kutta ODE Solver with fixed step h
@@ -52,18 +52,33 @@ contains
       if(xn+h.gt.b) then
         h = b-xn
       end if
-      yn = rk1FixedDriver(f,nF,xn,yn,h,nC,consts)
+      call rk1FixedDriver(f,nF,xn,yn,h,nC,consts)
       xn = xn+h
     end do
     rk1FixedStep = yn
   end function
+
+  ! function rk1AdaptDriver(f,nF,x,y,h,nC,consts,err)
+  !   integer nF, nC
+  !   real(dp) :: x, y(nF), ynT(nF), ynsT(nF), dyn, consts(nC), err
+  !   real(dp) :: k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF), kci(nF), kcip(nF)
+  !   real(dp) :: ai(6), bi(6,6), ci(6), cip(6), rk1AdaptDriver(nF)
+  !   logical :: goodStep
+  !   interface
+  !     function f(nF,nC,c,x,y)
+  !       integer, parameter :: dp = kind(0.d0)
+  !       integer :: nF, nC
+  !       real(dp) :: c(nC), x, y(nF), f(nF)
+  !     end function f
+  !   end interface
+  ! end function
 
   function rk1AdaptStep(f,nF,a,b,y0,nC,consts)
     !! Runga Kutta ODE Solver with adaptive h size
     integer :: i, j, nF, nC
     real(dp) :: xn, k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF)
     real(dp) :: a, b, h, y0(nF), yi(nF), yn(nF), yns(nF), yni(nF), ynT(nF), ynsT(nF), dyn
-    real(dp) :: xni,  kci(nF), kcip(nF), consts(nC), ai(6),bi(6,6),ci(6),cip(6), rk1AdaptStep(nF)
+    real(dp) :: xni,  kci(nF), kcip(nF), consts(nC), ai(6), bi(6,6), ci(6), cip(6), rk1AdaptStep(nF)
     logical :: goodStep
     interface
       function f(nF,nC,c,x,y)
