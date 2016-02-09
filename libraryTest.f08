@@ -114,7 +114,6 @@ program libraryTest
   y0(1) = 0.d0
   call system_clock(t1, clock_rate, clock_max)
   odeResult = rk1AdaptStep(odeFunction1,1,0.d0,1.5d0,y0,0,odeConsts)
-  !odeResult = rk1AdaptStep2(odeFunction1,1,0.d0,1.5d0,y0,0,odeConsts)
   call system_clock(t2, clock_rate, clock_max)
   write(*,'(5x,3(1x,a,1x,es12.5),1x,a)') 'result =', odeResult(1), &
       'diff =', abs(odeResult(1)-tan(1.5d0)), ' time =', dble(t2-t1)/dble(clock_rate), 'sec'

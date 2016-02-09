@@ -22,7 +22,7 @@ module odeSolver
       277.d0/14336.d0, 1.d0/4.d0]
 
   public :: rk1FixedDriver, rk1FixedStep
-  public :: rk1AdaptDriver, rk1AdaptStep, rk1AdaptStep2
+  public :: rk1AdaptDriver, rk1AdaptStep
   public :: rk1AdaptStepCmplxC
 
 contains
@@ -70,7 +70,7 @@ contains
 
   subroutine rk1AdaptDriver(f,nF,x,y,h,nC,consts,err)
     integer nF, nC
-    real(dp) :: x, y(nF), ynT(nF), ynsT(nF), dyn, consts(nC), h, err
+    real(dp) :: x, y(nF), ys(nF), ynT(nF), ynsT(nF), dyn, consts(nC), h, err
     real(dp) :: k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF), kci(nF), kcip(nF)
     logical :: goodStep
     interface
@@ -93,20 +93,21 @@ contains
       ynT = y+kci
       ynsT = y+kcip
       dyn = abs(ynT(1)-ynsT(1))
-      if(dyn .gt. err) then
+      if(dyn .gt. 1.d-8) then
         h = h*((err/dyn)**(0.2d0))
       else
+        x = x+h
+        y = ynT
         h = h*((err/dyn)**(0.2d0))
         goodStep = .true.
       end if
     end do
-    y = y+kci
   end subroutine
 
-  function rk1AdaptStep2(f,nF,a,b,y0,nC,consts)
+  function rk1AdaptStep(f,nF,a,b,y0,nC,consts)
     !! Runga Kutta ODE Solver with adaptive h size
     integer :: i, j, nF, nC
-    real(dp) :: xn, a, b, h, yn(nF), y0(nF), consts(nC), rk1AdaptStep2(nF)
+    real(dp) :: xn, a, b, h, yn(nF), y0(nF), consts(nC), rk1AdaptStep(nF)
     interface
       function f(nF,nC,c,x,y)
         integer, parameter :: dp = kind(0.d0)
@@ -122,59 +123,7 @@ contains
       if(xn+h>b) then
         h = b-xn
       end if
-      xn = xn+h
       call rk1AdaptDriver(f,nF,xn,yn,h,nC,consts,1.d-12)
-      print *, xn, yn
-    end do
-    rk1AdaptStep2 = yn
-  end function
-
-  function rk1AdaptStep(f,nF,a,b,y0,nC,consts)
-    !! Runga Kutta ODE Solver with adaptive h size
-    integer :: i, j, nF, nC
-    real(dp) :: xn, k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF)
-    real(dp) :: a, b, h, y0(nF), yi(nF), yn(nF), yns(nF), yni(nF), ynT(nF), ynsT(nF), dyn
-    real(dp) :: xni,  kci(nF), kcip(nF), consts(nC), rk1AdaptStep(nF)
-    logical :: goodStep
-    interface
-      function f(nF,nC,c,x,y)
-        integer, parameter :: dp = kind(0.d0)
-        integer :: nF, nC
-        real(dp) :: c(nC), x, y(nF), f(nF)
-      end function f
-    end interface
-    xn = a
-    yn = y0
-    h = 0.001d0
-    do while(xn<b)
-      goodStep = .false.
-      if(xn+h>b) then
-        h = b-xn
-      end if
-      do while(goodStep .eqv. .false.)
-        k1 = h*f(nF,nC,consts,xn,yn)
-        k2 = h*f(nF,nC,consts,xn+rk1ai(2)*h,yn+rk1bi(2,1)*k1)
-        k3 = h*f(nF,nC,consts,xn+rk1ai(3)*h,yn+rk1bi(3,1)*k1+rk1bi(3,2)*k2)
-        k4 = h*f(nF,nC,consts,xn+rk1ai(4)*h,yn+rk1bi(4,1)*k1+rk1bi(4,2)*k2+rk1bi(4,3)*k3)
-        k5 = h*f(nF,nC,consts,xn+rk1ai(5)*h,yn+rk1bi(5,1)*k1+rk1bi(5,2)*k2+rk1bi(5,3)*k3+rk1bi(5,4)*k4)
-        k6 = h*f(nF,nC,consts,xn+rk1ai(6)*h,yn+rk1bi(6,1)*k1+rk1bi(6,2)*k2+rk1bi(6,3)*k3+rk1bi(6,4)*k4+rk1bi(6,5)*k5)
-        kci = k1*rk1ci(1)+k2*rk1ci(2)+k3*rk1ci(3)+k4*rk1ci(4)+k5*rk1ci(5)+k6*rk1ci(6)
-        kcip = k1*rk1cip(1)+k2*rk1cip(2)+k3*rk1cip(3)+k4*rk1cip(4)+k5*rk1cip(5)+k6*rk1cip(6)
-        ynT = yn+kci
-        ynsT = yn+kcip
-        dyn = abs(ynT(1)-ynsT(1))
-        if(dyn .gt. 1.d-10) then
-          h = h*((1.d-12/dyn)**(0.2d0))
-        else
-          goodStep = .true.
-        end if
-      end do
-      xn = xn+h
-      yns = yn+kcip
-      yn = yn+kci
-      print *, xn, kci
-      dyn = abs(yn(1)-yns(1))
-      h = h*((1.d-12/dyn)**(0.2d0))
     end do
     rk1AdaptStep = yn
   end function
