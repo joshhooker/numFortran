@@ -12,15 +12,32 @@ module odeSolver
   private
   integer, parameter :: dp = kind(0.d0)
 
-  public :: rk1FixedStep
+  public :: rk1FixedDriver, rk1FixedStep
   public :: rk1AdaptStep
   public :: rk1AdaptStepCmplxC
 contains
 
+  function rk1FixedDriver(f,nF,x,y,h,nC,consts)
+    integer :: i, nF, nC
+    real(dp) :: x, y(nF), k1(nF), k2(nF), k3(nF), k4(nF), h, consts(nC), rk1FixedDriver(nF)
+    interface
+      function f(nF,nC,c,x,y)
+        integer, parameter :: dp = kind(0.d0)
+        integer :: nF, nC
+        real(dp) :: c(nC), x, y(nF), f(nF)
+      end function f
+    end interface
+    k1 = h*f(nF,nC,consts,x,y)
+    k2 = h*f(nF,nC,consts,x+h/2.d0,y+k1/2.d0)
+    k3 = h*f(nF,nC,consts,x+h/2.d0,y+k2/2.d0)
+    k4 = h*f(nF,nC,consts,x+h,y+k3)
+    rk1FixedDriver = y+(1.d0/6.d0)*(k1+2.d0*k2+2.d0*k3+k4)
+  end function
+
   function rk1FixedStep(f,nF,a,b,h,y0,nC,consts)
     !! 4th order Runga Kutta ODE Solver with fixed step h
     integer :: i, nF, nC
-    real(dp) :: xn, k1(nF), k2(nF), k3(nF), k4(nF), a, b, h
+    real(dp) :: xn, a, b, h
     real(dp) :: y0(nF), yi(nF), yn(nF), consts(nC), rk1FixedStep(nF)
     interface
       function f(nF,nC,c,x,y)
@@ -35,12 +52,8 @@ contains
       if(xn+h.gt.b) then
         h = b-xn
       end if
-      k1 = h*f(nF,nC,consts,xn,yn)
-      k2 = h*f(nF,nC,consts,xn+h/2.d0,yn+k1/2.d0)
-      k3 = h*f(nF,nC,consts,xn+h/2.d0,yn+k2/2.d0)
-      k4 = h*f(nF,nC,consts,xn+h,yn+k3)
+      yn = rk1FixedDriver(f,nF,xn,yn,h,nC,consts)
       xn = xn+h
-      yn = yn+(1.d0/6.d0)*(k1+2.d0*k2+2.d0*k3+k4)
     end do
     rk1FixedStep = yn
   end function

@@ -15,9 +15,6 @@ module cubicSpline
   contains
 
   subroutine tridiagonalSolver(a,b,c,f,u)
-    !! date: January 8, 2016
-    !! version: v0.1
-    !!
     !! Tridiagonal matrix solver that solves
     !! a tridiagonal system for n unknowns may be written as
     !! \[a_i u_{i-1} + b_i u_i + c_i u_{i+1} = f_i\]
