@@ -16,6 +16,7 @@ VPATH = $(SRCDIR):$(OBJDIR)
 # add any extra objects here
 OBJFILES = libraryTest.o constants.o cubicSpline.o odeSolver.o \
            randomNumbers.o statTests.o integration.o specialFunctions.o \
+           sorting.o
 
 FULLTARGET = $(TARGET)
 
@@ -49,4 +50,4 @@ tidy:
 
 # Add Dependencies here
 libraryTest.o : constants.o cubicSpline.o odeSolver.o randomNumbers.o \
-								statTests.o integration.o specialFunctions.o
+								statTests.o integration.o specialFunctions.o sorting.o

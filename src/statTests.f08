@@ -27,6 +27,7 @@ module statTests
 contains
 
   real(dp) function mean_i(array)
+    implicit none
     integer :: i, n, array(:)
     real(dp) :: arraySum
     n = size(array,1)
@@ -38,6 +39,7 @@ contains
   end function
 
   real(dp) function mean_r(array)
+    implicit none
     integer :: i, n
     real :: array(:)
     real(dp) :: arraySum
@@ -50,6 +52,7 @@ contains
   end function
 
   real(dp) function mean_d(array)
+    implicit none
     integer :: i, n
     real(dp) :: array(:), arraySum
     n = size(array,1)
@@ -61,6 +64,7 @@ contains
   end function
 
   subroutine stdDev_i(array, mean, sigma)
+    implicit none
     integer :: i, n, array(:)
     real(dp) :: arrayStdDev, mean, sigma
     n = size(array,1)
@@ -75,6 +79,7 @@ contains
   end subroutine
 
   subroutine stdDev_r(array, mean, sigma)
+    implicit none
     integer :: i, n
     real :: array(:)
     real(dp) :: arrayStdDev, mean, sigma
@@ -90,6 +95,7 @@ contains
   end subroutine
 
   subroutine stdDev_d(array, mean, sigma)
+    implicit none
     integer :: i, n
     real(dp) :: array(:), arrayStdDev, mean, sigma
     n = size(array,1)
@@ -105,4 +111,4 @@ contains
 
 
 
-end module statTests
+end module

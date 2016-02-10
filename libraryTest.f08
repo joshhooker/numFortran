@@ -4,6 +4,7 @@ program libraryTest
   use integration
   use odeSolver
   use randomNumbers
+  use sorting
   use specialFunctions
   use statTests
 
@@ -46,6 +47,11 @@ program libraryTest
   real(dp), allocatable :: testBesselN(:), testBesselX(:), testBessel(:)
   real(dp), allocatable :: testAiryX(:), testAiry(:)
   complex(dp) :: sfCmplxResult
+
+  ! Variables to test sorting functions
+  integer, allocatable :: sortArrI(:)
+  real, allocatable :: sortArrR(:)
+  real(dp), allocatable :: sortArrD(:)
 
   !*******************************
   ! CONSTANT TESTING
@@ -280,6 +286,7 @@ program libraryTest
   intCmplxResult = gaussLegendreCmplx(integralFunction3,0.d0,1.8d0,1,intCmplxConsts)
   write (*, '(3x,es12.5," + ",es12.5,"*i")') intCmplxResult
   deallocate(intCmplxConsts)
+  write(*,*)
   write(*,*)
 
   !*******************************
@@ -543,6 +550,28 @@ program libraryTest
   write(*,'(2x,a)') 'DILOGARITHM FUNCTION'
   sfCmplxResult = diLog(1.5d0)
   print *, sfCmplxResult
+  write(*,*)
+
+  write(*,*)
+
+  !*******************************
+  ! SORTING TESTING
+  !*******************************
+  write(*,'(a)') '*************************************'
+  write(*,'(a)') 'TESTING SORTING FUNCTIONS:'
+
+  allocate(sortArrI(16))
+  do i=1,16
+    sortArrI(i) = xorshiftInt(101)
+    print *, sortArrI(i)
+  end do
+  call sort(sortArrI)
+  do i=1,16
+    print *, sortArrI(i)
+  end do
+  deallocate(sortArrI)
+
+  write(*,*)
   write(*,*)
 
 

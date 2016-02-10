@@ -129,4 +129,4 @@ contains
     gaussLegendreCmplx = cmplx(sumReal*dt, sumCmplx*dt)
   end function
 
-end module integration
+end module

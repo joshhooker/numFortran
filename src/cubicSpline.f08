@@ -153,4 +153,4 @@ module cubicSpline
     computeNaturalCubicSpline = output
   end function computeNaturalCubicSpline
 
-end module cubicSpline
+end module

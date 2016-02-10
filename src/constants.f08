@@ -102,4 +102,4 @@ module constants
   ! solar luminosity in erg s^-1
   real(dp), parameter :: lumsolar_ = 3.839d33
 
-end module constants
+end module
