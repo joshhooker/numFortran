@@ -12,7 +12,7 @@ module sorting
   public :: qsort
 
   interface swap
-    module procedure swap_i, swap_r, swap_d
+    module procedure swap_i, swap_r, swap_d, swap_Cr, swap_Cd
   end interface
 
   interface qsort
@@ -56,6 +56,38 @@ contains
   subroutine swap_d(a,b,condition)
     implicit none
     real(dp) :: a, b, aDum, bDum
+    logical :: ifSwap
+    logical, optional :: condition
+    if(present(condition)) then
+      ifSwap = condition
+    else
+      ifSwap = .true.
+    end if
+    if(ifSwap) then
+      aDum = a; bDum = b
+      a = bDum; b = aDum
+    end if
+  end subroutine
+
+  subroutine swap_Cr(a,b,condition)
+    implicit none
+    complex :: a, b, aDum, bDum
+    logical :: ifSwap
+    logical, optional :: condition
+    if(present(condition)) then
+      ifSwap = condition
+    else
+      ifSwap = .true.
+    end if
+    if(ifSwap) then
+      aDum = a; bDum = b
+      a = bDum; b = aDum
+    end if
+  end subroutine
+
+  subroutine swap_Cd(a,b,condition)
+    implicit none
+    complex(dp) :: a, b, aDum, bDum
     logical :: ifSwap
     logical, optional :: condition
     if(present(condition)) then
