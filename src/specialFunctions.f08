@@ -310,7 +310,7 @@ contains
     integer :: i, n
     complex(dp) :: x, result
     if(n.eq.0) then
-      pochhammerRFunc = cmplx(1.d0,0.d0)
+      pochhammerRFunc = cmplx(1.d0,0.d0,dp)
     else
       result = x
       do i=1,n-1
@@ -1155,7 +1155,7 @@ contains
 
   real(dp) function gammaFunction(n,c,x)
     integer :: n
-    real(dp) :: c(n), x, func
+    real(dp) :: c(n), x
     gammaFunction = (-log(x))**(c(1)-1.d0)
   end function
 
@@ -1595,7 +1595,7 @@ contains
     complex(dp) :: c(nC), zs, fT, fpT, f, fp, dz
     dz = c(2)-c(1)
     zs = c(1) + x*dz
-    fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4))
+    fT = cmplx(y(1),y(2),dp); fpT = cmplx(y(3),y(4),dp)
     f = dz*fpT
     fp = (fT-c(3)*fpT)*(dz/zs)
     hypGeo0F1_odeFunc(1) = real(f); hypGeo0F1_odeFunc(2) = aimag(f)
@@ -1606,8 +1606,8 @@ contains
     !! Returns Hypergeometric Function 0F1
     !! Should be only used for |z|<1.0
     integer :: i
-    complex(dp) :: a, z, result, oldResult, indvResult, deriv
-    result = cmplx(0.d0,0.d0)
+    complex(dp) :: a, z, result, oldResult, indvResult
+    result = cmplx(0.d0,0.d0,dp)
     oldResult = result
     do i=0, 100000
       indvResult = (z**i)/(pochhammerR(a,i)*gamma(dble(i)+1.d0))
@@ -1627,21 +1627,20 @@ contains
   end function
 
   complex(dp) function hypGeo0F1Func(a,z)
-    integer :: i
-    complex(dp) :: a, z, result, indvResult, oldResult
+    complex(dp) :: a, z
     real(dp) :: y0(4), odeResult(4)
     complex(dp) :: z0, series(2), consts(3)
     if(abs(z).lt.1.d0) then
       hypGeo0F1Func = hypGeo0F1_series(a,z)
       return
     else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
-      z0 = cmplx(0.5d0,0.d0)
+      z0 = cmplx(0.5d0,0.d0,dp)
     else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
-      z0 = cmplx(-0.5d0,0.d0)
+      z0 = cmplx(-0.5d0,0.d0,dp)
     else if(real(z).gt.1.d0) then
-      z0 = cmplx(0.d0,0.5d0)
+      z0 = cmplx(0.d0,0.5d0,dp)
     else if(real(z).lt.-1.d0) then
-      z0 = cmplx(0.d0,-0.5d0)
+      z0 = cmplx(0.d0,-0.5d0,dp)
     end if
     series(1) = hypGeo0F1_series(a,z0)
     series(2) = hypGeo0F1Deriv_series(a,z0)
@@ -1649,11 +1648,10 @@ contains
     y0(1) = real(series(1)); y0(2) = aimag(series(1))
     y0(3) = real(series(2)); y0(4) = aimag(series(2))
     odeResult = rk1AdaptStepCmplxC(hypGeo0F1_odeFunc,4,0.d0,1.d0,y0,3,consts)
-    hypGeo0F1Func = cmplx(odeResult(1),odeResult(2))
+    hypGeo0F1Func = cmplx(odeResult(1),odeResult(2),dp)
   end function
 
   complex(dp) function hypGeo0F1DerivFunc(a,z)
-    integer :: i
     complex(dp) :: a, z
     hypGeo0F1DerivFunc = hypGeo0F1Func(a+1.d0,z)/a
   end function
@@ -1874,7 +1872,7 @@ contains
     complex(dp) :: c(nC), zs, fT, f, dz
     dz = c(2)-c(1)
     zs = c(1) + x*dz
-    fT = cmplx(y(1),y(2))
+    fT = cmplx(y(1),y(2),dp)
     f = dz*fT*c(3)/(1.d0-zs)
     hypGeo1F0_odeFunc(1) = real(f)
     hypGeo1F0_odeFunc(2) = aimag(f)
@@ -1884,8 +1882,8 @@ contains
     !! Returns Hypergeometric Function 1F0
     !! Should be only used for |z|<1.0
     integer :: i
-    complex(dp) :: a, z, result, oldResult, indvResult, deriv
-    result = cmplx(0.d0,0.d0)
+    complex(dp) :: a, z, result, oldResult, indvResult
+    result = cmplx(0.d0,0.d0,dp)
     oldResult = result
     do i=0, 100000
       indvResult = pochhammerR(a,i)*(z**i)/gamma(dble(i)+1.d0)
@@ -1905,31 +1903,30 @@ contains
   end function
 
   complex(dp) function hypGeo1F0Func(a,z)
-    integer :: i
-    complex(dp) :: a, z, result, indvResult, oldResult
+    complex(dp) :: a, z
     real(dp) :: y0(2), odeResult(2)
     complex(dp) :: z0, series, consts(3)
+    z0 = cmplx(0.d0,0.d0,dp)
     if(abs(z).lt.1.d0) then
       hypGeo1F0Func = hypGeo1F0_series(a,z)
       return
     else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
-      z0 = cmplx(0.5d0,0.d0)
+      z0 = cmplx(0.5d0,0.d0,dp)
     else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
-      z0 = cmplx(-0.5d0,0.d0)
+      z0 = cmplx(-0.5d0,0.d0,dp)
     else if(real(z).gt.1.d0) then
-      z0 = cmplx(0.d0,0.5d0)
+      z0 = cmplx(0.d0,0.5d0,dp)
     else if(real(z).lt.-1.d0) then
-      z0 = cmplx(0.d0,-0.5d0)
+      z0 = cmplx(0.d0,-0.5d0,dp)
     end if
     series = hypGeo1F0_series(a,z0)
     consts(1) = z0; consts(2) = z; consts(3) = a;
     y0(1) = real(series); y0(2) = aimag(series)
     odeResult = rk1AdaptStepCmplxC(hypGeo1F0_odeFunc,2,0.d0,1.d0,y0,3,consts)
-    hypGeo1F0Func = cmplx(odeResult(1),odeResult(2))
+    hypGeo1F0Func = cmplx(odeResult(1),odeResult(2),dp)
   end function
 
   complex(dp) function hypGeo1F0DerivFunc(a,z)
-    integer :: i
     complex(dp) :: a, z
     hypGeo1F0DerivFunc = a*hypGeo1F0Func(a+1.d0,z)
   end function
@@ -2150,7 +2147,7 @@ contains
     complex(dp) :: c(nC), zs, fT, fpT, f, fp, dz
     dz = c(2)-c(1)
     zs = c(1) + x*dz
-    fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4))
+    fT = cmplx(y(1),y(2),dp); fpT = cmplx(y(3),y(4),dp)
     f = dz*fpT
     fp = (c(3)*fT-(c(4)-zs)*fpT)*dz/zs
     hypGeo1F1_odeFunc(1) = real(f); hypGeo1F1_odeFunc(2) = aimag(f)
@@ -2161,8 +2158,8 @@ contains
     !! Returns Hypergeometric Function 1F1
     !! Should be only used for |z|<1.0
     integer :: i
-    complex(dp) :: a, b, z, result, oldResult, indvResult, deriv
-    result = cmplx(0.d0,0.d0)
+    complex(dp) :: a, b, z, result, oldResult, indvResult
+    result = cmplx(0.d0,0.d0,dp)
     oldResult = result
     do i=0, 100000
       indvResult = (pochhammerR(a,i)/pochhammerR(b,i))*(z**i)/gamma(dble(i)+1.d0)
@@ -2182,21 +2179,20 @@ contains
   end function
 
   complex(dp) function hypGeo1F1Func(a,b,z)
-    integer :: i
-    complex(dp) :: a, b, z, result, indvResult, oldResult
+    complex(dp) :: a, b, z
     real(dp) :: y0(4), odeResult(4)
     complex(dp) :: z0, series(2), consts(4)
     if(abs(z).lt.1.d0) then
       hypGeo1F1Func = hypGeo1F1_series(a,b,z)
       return
     else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
-      z0 = cmplx(0.5d0,0.d0)
+      z0 = cmplx(0.5d0,0.d0,dp)
     else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
-      z0 = cmplx(-0.5d0,0.d0)
+      z0 = cmplx(-0.5d0,0.d0,dp)
     else if(real(z).gt.1.d0) then
-      z0 = cmplx(0.d0,0.5d0)
+      z0 = cmplx(0.d0,0.5d0,dp)
     else if(real(z).lt.-1.d0) then
-      z0 = cmplx(0.d0,-0.5d0)
+      z0 = cmplx(0.d0,-0.5d0,dp)
     end if
     series(1) = hypGeo1F1_series(a,b,z0)
     series(2) = hypGeo1F1Deriv_series(a,b,z0)
@@ -2205,11 +2201,10 @@ contains
     y0(1) = real(series(1)); y0(2) = aimag(series(1))
     y0(3) = real(series(2)); y0(4) = aimag(series(2))
     odeResult = rk1AdaptStepCmplxC(hypGeo1F1_odeFunc,4,0.d0,1.d0,y0,4,consts)
-    hypGeo1F1Func = cmplx(odeResult(1),odeResult(2))
+    hypGeo1F1Func = cmplx(odeResult(1),odeResult(2),dp)
   end function
 
   complex(dp) function hypGeo1F1DerivFunc(a,b,z)
-    integer :: i
     complex(dp) :: a, b, z
     hypGeo1F1DerivFunc = (a/b)*hypGeo1F1Func(a+1.d0,b+1.d0,z)
   end function
@@ -2431,7 +2426,7 @@ contains
     complex(dp) :: c(nC), zs, fT, fpT, f, fp, dz
     dz = c(2)-c(1)
     zs = c(1) + x*dz
-    fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4))
+    fT = cmplx(y(1),y(2),dp); fpT = cmplx(y(3),y(4),dp)
     f = dz*fpT
     fp = (c(3)*c(4)*fT-(c(5)-(c(3)+c(4)+1.d0)*zs)*fpT)*dz/(zs*(1.d0-zs))
     hypGeo2F1_odeFunc(1) = real(f); hypGeo2F1_odeFunc(2) = aimag(f)
@@ -2442,8 +2437,8 @@ contains
     !! Returns Hypergeometric Function 2F1
     !! Should be only used for |z|<1.0
     integer :: i
-    complex(dp) :: a, b, c, z, result, oldResult, indvResult, deriv
-    result = cmplx(0.d0,0.d0)
+    complex(dp) :: a, b, c, z, result, oldResult, indvResult
+    result = cmplx(0.d0,0.d0,dp)
     oldResult = result
     do i=0, 100000
       indvResult = ((pochhammerR(a,i)*pochhammerR(b,i))/pochhammerR(c,i))*(z**i)/gamma(dble(i)+1.d0)
@@ -2463,21 +2458,20 @@ contains
   end function
 
   complex(dp) function hypGeo2F1Func(a,b,c,z)
-    integer :: i
-    complex(dp) :: a, b, c, z, result, indvResult, oldResult
+    complex(dp) :: a, b, c, z
     real(dp) :: y0(4), odeResult(4)
     complex(dp) :: z0, series(2), consts(5)
     if(abs(z).lt.1.d0) then
       hypGeo2F1Func = hypGeo2F1_series(a,b,c,z)
       return
     else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
-      z0 = cmplx(0.5d0,0.d0)
+      z0 = cmplx(0.5d0,0.d0,dp)
     else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
-      z0 = cmplx(-0.5d0,0.d0)
+      z0 = cmplx(-0.5d0,0.d0,dp)
     else if(real(z).gt.1.d0) then
-      z0 = cmplx(0.d0,0.5d0)
+      z0 = cmplx(0.d0,0.5d0,dp)
     else if(real(z).lt.-1.d0) then
-      z0 = cmplx(0.d0,-0.5d0)
+      z0 = cmplx(0.d0,-0.5d0,dp)
     end if
     series(1) = hypGeo2F1_series(a,b,c,z0)
     series(2) = hypGeo2F1Deriv_series(a,b,c,z0)
@@ -2486,11 +2480,10 @@ contains
     y0(1) = real(series(1)); y0(2) = aimag(series(1))
     y0(3) = real(series(2)); y0(4) = aimag(series(2))
     odeResult = rk1AdaptStepCmplxC(hypGeo2F1_odeFunc,4,0.d0,1.d0,y0,5,consts)
-    hypGeo2F1Func = cmplx(odeResult(1),odeResult(2))
+    hypGeo2F1Func = cmplx(odeResult(1),odeResult(2),dp)
   end function
 
   complex(dp) function hypGeo2F1DerivFunc(a,b,c,z)
-    integer :: i
     complex(dp) :: a, b, c, z
     hypGeo2F1DerivFunc = (a*b/c)*hypGeo2F1Func(a+1.d0,b+1.d0,c+1.d0,z)
   end function
@@ -2718,7 +2711,7 @@ contains
     factfpT = c(4)*c(3)+c(5)*c(3)+c(3)+c(4)+c(4)*c(5)+c(5)+1.d0
     factfpT2 = c(6)*c(7) - factfpT*zs
     factfppT = (-(c(3)+c(4)+c(5)+3.d0)*zs+c(6)+c(7)+1.d0)*zs
-    fT = cmplx(y(1),y(2)); fpT = cmplx(y(3),y(4)); fppT = cmplx(y(5),y(6))
+    fT = cmplx(y(1),y(2),dp); fpT = cmplx(y(3),y(4),dp); fppT = cmplx(y(5),y(6),dp)
     f = dz*fpT
     fp = dz*fppT
     fpp = -dz*(factfppT*fppT+factfpT2*fpT+factfT*fT)/(zs*zs*(1.d0-zs))
@@ -2731,8 +2724,8 @@ contains
     !! Returns Hypergeometric Function 3F2
     !! Should be only used for |z|<1.0
     integer :: i
-    complex(dp) :: a, b, c, d, e, z, result, oldResult, indvResult, deriv
-    result = cmplx(0.d0,0.d0)
+    complex(dp) :: a, b, c, d, e, z, result, oldResult, indvResult
+    result = cmplx(0.d0,0.d0,dp)
     oldResult = result
     do i=0, 100000
       indvResult = ((pochhammerR(a,i)*pochhammerR(b,i)*pochhammerR(c,i))/(pochhammerR(d,i)*pochhammerR(e,i)))* &
@@ -2748,27 +2741,25 @@ contains
   complex(dp) function hypGeo3F2Deriv_series(a,b,c,d,e,z)
     !! Returns Hypergeometric Function 3F2
     !! Should be only used for |z|<1.0
-    integer :: i
     complex(dp) :: a, b, c, d, e, z
     hypGeo3F2Deriv_series = (a*b*c/(d*e))*hypGeo3F2_series(a+1.d0,b+1.d0,c+1.d0,d+1.d0,e+1.d0,z)
   end function
 
   complex(dp) function hypGeo3F2Func(a,b,c,d,e,z)
-    integer :: i
-    complex(dp) :: a, b, c, d, e, z, result, indvResult, oldResult
+    complex(dp) :: a, b, c, d, e, z
     real(dp) :: y0(6), odeResult(6)
     complex(dp) :: z0, series(3), consts(7)
     if(abs(z).lt.1.d0) then
       hypGeo3F2Func = hypGeo3F2_series(a,b,c,d,e,z)
       return
     else if(real(z).gt.0.d0 .and. real(z).lt.1.d0) then
-      z0 = cmplx(0.5d0,0.d0)
+      z0 = cmplx(0.5d0,0.d0,dp)
     else if(real(z).gt.-1.d0 .and. real(z).lt.0.d0) then
-      z0 = cmplx(-0.5d0,0.d0)
+      z0 = cmplx(-0.5d0,0.d0,dp)
     else if(real(z).gt.1.d0) then
-      z0 = cmplx(0.d0,0.5d0)
+      z0 = cmplx(0.d0,0.5d0,dp)
     else if(real(z).lt.-1.d0) then
-      z0 = cmplx(0.d0,-0.5d0)
+      z0 = cmplx(0.d0,-0.5d0,dp)
     end if
     series(1) = hypGeo3F2_series(a,b,c,d,e,z0)
     series(2) = hypGeo3F2Deriv_series(a,b,c,d,e,z0)
@@ -2780,11 +2771,10 @@ contains
     y0(3) = real(series(2)); y0(4) = aimag(series(2))
     y0(5) = real(series(3)); y0(6) = aimag(series(3))
     odeResult = rk1AdaptStepCmplxC(hypGeo3F2_odeFunc,6,0.d0,1.d0,y0,7,consts)
-    hypGeo3F2Func = cmplx(odeResult(1),odeResult(2))
+    hypGeo3F2Func = cmplx(odeResult(1),odeResult(2),dp)
   end function
 
   complex(dp) function hypGeo3F2DerivFunc(a,b,c,d,e,z)
-    integer :: i
     complex(dp) :: a, b, c, d, e, z
     hypGeo3F2DerivFunc = (a*b*c/(d*e))*hypGeo3F2Func(a+1.d0,b+1.d0,c+1.d0,d+1.d0,e+1.d0,z)
   end function

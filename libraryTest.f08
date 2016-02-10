@@ -49,6 +49,7 @@ program libraryTest
   complex(dp) :: sfCmplxResult
 
   ! Variables to test sorting functions
+  integer :: sortNum
   integer, allocatable :: sortArrI(:)
   real, allocatable :: sortArrR(:)
   real(dp), allocatable :: sortArrD(:)
@@ -134,8 +135,8 @@ program libraryTest
   y0(2) = 1.d0
   y0(3) = 1.d0
   y0(4) = 2.d0
-  odeConstsC(1) = cmplx(0.d0,0.d0)
-  odeConstsC(2) = cmplx(1.5d0,1.2d0)
+  odeConstsC(1) = cmplx(0.d0,0.d0,dp)
+  odeConstsC(2) = cmplx(1.5d0,1.2d0,dp)
   odeResult = rk1AdaptStepCmplxC(odeFunction2,4,0.d0,1.d0,y0,2,odeConstsC)
   write(*,'(6x,a,1x,es12.5," + ",es12.5,"i")') 'Result =', odeResult(1), odeResult(2)
   deallocate(y0, odeResult ,odeConstsC)
@@ -282,7 +283,7 @@ program libraryTest
   write(*,'(2x,a)') 'Function = (1-x)^2*(2+3i) from 0 to 1.8'
   write(*,'(2x,a)') 'Answer = 1.008 + 1.512i'
   allocate(intCmplxConsts(1))
-  intCmplxConsts(1) = cmplx(2.d0,3.d0)
+  intCmplxConsts(1) = cmplx(2.d0,3.d0,dp)
   intCmplxResult = gaussLegendreCmplx(integralFunction3,0.d0,1.8d0,1,intCmplxConsts)
   write (*, '(3x,es12.5," + ",es12.5,"*i")') intCmplxResult
   deallocate(intCmplxConsts)
@@ -538,12 +539,12 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING HYPERGEOMETRIC FUNCTION 2F1'
-  sfCmplxResult = hypGeo2F1(1,3,2,cmplx(2.65d0,1.3))
+  sfCmplxResult = hypGeo2F1(1,3,2,cmplx(2.65d0,1.3,dp))
   print *, sfCmplxResult
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING HYPERGEOMETRIC FUNCTION 3F2'
-  sfCmplxResult = hypGeo3F2(1,3,2,2,2,cmplx(4.5d0,1.5d0))
+  sfCmplxResult = hypGeo3F2(1,3,2,2,2,cmplx(4.5d0,1.5d0,dp))
   print *, sfCmplxResult
   write(*,*)
 
@@ -560,13 +561,14 @@ program libraryTest
   write(*,'(a)') '*************************************'
   write(*,'(a)') 'TESTING SORTING FUNCTIONS:'
 
-  allocate(sortArrI(16))
-  do i=1,16
+  sortNum = 10
+  allocate(sortArrI(sortNum))
+  do i=1,sortNum
     sortArrI(i) = xorshiftInt(101)
-    print *, sortArrI(i)
+    !print *, sortArrI(i)
   end do
-  call sort(sortArrI)
-  do i=1,16
+  call qsort(sortArrI)
+  do i=1,sortNum
     print *, sortArrI(i)
   end do
   deallocate(sortArrI)
@@ -588,8 +590,8 @@ contains
     real(dp) :: odeFunction2(nF), x, y(nF)
     complex(dp) :: c(nC), fn, fnp, zn
     zn = c(1) + x*(c(2)-c(1))
-    fn = cmplx(y(1),y(2))
-    fnp = cmplx(y(3),y(4))
+    fn = cmplx(y(1),y(2),dp)
+    fnp = cmplx(y(3),y(4),dp)
     odeFunction2(1) = real((c(2)-c(1))*fnp)
     odeFunction2(2) = aimag((c(2)-c(1))*fnp)
     odeFunction2(3) = real(-(c(2)-c(1))*zn*fn*fn)

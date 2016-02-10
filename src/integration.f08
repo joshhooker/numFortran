@@ -126,7 +126,7 @@ contains
     !   sumIntegral = sumIntegral+glw1024(i)*f(n,consts,t0+dt*glx1024(i))
     ! end do
 
-    gaussLegendreCmplx = cmplx(sumReal*dt, sumCmplx*dt)
+    gaussLegendreCmplx = cmplx(sumReal*dt,sumCmplx*dt,dp)
   end function
 
 end module

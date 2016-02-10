@@ -46,9 +46,9 @@ contains
 
   function rk1FixedStep(f,nF,a,b,h,y0,nC,consts)
     !! 4th order Runga Kutta ODE Solver with fixed step h
-    integer :: i, nF, nC
+    integer :: nF, nC
     real(dp) :: xn, a, b, h
-    real(dp) :: y0(nF), yi(nF), yn(nF), consts(nC), rk1FixedStep(nF)
+    real(dp) :: y0(nF), yn(nF), consts(nC), rk1FixedStep(nF)
     interface
       function f(nF,nC,c,x,y)
         integer, parameter :: dp = kind(0.d0)
@@ -70,7 +70,7 @@ contains
 
   subroutine rk1AdaptDriver(f,nF,x,y,h,nC,consts,err)
     integer nF, nC
-    real(dp) :: x, y(nF), ys(nF), ynT(nF), ynsT(nF), dyn, consts(nC), h, err
+    real(dp) :: x, y(nF), ynT(nF), ynsT(nF), dyn, consts(nC), h, err
     real(dp) :: k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF), kci(nF), kcip(nF)
     logical :: goodStep
     interface
@@ -106,7 +106,7 @@ contains
 
   function rk1AdaptStep(f,nF,a,b,y0,nC,consts)
     !! Runga Kutta ODE Solver with adaptive h size
-    integer :: i, j, nF, nC
+    integer :: nF, nC
     real(dp) :: xn, a, b, h, yn(nF), y0(nF), consts(nC), rk1AdaptStep(nF)
     interface
       function f(nF,nC,c,x,y)
@@ -130,10 +130,10 @@ contains
 
   function rk1AdaptStepCmplxC(f,nF,a,b,y0,nC,consts)
     !! Runga Kutta ODE Solver with adaptive h size with Complex constant arguments
-    integer :: i, j, nF, nC
+    integer :: nF, nC
     real(dp) :: xn, k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF)
-    real(dp) :: a, b, h, y0(nF), yi(nF), yn(nF), yns(nF), dyn, ynT(nF), ynsT(nF)
-    real(dp) :: xni, yni(nF), kci(nF), kcip(nF), rk1AdaptStepCmplxC(nF)
+    real(dp) :: a, b, h, y0(nF), yn(nF), yns(nF), dyn, ynT(nF), ynsT(nF)
+    real(dp) :: kci(nF), kcip(nF), rk1AdaptStepCmplxC(nF)
     complex(dp) :: consts(nC)
     logical :: goodStep
     interface

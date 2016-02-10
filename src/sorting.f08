@@ -9,14 +9,14 @@ module sorting
   integer, parameter :: dp = kind(0.d0)
 
   public :: swap
-  public :: sort
+  public :: qsort
 
   interface swap
     module procedure swap_i, swap_r, swap_d
   end interface
 
-  interface sort
-    module procedure sort_i
+  interface qsort
+    module procedure qsort_i, qsort_r, qsort_d
   end interface
 
 contains
@@ -69,67 +69,103 @@ contains
     end if
   end subroutine
 
-  subroutine sort_i(array)
+  subroutine qsort_i(array)
     implicit none
-    integer :: i, j, k, l, m, n, iStack
-    integer, parameter :: sizeSub = 15, sizeStack = 50
-    integer :: arrValue, array(:), arrStack(sizeStack)
+    integer :: k, n, left, right, marker
+    integer :: pivot, array(:)
     n = size(array,1)
-    iStack = 0
-    l = 1
-    m = n
-    do
-      if(m-1.lt.sizeSub) then
-        do j=l+1,m
-          arrValue = array(j)
-          do i=j-1,l,-1
-            if(array(i).le.arrValue) exit
-            array(i+1) = array(i)
-          end do
-          array(i+1) = arrValue
+    if(n>1) then
+      k = (n/2)
+      pivot = array(k)
+      left = 0
+      right = n+1
+      do while(left<right)
+        right = right-1
+        do while(array(right).gt.pivot)
+          right = right-1
         end do
-        if(iStack.eq.0) return
-        m = arrStack(iStack)
-        l = arrStack(iStack-1)
-        iStack = iStack-2
-      else
-        k=(l+m)/2
-        call swap(array(k),array(l+1))
-        call swap(array(l),array(m),array(l).gt.array(m))
-        call swap(array(l+1),array(m),array(l+1).gt.array(m))
-        call swap(array(l),array(l+1),array(l).gt.array(l+1))
-        i = l+1
-        j = m
-        arrValue = array(l+1)
-        do
-          do
-            i=i+1
-            if(array(i).ge.arrValue) exit
-          end do
-          do
-            j=j-1
-            if(array(j).le.arrValue) exit
-          end do
-          if(j.lt.i) exit
-          call swap(array(i),array(j))
+        left = left+1
+        do while(array(left).lt.pivot)
+          left = left+1
         end do
-        array(l+1) = array(j)
-        array(j) = arrValue
-        iStack = iStack+2
-        if(iStack.gt.sizeStack) write(*,*) 'Sort Warning: sizeStack too small!'
-        if(m-i+1 .ge. j-l) then
-          arrStack(iStack) = m
-          arrStack(iStack-1) = i
-          m = j-1
-        else
-          arrStack(iStack) = j-1
-          arrStack(iStack-1) = l
-          l = i
+        if(left<right) then
+          call swap(array(left),array(right))
         end if
+      end do
+      if(left==right) then
+        marker = left +1
+      else
+        marker = left
       end if
-    end do
+      call qsort(array(:marker-1))
+      call qsort(array(marker:))
+    end if
   end subroutine
 
+  subroutine qsort_r(array)
+    implicit none
+    integer :: k, n, left, right, marker
+    real :: pivot, array(:)
+    n = size(array,1)
+    if(n>1) then
+      k = (n/2)
+      pivot = array(k)
+      left = 0
+      right = n+1
+      do while(left<right)
+        right = right-1
+        do while(array(right).gt.pivot)
+          right = right-1
+        end do
+        left = left+1
+        do while(array(left).lt.pivot)
+          left = left+1
+        end do
+        if(left<right) then
+          call swap(array(left),array(right))
+        end if
+      end do
+      if(left==right) then
+        marker = left +1
+      else
+        marker = left
+      end if
+      call qsort(array(:marker-1))
+      call qsort(array(marker:))
+    end if
+  end subroutine
 
+  subroutine qsort_d(array)
+    implicit none
+    integer :: k, n, left, right, marker
+    real(dp) :: pivot, array(:)
+    n = size(array,1)
+    if(n>1) then
+      k = (n/2)
+      pivot = array(k)
+      left = 0
+      right = n+1
+      do while(left<right)
+        right = right-1
+        do while(array(right).gt.pivot)
+          right = right-1
+        end do
+        left = left+1
+        do while(array(left).lt.pivot)
+          left = left+1
+        end do
+        if(left<right) then
+          call swap(array(left),array(right))
+        end if
+      end do
+      if(left==right) then
+        marker = left +1
+      else
+        marker = left
+      end if
+      call qsort(array(:marker-1))
+      call qsort(array(marker:))
+    end if
+  end subroutine
 
 end module
