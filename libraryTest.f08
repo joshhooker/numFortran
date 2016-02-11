@@ -2,6 +2,7 @@ program libraryTest
   use constants
   use cubicSpline
   use integration
+  use matrixSolver
   use odeSolver
   use randomNumbers
   use sorting
