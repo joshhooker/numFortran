@@ -9,7 +9,6 @@ module integration
 
   private
   integer, parameter :: dp = kind(0.d0)
-
   real(dp) :: glx128(64), glw128(64)
   real(dp) :: glx512(256), glw512(256)
   real(dp) :: glx1024(512), glw1024(512)
@@ -21,19 +20,16 @@ contains
 
   subroutine readGLParameters()
     integer :: i
-
     open(unit=1,file='data/gl128.dat',status='old')
     do i=1,64
       read(1,*) glx128(i), glw128(i)
     end do
     close(1)
-
     open(unit=1,file='data/gl512.dat',status='old')
     do i=1,256
       read(1,*) glx512(i), glw512(i)
     end do
     close(1)
-
     open(unit=1,file='data/gl1024.dat',status='old')
     do i=1,512
       read(1,*) glx1024(i), glw1024(i)
@@ -51,7 +47,6 @@ contains
         real(dp) :: c(n), x, f
       end function f
     end interface
-
     t0 = (a+b)/2.d0
     dt = (b-a)/2.d0
     sumIntegral = 0.d0
@@ -94,7 +89,6 @@ contains
         complex(dp) :: c(n), f
       end function
     end interface
-
     t0 = (a+b)/2.d0
     dt = (b-a)/2.d0
     sumReal = 0.d0
@@ -125,7 +119,6 @@ contains
     ! do i=1,512
     !   sumIntegral = sumIntegral+glw1024(i)*f(n,consts,t0+dt*glx1024(i))
     ! end do
-
     gaussLegendreCmplx = cmplx(sumReal*dt,sumCmplx*dt,dp)
   end function
 
