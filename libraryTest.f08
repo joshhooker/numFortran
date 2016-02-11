@@ -561,17 +561,29 @@ program libraryTest
   write(*,'(a)') '*************************************'
   write(*,'(a)') 'TESTING SORTING FUNCTIONS:'
 
+  write(*,'(2x,a)') 'TESTING INTEGER SORTING:'
   sortNum = 10
   allocate(sortArrI(sortNum))
   do i=1,sortNum
     sortArrI(i) = xorshiftInt(101)
-    !print *, sortArrI(i)
   end do
   call qsort(sortArrI)
   do i=1,sortNum
-    print *, sortArrI(i)
+    write(*,'(4x,i0)') sortArrI(i)
   end do
   deallocate(sortArrI)
+  write(*,*)
+
+  write(*,'(2x,a)') 'TESTING FLOAT SORTING:'
+  allocate(sortArrR(sortNum))
+  do i=1,sortNum
+    sortArrR(i) = real(mt19937())
+  end do
+  call qsort(sortArrR)
+  do i=1,sortNum
+    write(*,'(4x,f6.4)') sortArrR(i)
+  end do
+  deallocate(sortArrR)
 
   write(*,*)
   write(*,*)

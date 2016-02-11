@@ -2,8 +2,10 @@ SHELL = /bin/sh
 
 # FORTRAN compiler
 FC = gfortran-mp-5
-
 FFLAGS = -O2 -std=f2008 -fno-range-check
+
+#FC = ifort
+#FFLAGS = -O3 -fast -parallel -ipo
 
 TARGET = libraryTest
 DATADIR = data
