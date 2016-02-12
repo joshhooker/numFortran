@@ -267,6 +267,7 @@ contains
       sum = sum + array(i)
     end do
     mean = 0.d0
+    allocate(jack_arr(n))
     do i=1,n
       jack_arr(i) = sum - array(i)
       jack_arr(i) = jack_arr(i)/real(n-1,dp)
@@ -277,6 +278,7 @@ contains
     do i=1,n
       var = var + (mean-jack_arr(i))*(mean-jack_arr(i))
     end do
+    deallocate(jack_arr)
     var = var*real(n-1,dp)/real(n,dp)
     sigma = sqrt(var)
   end subroutine

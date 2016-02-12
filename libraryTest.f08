@@ -584,9 +584,13 @@ program libraryTest
   do i=1,sortNum
     write(*,'(4x,f6.4)') sortArrD(i)
   end do
+  call bootstrap(sortArrD,randMean,randStdDev,10000)
+  print *, randMean, randStdDev
   call jackknife(sortArrD,randMean,randStdDev)
   print *, randMean, randStdDev
-  deallocate(sortArrR)
+  call stdDev(sortArrD,randMean,randStdDev)
+  print *, randMean, randStdDev
+  deallocate(sortArrD)
 
   write(*,*)
   write(*,*)
