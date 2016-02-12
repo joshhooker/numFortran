@@ -572,7 +572,6 @@ program libraryTest
   do i=1,sortNum
     write(*,'(4x,i0)') sortArrI(i)
   end do
-  print *, medianArr(sortArrI)
   deallocate(sortArrI)
   write(*,*)
 
@@ -585,7 +584,6 @@ program libraryTest
   do i=1,sortNum
     write(*,'(4x,f6.4)') sortArrR(i)
   end do
-  print *, medianArr(sortArrR)
   deallocate(sortArrR)
 
   write(*,*)

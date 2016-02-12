@@ -19,6 +19,7 @@ module statTests
   public :: medianArr
   public :: meanArr
   public :: stdDev
+  public :: bootstrap
 
   interface medianArr
     module procedure median_i, median_r, median_d
@@ -30,6 +31,10 @@ module statTests
 
   interface stdDev
     module procedure stdDev_i, stdDev_r, stdDev_d
+  end interface
+
+  interface bootstrap
+    module procedure bootstrap_i, bootstrap_r, bootstrap_d
   end interface
 
 contains
@@ -161,24 +166,92 @@ contains
     sigma = sqrt(arrayStdDev)
   end subroutine
 
-  subroutine bootstrap(array, mean, sigma, nboot)
+  subroutine bootstrap_i(array, mean, sigma, nboot)
     implicit none
-    integer :: i, n, nboot, boot_i, clock
-    real(dp) :: array(:), mean, sigma, bootMean(nboot)
+    integer :: i, n, nboot, boot_i, clock, array(:)
+    real(dp) :: mean, sigma, bootMedian(nboot), sum, var
     real(dp), allocatable :: bootArr(:)
 
     call system_clock(count=clock)
     call randSeedGenerator(clock)
     n = size(array,1)
+    sum = 0.d0
     allocate(bootArr(n))
     do boot_i=1,nboot
       do i=1,n
         bootArr(i) = array(xorshift128Int(n)+1)
       end do
       call qsort(bootArr)
+      bootMedian(boot_i) = medianArr(bootArr)
+      sum = sum + bootMedian(boot_i)
     end do
     deallocate(bootArr)
+    mean = sum/real(nboot,dp)
+    var = 0.d0
+    do boot_i=1,nboot
+      var = var + (bootMedian(boot_i)-mean)*(bootMedian(boot_i)-mean)
+    end do
+    var = var/real(nboot-1,dp)
+    sigma = sqrt(var)
+  end subroutine
 
+  subroutine bootstrap_r(array, mean, sigma, nboot)
+    implicit none
+    integer :: i, n, nboot, boot_i, clock
+    real :: array(:)
+    real(dp) :: mean, sigma, bootMedian(nboot), sum, var
+    real(dp), allocatable :: bootArr(:)
+
+    call system_clock(count=clock)
+    call randSeedGenerator(clock)
+    n = size(array,1)
+    sum = 0.d0
+    allocate(bootArr(n))
+    do boot_i=1,nboot
+      do i=1,n
+        bootArr(i) = array(xorshift128Int(n)+1)
+      end do
+      call qsort(bootArr)
+      bootMedian(boot_i) = medianArr(bootArr)
+      sum = sum + bootMedian(boot_i)
+    end do
+    deallocate(bootArr)
+    mean = sum/real(nboot,dp)
+    var = 0.d0
+    do boot_i=1,nboot
+      var = var + (bootMedian(boot_i)-mean)*(bootMedian(boot_i)-mean)
+    end do
+    var = var/real(nboot-1,dp)
+    sigma = sqrt(var)
+  end subroutine
+
+  subroutine bootstrap_d(array, mean, sigma, nboot)
+    implicit none
+    integer :: i, n, nboot, boot_i, clock
+    real(dp) :: array(:), mean, sigma, bootMedian(nboot), sum, var
+    real(dp), allocatable :: bootArr(:)
+
+    call system_clock(count=clock)
+    call randSeedGenerator(clock)
+    n = size(array,1)
+    sum = 0.d0
+    allocate(bootArr(n))
+    do boot_i=1,nboot
+      do i=1,n
+        bootArr(i) = array(xorshift128Int(n)+1)
+      end do
+      call qsort(bootArr)
+      bootMedian(boot_i) = medianArr(bootArr)
+      sum = sum + bootMedian(boot_i)
+    end do
+    deallocate(bootArr)
+    mean = sum/real(nboot,dp)
+    var = 0.d0
+    do boot_i=1,nboot
+      var = var + (bootMedian(boot_i)-mean)*(bootMedian(boot_i)-mean)
+    end do
+    var = var/real(nboot-1,dp)
+    sigma = sqrt(var)
   end subroutine
 
 end module
