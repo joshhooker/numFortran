@@ -21,6 +21,7 @@ contains
   subroutine readGLParameters()
     implicit none
     integer :: i
+
     open(unit=1,file='data/gl128.dat',status='old')
     do i=1,64
       read(1,*) glx128(i), glw128(i)
@@ -49,6 +50,7 @@ contains
         real(dp) :: c(n), x, f
       end function f
     end interface
+
     t0 = (a+b)/2.d0
     dt = (b-a)/2.d0
     sumIntegral = 0.d0
@@ -92,6 +94,7 @@ contains
         complex(dp) :: c(n), f
       end function
     end interface
+
     t0 = (a+b)/2.d0
     dt = (b-a)/2.d0
     sumReal = 0.d0

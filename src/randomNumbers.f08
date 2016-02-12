@@ -41,7 +41,7 @@ module randomNumbers
 contains
 
   subroutine randSeedGenerator(seed)
-
+    implicit none
     integer :: seed
       !! input: seed is an integer for random number
       !! generators

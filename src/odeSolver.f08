@@ -28,6 +28,7 @@ module odeSolver
 contains
 
   subroutine rk1FixedDriver(f,nF,x,y,h,nC,consts)
+    implicit none
     integer :: nF, nC
     real(dp) :: x, y(nF), k1(nF), k2(nF), k3(nF), k4(nF), h, consts(nC)
     interface
@@ -37,6 +38,7 @@ contains
         real(dp) :: c(nC), x, y(nF), f(nF)
       end function f
     end interface
+
     k1 = h*f(nF,nC,consts,x,y)
     k2 = h*f(nF,nC,consts,x+h/2.d0,y+k1/2.d0)
     k3 = h*f(nF,nC,consts,x+h/2.d0,y+k2/2.d0)
@@ -45,7 +47,7 @@ contains
   end subroutine
 
   function rk1FixedStep(f,nF,a,b,h,y0,nC,consts)
-    !! 4th order Runga Kutta ODE Solver with fixed step h
+    implicit none
     integer :: nF, nC
     real(dp) :: xn, a, b, h
     real(dp) :: y0(nF), yn(nF), consts(nC), rk1FixedStep(nF)
@@ -56,6 +58,7 @@ contains
         real(dp) :: c(nC), x, y(nF), f(nF)
       end function f
     end interface
+
     xn = a
     yn = y0
     do while(xn.lt.b)
@@ -69,6 +72,7 @@ contains
   end function
 
   subroutine rk1AdaptDriver(f,nF,x,y,h,nC,consts,err)
+    implicit none
     integer nF, nC
     real(dp) :: x, y(nF), ynT(nF), ynsT(nF), dyn, consts(nC), h, err
     real(dp) :: k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF), kci(nF), kcip(nF)
@@ -80,6 +84,7 @@ contains
         real(dp) :: c(nC), x, y(nF), f(nF)
       end function f
     end interface
+
     goodStep = .false.
     do while(goodStep .eqv. .false.)
       k1 = h*f(nF,nC,consts,x,y)
@@ -105,7 +110,7 @@ contains
   end subroutine
 
   function rk1AdaptStep(f,nF,a,b,y0,nC,consts)
-    !! Runga Kutta ODE Solver with adaptive h size
+    implicit none
     integer :: nF, nC
     real(dp) :: xn, a, b, h, yn(nF), y0(nF), consts(nC), rk1AdaptStep(nF)
     interface
@@ -115,6 +120,7 @@ contains
         real(dp) :: c(nC), x, y(nF), f(nF)
       end function f
     end interface
+
     xn = a
     yn = y0
     h = 0.001d0
@@ -129,7 +135,7 @@ contains
   end function
 
   function rk1AdaptStepCmplxC(f,nF,a,b,y0,nC,consts)
-    !! Runga Kutta ODE Solver with adaptive h size with Complex constant arguments
+    implicit none
     integer :: nF, nC
     real(dp) :: xn, k1(nF), k2(nF), k3(nF), k4(nF), k5(nF), k6(nF)
     real(dp) :: a, b, h, y0(nF), yn(nF), yns(nF), dyn, ynT(nF), ynsT(nF)
@@ -144,6 +150,7 @@ contains
         complex(dp) :: c(nC)
       end function f
     end interface
+
     xn = a
     yn = y0
     h = 0.001d0
