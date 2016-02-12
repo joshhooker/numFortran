@@ -16,10 +16,11 @@ module statTests
   private
   integer, parameter :: dp = kind(0.d0)
 
-  public :: medianArr
-  public :: meanArr
-  public :: stdDev
   public :: bootstrap
+  public :: jackknife
+  public :: meanArr
+  public :: medianArr
+  public :: stdDev
 
   interface medianArr
     module procedure median_i, median_r, median_d
@@ -251,6 +252,32 @@ contains
       var = var + (bootMedian(boot_i)-mean)*(bootMedian(boot_i)-mean)
     end do
     var = var/real(nboot-1,dp)
+    sigma = sqrt(var)
+  end subroutine
+
+  subroutine jackknife(array, mean, sigma)
+    implicit none
+    integer :: i, n
+    real(dp) :: array(:), mean, sigma, var, sum
+    real(dp), allocatable :: jack_arr(:)
+
+    n = size(array,1)
+    sum = 0.d0
+    do i=1,n
+      sum = sum + array(i)
+    end do
+    mean = 0.d0
+    do i=1,n
+      jack_arr(i) = sum - array(i)
+      jack_arr(i) = jack_arr(i)/real(n-1,dp)
+      mean = mean + jack_arr(i)
+    end do
+    mean = mean/real(n,dp)
+    var = 0.d0
+    do i=1,n
+      var = var + (mean-jack_arr(i))*(mean-jack_arr(i))
+    end do
+    var = var*real(n-1,dp)/real(n,dp)
     sigma = sqrt(var)
   end subroutine
 

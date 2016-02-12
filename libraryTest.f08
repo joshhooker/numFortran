@@ -576,14 +576,16 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING FLOAT SORTING:'
-  allocate(sortArrR(sortNum))
+  allocate(sortArrD(sortNum))
   do i=1,sortNum
-    sortArrR(i) = real(mt19937())
+    sortArrD(i) = real(mt19937())
   end do
-  call qsort(sortArrR)
+  call qsort(sortArrD)
   do i=1,sortNum
-    write(*,'(4x,f6.4)') sortArrR(i)
+    write(*,'(4x,f6.4)') sortArrD(i)
   end do
+  call jackknife(sortArrD,randMean,randStdDev)
+  print *, randMean, randStdDev
   deallocate(sortArrR)
 
   write(*,*)
