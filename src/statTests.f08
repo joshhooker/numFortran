@@ -16,7 +16,9 @@ module statTests
   private
   integer, parameter :: dp = kind(0.d0)
 
-  public :: meanArr, stdDev
+  public :: medianArr
+  public :: meanArr
+  public :: stdDev
 
   interface medianArr
     module procedure median_i, median_r, median_d

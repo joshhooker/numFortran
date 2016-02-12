@@ -563,7 +563,7 @@ program libraryTest
   write(*,'(a)') 'TESTING SORTING FUNCTIONS:'
 
   write(*,'(2x,a)') 'TESTING INTEGER SORTING:'
-  sortNum = 10
+  sortNum = 11
   allocate(sortArrI(sortNum))
   do i=1,sortNum
     sortArrI(i) = xorshiftInt(101)
@@ -572,6 +572,7 @@ program libraryTest
   do i=1,sortNum
     write(*,'(4x,i0)') sortArrI(i)
   end do
+  print *, medianArr(sortArrI)
   deallocate(sortArrI)
   write(*,*)
 
@@ -584,6 +585,7 @@ program libraryTest
   do i=1,sortNum
     write(*,'(4x,f6.4)') sortArrR(i)
   end do
+  print *, medianArr(sortArrR)
   deallocate(sortArrR)
 
   write(*,*)
