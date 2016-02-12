@@ -19,6 +19,7 @@ module integration
 contains
 
   subroutine readGLParameters()
+    implicit none
     integer :: i
     open(unit=1,file='data/gl128.dat',status='old')
     do i=1,64
@@ -38,6 +39,7 @@ contains
   end subroutine
 
   real(dp) function gaussLegendre(f,a,b,n,consts)
+    implicit none
     integer :: i, n
     real(dp) :: consts(n), a, b, t0, dt, sumIntegral
     interface
@@ -78,6 +80,7 @@ contains
   end function
 
   complex(dp) function gaussLegendreCmplx(f,a,b,n,consts)
+    implicit none
     integer :: i, n
     real(dp) :: a, b, t0, dt, sumReal, sumCmplx
     complex(dp) :: consts(n)

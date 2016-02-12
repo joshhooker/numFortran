@@ -151,7 +151,7 @@ program libraryTest
   write(*,'(a,i0,1x,a)') 'TESTING RANDOM NUMBER GENERATORS (', randArrayN, 'numbers):'
 
   write(*,'(2x,a)') 'xorshift:'
-  call randSeedGenerator(12345679)
+  call randSeedGenerator(12345678)
   call system_clock(t1, clock_rate, clock_max)
   do i=1,randArrayN
     randArray(i) = xorshift()
@@ -229,7 +229,7 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'mt19937:'
-  call randSeedGenerator(12349)
+  call randSeedGenerator(12345678)
   call system_clock(t1, clock_rate, clock_max)
   do i=1,randArrayN
     randArray(i) = mt19937()
