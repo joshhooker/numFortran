@@ -58,3 +58,5 @@ libraryTest.o : constants.o cubicSpline.o odeSolver.o randomNumbers.o \
 cubicSpline.o : matrixSolver.o
 
 specialFunctions.o: constants.o integration.o odeSolver.o
+
+statTests.o : randomNumbers.o sorting.o
