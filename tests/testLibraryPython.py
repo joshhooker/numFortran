@@ -43,16 +43,34 @@ for i in range(0,yn_length):
   f.write('{} {} {}\n'.format(yn_n[i],yn_x[i],yn[i]))
 f.close()
 
-f = open('test_in.dat','w')
+in_n=[]
+in_x=[]
+in_arr=[]
 for n in drange(-3.0,5.0,0.2):
   for x in drange(1.0,5.0,0.2):
-    f.write('{} {} {}\n'.format(n,x,sp.iv(n,x)))
+    in_n.append(n)
+    in_x.append(x)
+    in_arr.append(sp.iv(n,x))
+in_length = len(in_arr)
+f = open('test_in.dat','w')
+f.write('{}\n'.format(in_length))
+for i in range(0,in_length):
+  f.write('{} {} {}\n'.format(in_n[i],in_x[i],in_arr[i]))
 f.close()
 
-f = open('test_kn.dat','w')
+kn_n=[]
+kn_x=[]
+kn=[]
 for n in drange(-3.0,5.0,0.2):
   for x in drange(1.0,5.0,0.2):
-    f.write('{} {} {}\n'.format(n,x,sp.kv(n,x)))
+    kn_n.append(n)
+    kn_x.append(x)
+    kn.append(sp.kv(n,x))
+kn_length = len(kn)
+f = open('test_kn.dat','w')
+f.write('{}\n'.format(kn_length))
+for i in range(0,kn_length):
+  f.write('{} {} {}\n'.format(kn_n[i],kn_x[i],kn[i]))
 f.close()
 
 f = open('test_sphjn.dat','w')
