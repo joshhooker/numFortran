@@ -73,16 +73,34 @@ for i in range(0,kn_length):
   f.write('{} {} {}\n'.format(kn_n[i],kn_x[i],kn[i]))
 f.close()
 
-f = open('test_sphjn.dat','w')
+sphjn_n=[]
+sphjn_x=[]
+sphjn=[]
 for n in range(0,10,1):
   for x in drange(0.0,10.0,0.2):
-    f.write('{} {} {}\n'.format(n,x,sp.sph_jn(n,x)[0][n]))
+    sphjn_n.append(n)
+    sphjn_x.append(x)
+    sphjn.append(sp.sph_jn(n,x)[0][n])
+sphjn_length = len(sphjn)
+f = open('test_sphjn.dat','w')
+f.write('{}\n'.format(sphjn_length))
+for i in range(0,sphjn_length):
+  f.write('{} {} {}\n'.format(sphjn_n[i],sphjn_x[i],sphjn[i]))
 f.close()
 
-f = open('test_sphyn.dat','w')
+sphyn_n=[]
+sphyn_x=[]
+sphyn=[]
 for n in range(0,10,1):
   for x in drange(0.2*n+0.2,10.0,0.2):
-    f.write('{} {} {}\n'.format(n,x,sp.sph_yn(n,x)[0][n]))
+    sphyn_n.append(n)
+    sphyn_x.append(x)
+    sphyn.append(sp.sph_yn(n,x)[0][n])
+sphyn_length = len(sphyn)
+f = open('test_sphyn.dat','w')
+f.write('{}\n'.format(sphyn_length))
+for i in range(0,sphyn_length):
+  f.write('{} {} {}\n'.format(sphyn_n[i],sphyn_x[i],sphyn[i]))
 f.close()
 
 f = open('test_airyA.dat','w')
