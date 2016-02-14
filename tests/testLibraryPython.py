@@ -156,3 +156,19 @@ for i in range (0,errc_length):
   f.write('{} {}\n'.format(errc_x[i],errc[i]))
 f.close()
 
+# Beta Function
+beta_a=[]
+beta_b=[]
+beta=[]
+for a in drange(0.1,5.0,0.1):
+  for b in drange(0.1,5.0,0.1):
+    beta_a.append(a)
+    beta_b.append(b)
+    beta.append(sp.beta(a,b))
+beta_length = len(beta)
+f = open('test_beta.dat','w')
+f.write('{}\n'.format(beta_length))
+for i in range (0,beta_length):
+  f.write('{} {} {}\n'.format(beta_a[i],beta_b[i],beta[i]))
+f.close()
+
