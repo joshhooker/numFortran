@@ -160,8 +160,8 @@ f.close()
 beta_a=[]
 beta_b=[]
 beta=[]
-for a in drange(0.1,5.0,0.1):
-  for b in drange(0.1,5.0,0.1):
+for a in drange(0.2,5.0,0.2):
+  for b in drange(0.2,5.0,0.2):
     beta_a.append(a)
     beta_b.append(b)
     beta.append(sp.beta(a,b))
@@ -172,3 +172,21 @@ for i in range (0,beta_length):
   f.write('{} {} {}\n'.format(beta_a[i],beta_b[i],beta[i]))
 f.close()
 
+# Incomplete Beta Function
+incbeta_a=[]
+incbeta_b=[]
+incbeta_x=[]
+incbeta=[]
+for a in drange(0.2,5.0,0.2):
+  for b in drange(0.2,5.0,0.2):
+    for x in drange(0.2,1.0,0.2):
+      incbeta_a.append(a)
+      incbeta_b.append(b)
+      incbeta_x.append(x)
+      incbeta.append(sp.betainc(a,b,x))
+incbeta_length = len(incbeta)
+f = open('test_incbeta.dat','w')
+f.write('{}\n'.format(incbeta_length))
+for i in range (0,incbeta_length):
+  f.write('{} {} {} {}\n'.format(incbeta_a[i],incbeta_b[i],incbeta_x[i],incbeta[i]))
+f.close()
