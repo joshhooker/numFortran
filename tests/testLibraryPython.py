@@ -103,14 +103,26 @@ for i in range(0,sphyn_length):
   f.write('{} {} {}\n'.format(sphyn_n[i],sphyn_x[i],sphyn[i]))
 f.close()
 
-f = open('test_airyA.dat','w')
+airyA_x=[]
+airyA=[]
 for x in drange(-5.0,5.0,0.2):
-  f.write('{} {}\n'.format(x,sp.airy(x)[0]))
-  #print x, sp.airy(x)[0], sp.airy(x)[2]
+  airyA_x.append(x)
+  airyA.append(sp.airy(x)[0])
+airyA_length = len(airyA)
+f = open('test_airyA.dat','w')
+f.write('{}\n'.format(airyA_length))
+for i in range (0,airyA_length):
+  f.write('{} {}\n'.format(airyA_x[i],airyA[i]))
 f.close()
 
-f = open('test_airyB.dat','w')
+airyB_x=[]
+airyB=[]
 for x in drange(-5.0,5.0,0.2):
-  f.write('{} {}\n'.format(x,sp.airy(x)[2]))
-  #print x, sp.airy(x)[0], sp.airy(x)[2]
+  airyB_x.append(x)
+  airyB.append(sp.airy(x)[2])
+airyB_length = len(airyB)
+f = open('test_airyB.dat','w')
+f.write('{}\n'.format(airyB_length))
+for i in range (0,airyB_length):
+  f.write('{} {}\n'.format(airyB_x[i],airyB[i]))
 f.close()
