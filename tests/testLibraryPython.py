@@ -8,11 +8,7 @@ def drange(start, stop, step):
     yield r
     r += step
 
-# f = open('test_jn.dat','w')
-# for n in drange(-3.0,5.0,0.2):
-#   for x in drange(1.0,5.0,0.2):
-#     f.write('{} {} {}\n'.format(n,x,sp.jv(n,x)))
-# f.close()
+# Bessel Function of the 1st Kind
 jn_n=[]
 jn_x=[]
 jn=[]
@@ -28,6 +24,7 @@ for i in range(0,jn_length):
   f.write('{} {} {}\n'.format(jn_n[i],jn_x[i],jn[i]))
 f.close()
 
+# Bessel Function of the 2nd Kind
 yn_n=[]
 yn_x=[]
 yn=[]
@@ -43,6 +40,7 @@ for i in range(0,yn_length):
   f.write('{} {} {}\n'.format(yn_n[i],yn_x[i],yn[i]))
 f.close()
 
+# Modified Bessel Function of the 1st Kind
 in_n=[]
 in_x=[]
 in_arr=[]
@@ -58,6 +56,7 @@ for i in range(0,in_length):
   f.write('{} {} {}\n'.format(in_n[i],in_x[i],in_arr[i]))
 f.close()
 
+# Modified Bessel Function of the 2nd Kind
 kn_n=[]
 kn_x=[]
 kn=[]
@@ -73,6 +72,7 @@ for i in range(0,kn_length):
   f.write('{} {} {}\n'.format(kn_n[i],kn_x[i],kn[i]))
 f.close()
 
+# Spherical Bessel Function of the 1st Kind
 sphjn_n=[]
 sphjn_x=[]
 sphjn=[]
@@ -88,6 +88,7 @@ for i in range(0,sphjn_length):
   f.write('{} {} {}\n'.format(sphjn_n[i],sphjn_x[i],sphjn[i]))
 f.close()
 
+# Spherical Bessel Function of the 2nd Kind
 sphyn_n=[]
 sphyn_x=[]
 sphyn=[]
@@ -103,6 +104,7 @@ for i in range(0,sphyn_length):
   f.write('{} {} {}\n'.format(sphyn_n[i],sphyn_x[i],sphyn[i]))
 f.close()
 
+# Airy A Function
 airyA_x=[]
 airyA=[]
 for x in drange(-5.0,5.0,0.2):
@@ -115,6 +117,7 @@ for i in range (0,airyA_length):
   f.write('{} {}\n'.format(airyA_x[i],airyA[i]))
 f.close()
 
+# Airy B Function
 airyB_x=[]
 airyB=[]
 for x in drange(-5.0,5.0,0.2):
@@ -126,3 +129,30 @@ f.write('{}\n'.format(airyB_length))
 for i in range (0,airyB_length):
   f.write('{} {}\n'.format(airyB_x[i],airyB[i]))
 f.close()
+
+# Error Function
+err_x=[]
+err=[]
+for x in drange(-5.0,5.0,0.2):
+  err_x.append(x)
+  err.append(sp.erf(x))
+err_length = len(err)
+f = open('test_err.dat','w')
+f.write('{}\n'.format(err_length))
+for i in range (0,err_length):
+  f.write('{} {}\n'.format(err_x[i],err[i]))
+f.close()
+
+# Complementary Error Function
+errc_x=[]
+errc=[]
+for x in drange(-5.0,5.0,0.2):
+  errc_x.append(x)
+  errc.append(sp.erfc(x))
+errc_length = len(err)
+f = open('test_errc.dat','w')
+f.write('{}\n'.format(errc_length))
+for i in range (0,errc_length):
+  f.write('{} {}\n'.format(errc_x[i],errc[i]))
+f.close()
+
