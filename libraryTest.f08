@@ -47,6 +47,8 @@ program libraryTest
   real(dp) :: sfResult, sfSumDiff
   real(dp), allocatable :: testBesselN(:), testBesselX(:), testBessel(:)
   real(dp), allocatable :: testAiryX(:), testAiry(:)
+  real(dp), allocatable :: testErrX(:), testErr(:)
+  real(dp), allocatable :: testBetaA(:), testBetaB(:), testBetaX(:), testBeta(:)
   complex(dp) :: sfCmplxResult
 
   ! Variables to test sorting functions
@@ -450,8 +452,22 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING ERROR FUNCTION:'
-  print *, errf(2.d0)
-  print *, errf(-0.2d0)
+  open(unit=1,file='tests/test_err.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testErrX(sfTestsN), testErr(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testErrX(i), testErr(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(errf(testErrX(i))-testErr(i))
+  end do
+  call system_clock(t2, clock_rate, clock_max)
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
+  deallocate(testErrX, testErr)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING COMPLEMENTARY ERROR FUNCTION:'
