@@ -490,6 +490,22 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING BETA FUNCTION:'
+  open(unit=1,file='tests/test_beta.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testBetaA(sfTestsN),testBetaB(sfTestsN),testBeta(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testBetaA(i), testBetaB(i), testBeta(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(beta(testBetaA(i),testBetaB(i))-testBeta(i))
+  end do
+  call system_clock(t2, clock_rate, clock_max)
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
+  deallocate(testBetaA, testBetaB, testBeta)
   print *, beta(2.d0,3.d0)
   print *, beta(2,3)
   write(*,*)
