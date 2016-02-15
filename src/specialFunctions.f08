@@ -911,15 +911,16 @@ contains
     integer :: n
     real(dp) :: c(n), x, func
     func = x**(c(1)-1.d0)
-    func = func*((1-x)**(c(2)-1.d0))
+    func = func*((1.d0-x)**(c(2)-1.d0))
     beta_IntFunc = func
   end function
 
   real(dp) function betaFunc(x,y)
-    real(dp) :: x, y, consts(2)
+    real(dp) :: x, y, consts(2), intResults
     consts(1) = x
     consts(2) = y
-    betaFunc = gaussLegendre(beta_IntFunc,0.d0,1.d0,2,consts)
+    !betaFunc = gaussLegendre(beta_IntFunc,0.d0,1.d0,2,consts)
+    betaFunc = gamma(x)*gamma(y)/gamma(x+y)
   end function
 
   real(dp) function beta_ii(x,y)

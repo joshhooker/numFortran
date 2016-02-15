@@ -501,6 +501,10 @@ program libraryTest
   call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(beta(testBetaA(i),testBetaB(i))-testBeta(i))
+    if(abs(beta(testBetaA(i),testBetaB(i))-testBeta(i)).gt.1.d-3) then
+      write(*,'(4x,es12.5,1x,es12.5,1x,es12.5,1x,es12.5,1x,es12.5)') testBetaA(i), testBetaB(i), &
+          beta(testBetaA(i),testBetaB(i)), testBeta(i), abs(beta(testBetaA(i),testBetaB(i))-testBeta(i))
+    end if
   end do
   call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
