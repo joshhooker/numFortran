@@ -54,7 +54,7 @@ module specialFunctions
   public :: sphBesselJ, sphBesselY
   public :: airyA, airyB
   public :: errf, errfc
-  public :: beta
+  public :: beta, incBeta
   public :: gammaFunc
   public :: legendrePoly
   public :: hermitePoly, hermitePolyProb

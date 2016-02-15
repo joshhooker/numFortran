@@ -510,6 +510,27 @@ program libraryTest
   print *, beta(2,3)
   write(*,*)
 
+  write(*,'(2x,a)') 'TESTING INCOMPLETE BETA FUNCTION:'
+  open(unit=1,file='tests/test_incbeta.dat',status='old')
+  read(1,*) sfTestsN
+  allocate(testBetaA(sfTestsN),testBetaB(sfTestsN),testBetaX(sfTestsN),testBeta(sfTestsN))
+  do i=1,sfTestsN
+    read(1,*) testBetaA(i), testBetaB(i), testBetaX(i), testBeta(i)
+  end do
+  close(1)
+  sfSumDiff = 0.d0
+  call system_clock(t1, clock_rate, clock_max)
+  do i=1, sfTestsN
+    sfSumDiff = sfSumDiff+abs(incBeta(testBetaX(i),testBetaA(i),testBetaB(i))-testBeta(i))
+  end do
+  call system_clock(t2, clock_rate, clock_max)
+  write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
+  write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
+  deallocate(testBetaA, testBetaB, testBetaX, testBeta)
+  print *, beta(2.d0,3.d0)
+  print *, beta(2,3)
+  write(*,*)
+
   write(*,'(2x,a)') 'TESTING GAMMA FUNCTION:'
   print *, gamma(10.21d0)
   print *, gammaFunc(10.21d0)
