@@ -12,9 +12,11 @@ module integration
   real(dp) :: glx128(64), glw128(64)
   real(dp) :: glx512(256), glw512(256)
   real(dp) :: glx1024(512), glw1024(512)
+  real(dp) :: g30k61_gx(15), g30k61_gw(15), g30k61_kx(31), g30k61_kw(31)
 
   public :: readGLParameters
   public :: gaussLegendre, gaussLegendreCmplx
+  public :: readGKParameters
 
 contains
 
@@ -35,6 +37,22 @@ contains
     open(unit=1,file='data/gl1024.dat',status='old')
     do i=1,512
       read(1,*) glx1024(i), glw1024(i)
+    end do
+    close(1)
+  end subroutine
+
+  subroutine readGKParameters()
+    implicit none
+    integer :: i, numLines
+
+    open(unit=1,file='data/g30k61.dat',status='old')
+    read(1,*) numLines
+    do i=1,numLines
+      read(1,*) g30k61_gx(i), g30k61_gw(i)
+    end do
+    read(1,*) numLines
+    do i=1,numLines
+      read(1,*) g30k61_kx(i), g30k61_kw(i)
     end do
     close(1)
   end subroutine

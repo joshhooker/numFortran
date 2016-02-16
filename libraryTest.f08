@@ -250,6 +250,7 @@ program libraryTest
   write(*,'(a)') '*************************************'
   write(*,'(a)') 'TESTING INTEGRALS:'
   call readGLParameters()
+  call readGKParameters()
 
   intA = 0.d0
   intB = 54.d0
@@ -506,8 +507,6 @@ program libraryTest
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
   write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testBetaA, testBetaB, testBeta)
-  print *, beta(2.d0,3.d0)
-  print *, beta(2,3)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING INCOMPLETE BETA FUNCTION:'
@@ -522,18 +521,16 @@ program libraryTest
   call system_clock(t1, clock_rate, clock_max)
   do i=1, sfTestsN
     sfSumDiff = sfSumDiff+abs(incBeta(testBetaX(i),testBetaA(i),testBetaB(i))-testBeta(i))
-    if(abs(incBeta(testBetaX(i),testBetaA(i),testBetaB(i))-testBeta(i)).gt.1.d-3) then
-      write(*,'(4x,es12.5,1x,es12.5,1x,es12.5,1x,es12.5,1x,es12.5,1x,es12.5)') testBetaX(i), testBetaA(i), testBetaB(i), &
-          incBeta(testBetaX(i),testBetaA(i),testBetaB(i)), testBeta(i), &
-          abs(incBeta(testBetaX(i),testBetaA(i),testBetaB(i))-testBeta(i))
-    end if
+    ! if(abs(incBeta(testBetaX(i),testBetaA(i),testBetaB(i))-testBeta(i)).gt.1.d-3) then
+    !   write(*,'(4x,es12.5,1x,es12.5,1x,es12.5,1x,es12.5,1x,es12.5,1x,es12.5)') testBetaX(i), testBetaA(i), testBetaB(i), &
+    !       incBeta(testBetaX(i),testBetaA(i),testBetaB(i)), testBeta(i), &
+    !       abs(incBeta(testBetaX(i),testBetaA(i),testBetaB(i))-testBeta(i))
+    ! end if
   end do
   call system_clock(t2, clock_rate, clock_max)
   write(*,'(3x,2(1x,a,1x,es16.8))') 'Total Error =', sfSumDiff, 'Average Error =', sfSumDiff/dble(sfTestsN)
   write(*,'(4x,a,1x,i0,1x,a,1x,es12.5,1x,a)') 'Time for ', sfTestsN, 'numbers =', dble(t2-t1)/dble(clock_rate), 'sec'
   deallocate(testBetaA, testBetaB, testBetaX, testBeta)
-  print *, beta(2.d0,3.d0)
-  print *, beta(2,3)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING GAMMA FUNCTION:'
