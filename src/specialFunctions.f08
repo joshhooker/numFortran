@@ -1154,37 +1154,36 @@ contains
   ! Gamma Function !
   !****************!
 
-  real(dp) function gammaFunction(n,c,x)
-    integer :: n
-    real(dp) :: c(n), x
-    gammaFunction = (-log(x))**(c(1)-1.d0)
+  recursive function gammaFunction(x) result(res)
+    implicit none
+    integer :: i
+    real(dp) :: p(8)
+    complex(dp) :: x, res, q, t
+    p(1) = 676.5203681218851d0
+    p(2) = -1259.1392167224028d0
+    p(3) = 771.32342877765313d0
+    p(4) = -176.61502916214059d0
+    p(5) = 12.507343278686905d0
+    p(6) = -0.13857109526572012d0
+    p(7) = 9.9843695780195716d-6
+    p(8) = 1.5056327351493116d-7
+
+    if(real(x).lt.0.5d0) then
+      res = pi_ / (sin(pi_*x)*gammaFunction(1.d0-x))
+    else
+      x = x-1.d0
+      q = cmplx(0.99999999999980993d0,0.d0,dp)
+      do i=1,8
+        q = q+p(i)/(x+i+1.d0)
+      end do
+      t = x + 8 - 0.5
+      res = sqrt(2.d0*pi_)*(t**(x+0.5d0))*exp(-t)*x
+    end if
   end function
 
   real(dp) function gammaFunc(x)
     real(dp) :: x
-    real(dp) :: intResults
-    real(dp) :: consts(1)
-    consts(1) = x
-    intResults = gaussLegendre(gammaFunction,0.d0,0.01d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.01d0,0.02d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.02d0,0.03d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.03d0,0.04d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.04d0,0.05d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.05d0,0.06d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.06d0,0.07d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.07d0,0.08d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.08d0,0.09d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.09d0,0.1d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.1d0,0.2d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.2d0,0.3d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.3d0,0.4d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.4d0,0.5d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.5d0,0.6d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.6d0,0.7d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.7d0,0.8d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.8d0,0.9d0,1,consts)
-    intResults = intResults+gaussLegendre(gammaFunction,0.9d0,1.d0,1,consts)
-    gammaFunc = intResults
+    gammaFunc = real(gammaFunction(cmplx(x,0.d0,dp)))
   end function
 
   !**********************!

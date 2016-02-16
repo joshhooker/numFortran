@@ -534,8 +534,8 @@ program libraryTest
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING GAMMA FUNCTION:'
-  print *, gamma(10.21d0)
-  print *, gammaFunc(10.21d0)
+  print *, gamma(0.21d0)
+  print *, gammaFunc(0.21d0)
   write(*,*)
 
   write(*,'(2x,a)') 'TESTING LEGENDRE POLYNOMIALS'
