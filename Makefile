@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 
 # FORTRAN compiler
-FC = gfortran-mp-5
+FC = gfortran
 FFLAGS = -O2 -std=f2008 -fno-range-check
 
 #FC = ifort
