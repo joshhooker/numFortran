@@ -11,14 +11,15 @@ TARGET = libraryTest
 DATADIR = data
 SRCDIR = src
 OBJDIR = obj
+TESTDIR = test
 
 MODULEFLAG = -J
-VPATH = $(SRCDIR):$(OBJDIR)
+VPATH = $(SRCDIR):$(OBJDIR):$(TESTDIR)
 
 # add any extra objects here
 OBJFILES = libraryTest.o constants.o cubicSpline.o odeSolver.o \
            randomNumbers.o statTests.o integration.o specialFunctions.o \
-           sorting.o matrixSolver.o
+           sorting.o matrixSolver.o testRandNum.o
 
 FULLTARGET = $(TARGET)
 
