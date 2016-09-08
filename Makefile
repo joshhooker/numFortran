@@ -54,7 +54,7 @@ tidy:
 # Add Dependencies here
 libraryTest.o : constants.o cubicSpline.o odeSolver.o randomNumbers.o \
 								statTests.o integration.o specialFunctions.o sorting.o \
-								matrixSolver.o
+								matrixSolver.o testRandNum.o
 
 cubicSpline.o : matrixSolver.o
 

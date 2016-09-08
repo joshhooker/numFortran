@@ -16,11 +16,12 @@ module statTests
   private
   integer, parameter :: dp = kind(0.d0)
 
+  public :: medianArr
+  public :: meanArr
+  public :: stdDev
   public :: bootstrap
   public :: jackknife
-  public :: meanArr
-  public :: medianArr
-  public :: stdDev
+  public :: chiSqTest
 
   interface medianArr
     module procedure median_i, median_r, median_d
@@ -281,6 +282,37 @@ contains
     deallocate(jack_arr)
     var = var*real(n-1,dp)/real(n,dp)
     sigma = sqrt(var)
+  end subroutine
+
+  subroutine chiSqTest(array, numBins, startPoint, stopPoint, chiSq)
+    implicit none
+    integer :: i, n, numBins, binPoint
+    real(dp) :: array(:), startPoint, stopPoint, stepPoint, chiSqSum
+    real(dp) :: expected, chiSq
+    integer, allocatable :: chiSqArray(:)
+
+    n = size(array,1)
+    stepPoint = (stopPoint-startPoint)/real(numBins,dp)
+    allocate(chiSqArray(numBins))
+
+    expected = real(n,dp)/real(numBins,dp)
+
+    do i=1,numBins
+      chiSqArray(i) = 0
+    end do
+
+    do i=1,n
+      binPoint = int(array(i)/stepPoint)+1
+      chiSqArray(binPoint) = chiSqArray(binPoint) + 1
+    end do
+
+    chiSqSum = 0d0
+    do i=1,numBins
+      chiSqSum = chiSqSum + (real(chiSqArray(i),dp)-expected)*(real(chiSqArray(i),dp)-expected)
+    end do
+
+    chiSqSum = chiSqSum/expected
+    chiSq = chiSqSum
   end subroutine
 
 end module
