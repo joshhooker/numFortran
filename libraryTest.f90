@@ -17,12 +17,7 @@ program libraryTest
   use iso_fortran_env
   implicit none
 
-  complex(dp) testComplex
-
   write(*,*) "Hi"
-
-  testComplex % RE = 1.0
-
 
   !call randNumTest
 

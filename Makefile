@@ -19,17 +19,17 @@ VPATH = $(SRCDIR):$(OBJDIR):$(TESTDIR)
 # add any extra objects here
 OBJFILES = libraryTest.o constants.o cubicSpline.o odeSolver.o \
            randomNumbers.o statTests.o integration.o specialFunctions.o \
-           sorting.o matrixSolver.o testRandNum.o
+           sorting.o matrixSolver.o testRandNum.o nfConstants.o nfIntegration.o
 
 FULLTARGET = $(TARGET)
 
 # Rules to build the fortran files
 
-.SUFFIXES: .f08 .o
+.SUFFIXES: .f90 .o
 .f08.o: ; @mkdir -p $(OBJDIR) $(DATADIR)
 	$(FC) -c $(FFLAGS)  $(MODULEFLAG) $(OBJDIR) -o $(OBJDIR)/$@ $<
 
-.SUFFIXES: .F08 .o
+.SUFFIXES: .F90 .o
 .F08.o: ; @mkdir -p $(OBJDIR) $(DATADIR)
 	$(FC) -c $(FFLAGS) $(DFLAGS) $(MODULEFLAG) $(OBJDIR) -o $(OBJDIR)/$@ $<
 
@@ -52,9 +52,12 @@ tidy:
 	@rm -rf $(OBJDIR) $(SRCDIR)/*~ *.out *.err *.log *.ipo
 
 # Add Dependencies here
-libraryTest.o : constants.o cubicSpline.o odeSolver.o randomNumbers.o \
-								statTests.o integration.o specialFunctions.o sorting.o \
-								matrixSolver.o testRandNum.o
+libraryTest.o : nfConstants.o nfIntegration.o
+# libraryTest.o : constants.o cubicSpline.o odeSolver.o randomNumbers.o \
+# 								statTests.o integration.o specialFunctions.o sorting.o \
+# 								matrixSolver.o testRandNum.o
+
+nfIntegration.o : nfConstants.o
 
 cubicSpline.o : matrixSolver.o
 
