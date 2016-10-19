@@ -1,5 +1,3 @@
-SHELL = /bin/sh
-
 # FORTRAN compiler
 FC = gfortran
 FFLAGS = -O2 -std=f2008 -fno-range-check
@@ -17,20 +15,22 @@ MODULEFLAG = -J
 VPATH = $(SRCDIR):$(OBJDIR):$(TESTDIR)
 
 # add any extra objects here
-OBJFILES = libraryTest.o constants.o cubicSpline.o odeSolver.o \
-           randomNumbers.o statTests.o integration.o specialFunctions.o \
-           sorting.o matrixSolver.o testRandNum.o nfConstants.o nfIntegration.o
+OBJFILES = libraryTest.o nfConstants.o nfIntegration.o
+# OBJFILES = libraryTest.o constants.o cubicSpline.o odeSolver.o \
+#            randomNumbers.o statTests.o integration.o specialFunctions.o \
+#            sorting.o matrixSolver.o testRandNum.o \
+#            nfConstants.o nfIntegration.o
 
 FULLTARGET = $(TARGET)
 
 # Rules to build the fortran files
 
 .SUFFIXES: .f90 .o
-.f08.o: ; @mkdir -p $(OBJDIR) $(DATADIR)
+.f90.o: ; @mkdir -p $(OBJDIR) $(DATADIR)
 	$(FC) -c $(FFLAGS)  $(MODULEFLAG) $(OBJDIR) -o $(OBJDIR)/$@ $<
 
 .SUFFIXES: .F90 .o
-.F08.o: ; @mkdir -p $(OBJDIR) $(DATADIR)
+.F90.o: ; @mkdir -p $(OBJDIR) $(DATADIR)
 	$(FC) -c $(FFLAGS) $(DFLAGS) $(MODULEFLAG) $(OBJDIR) -o $(OBJDIR)/$@ $<
 
 %.o: %.mod
@@ -38,10 +38,6 @@ FULLTARGET = $(TARGET)
 $(FULLTARGET): $(OBJFILES)
 	$(FC) $(FFLAGS) $(MODULEFLAG) $(OBJDIR) -o $@ $(addprefix $(OBJDIR)/, $(OBJFILES))
 
-
-.PHONEY: deepclean
-deepclean:
-	@rm -rf *~ $(BINDIR) $(OBJDIR) $(DATADIR) $(SRCDIR)/*~ *.out *.err *.log *.ipo
 
 .PHONEY: clean
 clean:

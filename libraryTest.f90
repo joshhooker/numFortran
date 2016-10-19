@@ -14,7 +14,6 @@ program libraryTest
   use nfConstants
   use nfIntegration
 
-  use iso_fortran_env
   implicit none
 
   write(*,*) "Hi"
