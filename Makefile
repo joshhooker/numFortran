@@ -1,6 +1,6 @@
 # FORTRAN compiler
 FC = gfortran
-FFLAGS = -O2 -std=f2008 -fno-range-check
+FFLAGS = -O3 -std=f2008 -fno-range-check
 
 #FC = ifort
 #FFLAGS = -O3 -fast -parallel -ipo
@@ -11,7 +11,6 @@ SRCDIR = src
 OBJDIR = obj
 TESTDIR = test
 
-MODULEFLAG = -J
 VPATH = $(SRCDIR):$(OBJDIR):$(TESTDIR)
 
 # add any extra objects here
@@ -27,17 +26,16 @@ FULLTARGET = $(TARGET)
 
 .SUFFIXES: .f90 .o
 .f90.o: ; @mkdir -p $(OBJDIR) $(DATADIR)
-	$(FC) -c $(FFLAGS)  $(MODULEFLAG) $(OBJDIR) -o $(OBJDIR)/$@ $<
+	$(FC) -c $(FFLAGS) $(OBJDIR) -o $(OBJDIR)/$@ $<
 
 .SUFFIXES: .F90 .o
 .F90.o: ; @mkdir -p $(OBJDIR) $(DATADIR)
-	$(FC) -c $(FFLAGS) $(DFLAGS) $(MODULEFLAG) $(OBJDIR) -o $(OBJDIR)/$@ $<
+	$(FC) -c $(FFLAGS) $(DFLAGS) $(OBJDIR) -o $(OBJDIR)/$@ $<
 
 %.o: %.mod
 
 $(FULLTARGET): $(OBJFILES)
-	$(FC) $(FFLAGS) $(MODULEFLAG) $(OBJDIR) -o $@ $(addprefix $(OBJDIR)/, $(OBJFILES))
-
+	$(FC) $(FFLAGS) $(OBJDIR) -o $@ $(addprefix $(OBJDIR)/, $(OBJFILES))
 
 .PHONEY: clean
 clean:
