@@ -17,7 +17,6 @@ module randomNumbers
     integer, private :: lMT = 18
     integer, private :: mti = 624+1 !=nMT+1
     integer, private :: mt(624) !mt(nMT)
-
   contains
     procedure, public :: generateSeed
     procedure, public :: getSeed

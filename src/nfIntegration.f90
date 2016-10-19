@@ -6,6 +6,7 @@
 
 module nfIntegration
   use nfConstants
+  use nfSpecialFunctions
   implicit none
 
   real(dp) :: glx128(64), glw128(64)
@@ -13,11 +14,88 @@ module nfIntegration
   real(dp) :: glx1024(512), glw1024(512)
   real(dp) :: g30k61_gx(15), g30k61_gw(15), g30k61_kx(31), g30k61_kw(31)
 
+  type, public :: nfInt
+    real(dp), public, allocatable :: glx(:), glw(:)
+  contains
+    procedure, public :: setGLNumPoints
+    procedure, private :: setGLPoints
+    procedure, private :: bisectionGLPoints
+  end type nfInt
+
+  type, private :: nfIntGLPoints
+    real(dp), private, allocatable :: lower(:), upper(:)
+  end type nfIntGLPoints
+
   public :: readGLParameters
   public :: gaussLegendre, gaussLegendreCmplx
   public :: readGKParameters
 
 contains
+
+  subroutine setGLNumPoints(this, numPoints)
+    class(nfInt) :: this
+    integer :: numPoints
+
+    allocate(this%glx(numPoints))
+    allocate(this%glw(numPoints))
+    call setGLPoints(this)
+  end subroutine setGLNumPoints
+
+  subroutine setGLPoints(this)
+    class(nfInt) :: this
+    type(nfIntGLPoints) :: points
+    integer :: i, numPoints
+    real(dp) :: x, dx, value, valueOLD
+
+    numPoints = size(this%glx,1)
+    allocate(points%lower(numPoints))
+    allocate(points%upper(numPoints))
+    dx = 0.000001
+    i = 1
+    valueOLD = legendrePoly(numPoints, -1)
+    do x=-1.d0+dx,1.d0,dx
+      value = legendrePoly(numPoints, x)
+      if(value*valueOLD.lt.0.d0) then
+        points%lower(i) = x-dx
+        points%upper(i) = x
+        i = i+1
+        print *, points%lower(i), points%upper(i)
+      end if
+      valueOLD = value
+    end do
+    ! do i=1,numPoints
+    !   print *, points%lower(i), points%upper(i)
+    ! end do
+    !print *, 'hi 2'
+    call bisectionGLPoints(this, points)
+  end subroutine setGLPoints
+
+  subroutine bisectionGLPoints(this, points)
+    class(nfInt) :: this
+    type(nfIntGLPoints) :: points
+    integer :: i, numPoints
+    real(dp) :: x, value, eps
+
+    eps = 1.d-10
+    numPoints = size(this%glx,1)
+
+    do i=1,numPoints
+      do while(abs(points%upper(i)-points%lower(i)).gt.eps)
+        x = (points%upper(i)+points%lower(i))/2.d0
+        value = legendrePoly(numPoints, x)
+        !print *, points%lower(i), points%upper(i), x, value
+        if(value.lt.0.d0) then
+          points%upper(i) = x
+        else
+          points%lower(i) = x
+        end if
+      end do
+      !print *, x
+    end do
+
+
+
+  end subroutine bisectionGLPoints
 
   subroutine readGLParameters()
     implicit none

@@ -13,11 +13,23 @@ program libraryTest
 
   use nfConstants
   use nfIntegration
+  use nfSpecialFunctions
 
   implicit none
 
-  write(*,*) "Hi"
 
+
+  ! nfIntegrationTest
+  type(nfInt) nfIntTest
+
+  print*, legendrePoly(44, 0.4d0)
+
+  !call nfIntTest%setGLNumPoints(500)
+
+
+
+
+  write(*,*) "Hi"
   !call randNumTest
 
   ! integer :: i
