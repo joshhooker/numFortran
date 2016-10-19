@@ -17,19 +17,16 @@ program libraryTest
 
   implicit none
 
-
+  real(dp) :: value
 
   ! nfIntegrationTest
   type(nfInt) nfIntTest
 
-  print*, legendrePoly(44, 0.4d0)
+  value = legendrePoly(1024, 0.4d0)
+  print *, value
 
   !call nfIntTest%setGLNumPoints(500)
 
-
-
-
-  write(*,*) "Hi"
   !call randNumTest
 
   ! integer :: i

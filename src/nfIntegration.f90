@@ -53,7 +53,9 @@ contains
     dx = 0.000001
     i = 1
     valueOLD = legendrePoly(numPoints, -1)
-    do x=-1.d0+dx,1.d0,dx
+    x = -1.d0+dx
+    !do x=-1.d0+dx,1.d0,dx
+    do while(x.le.1.d0)
       value = legendrePoly(numPoints, x)
       if(value*valueOLD.lt.0.d0) then
         points%lower(i) = x-dx
@@ -62,6 +64,7 @@ contains
         print *, points%lower(i), points%upper(i)
       end if
       valueOLD = value
+      x = x+dx
     end do
     ! do i=1,numPoints
     !   print *, points%lower(i), points%upper(i)

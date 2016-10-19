@@ -29,17 +29,9 @@ contains
         res = res - (i-1)*poly(i-1)
         res = res/(i)
         poly(i+1) = res
-        !print *, poly(i+1)
       end do
-      ! res = (2*(n-1)+1)*x*legendrePolyFunc(n-1,x)
-      ! res = res - (n-1)*legendrePolyFunc(n-2,x)
-      ! res = res/n
       res = poly(n+1)
-      !print*, poly(2), poly(n+1)
     end if
-    do i=1,n+1
-      print *, poly(i)
-    end do
     deallocate(poly)
   end function
 
