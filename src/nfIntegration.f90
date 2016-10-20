@@ -50,27 +50,26 @@ contains
     numPoints = size(this%glx,1)
     allocate(points%lower(numPoints))
     allocate(points%upper(numPoints))
-    dx = 0.000001
+    dx = 0.00001
     i = 1
     valueOLD = legendrePoly(numPoints, -1)
     x = -1.d0+dx
-    !do x=-1.d0+dx,1.d0,dx
     do while(x.le.1.d0)
       value = legendrePoly(numPoints, x)
       if(value*valueOLD.lt.0.d0) then
         points%lower(i) = x-dx
         points%upper(i) = x
         i = i+1
-        print *, points%lower(i), points%upper(i)
       end if
       valueOLD = value
       x = x+dx
     end do
-    ! do i=1,numPoints
-    !   print *, points%lower(i), points%upper(i)
-    ! end do
-    !print *, 'hi 2'
     call bisectionGLPoints(this, points)
+    do i=1,numPoints
+      this%glx(i) = (points%upper(i)+points%lower(i))/2.d0
+      this%glw(i) = 2.d0*(1.d0-this%glx(i)**2.d0)/((numPoints+1.d0)*legendrePoly(numPoints+1,this%glx(i)))**2.d0
+      print *, this%glx(i), this%glw(i)
+    end do
   end subroutine setGLPoints
 
   subroutine bisectionGLPoints(this, points)
@@ -81,23 +80,25 @@ contains
 
     eps = 1.d-10
     numPoints = size(this%glx,1)
-
     do i=1,numPoints
       do while(abs(points%upper(i)-points%lower(i)).gt.eps)
         x = (points%upper(i)+points%lower(i))/2.d0
         value = legendrePoly(numPoints, x)
-        !print *, points%lower(i), points%upper(i), x, value
         if(value.lt.0.d0) then
-          points%upper(i) = x
+          if(mod(i,2).eq.0) then
+            points%lower(i) = x
+          else
+            points%upper(i) = x
+          end if
         else
-          points%lower(i) = x
+          if(mod(i,2).eq.0) then
+            points%upper(i) = x
+          else
+            points%lower(i) = x
+          end if
         end if
       end do
-      !print *, x
     end do
-
-
-
   end subroutine bisectionGLPoints
 
   subroutine readGLParameters()

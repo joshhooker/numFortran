@@ -25,7 +25,7 @@ program libraryTest
   value = legendrePoly(1024, 0.4d0)
   print *, value
 
-  !call nfIntTest%setGLNumPoints(500)
+  call nfIntTest%setGLNumPoints(512)
 
   !call randNumTest
 
